@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { BehaviorSubject } from 'rxjs';
 import { AccountService } from 'src/app/services/account.service';
 import { LoadingService } from 'src/app/services/loading.service';
@@ -13,15 +13,15 @@ import { UsernameValidator } from 'src/app/shared/validators/username-validator'
 })
 export class LoginRegisterDialogComponent implements OnInit {
   register = false;
-  registerForm: FormGroup;
-  loginForm: FormGroup;
+  registerForm: UntypedFormGroup;
+  loginForm: UntypedFormGroup;
   componentIsDestroyed: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   test = true;
 
   constructor(
     public accountService: AccountService, 
     public loadingService: LoadingService,
-    private fb: FormBuilder
+    private fb: UntypedFormBuilder
   ) { }
 
   ngOnInit(): void {
