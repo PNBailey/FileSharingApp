@@ -1,0 +1,60 @@
+# See http://help.github.com/ignore-files/ for more about ignoring files.
+
+# Compiled output
+FileSharingApp.UI/dist
+FileSharingApp.UI/tmp
+FileSharingApp.UI/out-tsc
+FileSharingApp.UI/bazel-out
+
+# Node
+FileSharingApp.UI/node_modules
+FileSharingApp.UI/npm-debug.log
+FileSharingApp.UI/yarn-error.log
+
+# IDEs and editors
+FileSharingApp.UI/.idea/
+FileSharingApp.UI/.project
+FileSharingApp.UI/.classpath
+FileSharingApp.UI/.c9/
+FileSharingApp.UI/*.launch
+FileSharingApp.UI/.settings/
+FileSharingApp.UI/*.sublime-workspace
+
+# Visual Studio Code
+FileSharingApp.UI/.vscode/*
+FileSharingApp.UI/!.vscode/settings.json
+FileSharingApp.UI/!.vscode/tasks.json
+FileSharingApp.UI/!.vscode/launch.json
+FileSharingApp.UI/!.vscode/extensions.json
+FileSharingApp.UI/.history/*
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Miscellaneous
+FileSharingApp.UI/.angular/cache
+FileSharingApp.UI/.sass-cache/
+FileSharingApp.UI/connect.lock
+FileSharingApp.UI/coverage
+FileSharingApp.UI/libpeerconnection.log
+FileSharingApp.UI/testem.log
+FileSharingApp.UI/typings
+FileSharingApp.API/FileSharingAppUnitTests/bin/
+FileSharingApp.API/FileSharingAppUnitTests/obj/
+FileSharingApp.API/FileSharingApp.API/bin/
+FileSharingApp.API/.vs/
+FileSharingApp.API/FileSharingApp.API/appsettings.Development.json
+FileSharingApp.API/FileSharingApp.API/appsettings.json
+FileSharingApp.API/FileSharingApp.API/.config/
+FileSharingApp.API/FileSharingApp.API/obj/
+FileSharingApp.API/FileSharingApp.Domain/bin/
+FileSharingApp.API/FileSharingApp.Domain/obj/
+FileSharingApp.API/FileSharingApp.Service/obj/
+FileSharingApp.UI/.browserslistrc
+FileSharingApp.UI/.editorconfig
+FileSharingApp.UI/karma.conf.js
+FileSharingApp.UI/tsconfig.app.json
+FileSharingApp.UI/tsconfig.json
+FileSharingApp.UI/tsconfig.spec.json
+FileSharingApp.UI/src/favicon.ico
