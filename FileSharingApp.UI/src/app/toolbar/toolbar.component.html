@@ -1,0 +1,26 @@
+<mat-toolbar color="primary">
+    <button (click)="openSideNav()" mat-icon-button class="example-icon" aria-label="Example icon-button with menu icon">
+      <mat-icon>menu</mat-icon>
+    </button>
+    <span class="ml-3">Bookie Hols</span>
+    <span class="spacer"></span>
+    <div class="d-flex align-items-center">
+      <ng-container *ngIf="(accountService.loggedOnUser$ | async) as user; else loginButton">
+        <p class="m-0">
+          {{'Welcome ' + user.username}}
+        </p>
+      </ng-container>
+      <ng-template #loginButton>
+        <button (click)="openDialog()" color="white" mat-button aria-label="Login button">
+          Login
+        </button>
+      </ng-template>
+      <button mat-icon-button class="example-icon favorite-icon" aria-label="Example icon-button with heart icon" [matMenuTriggerFor]="menu">
+        <mat-icon>favorite</mat-icon>
+      </button>
+    </div>
+</mat-toolbar>
+<mat-menu #menu="matMenu">
+  <button mat-menu-item>Edit Profile</button>
+  <button mat-menu-item (click)="logout()">Logout</button>
+</mat-menu>

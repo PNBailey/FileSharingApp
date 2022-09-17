@@ -1,0 +1,129 @@
+@use '../node_modules/@angular/material/' as mat;
+
+// Adding the Angular Material Core Mixin
+@include mat.core();
+
+// Adjusting the focus of components to make the focus more obvious and make it more accessible 
+@include mat.strong-focus-indicators((
+  border-style: dotted,
+  border-width: 4px,
+  border-radius: 2px
+));
+
+// Defining custom theme colours
+
+$custom-teal: (
+ 50: #dff1ee,
+ 100: #b0dcd4,
+ 200: #7ec5b8,
+ 300: #4cae9c,
+ 400: #279d89,
+ 500: #068c76,
+ 600: #047f6a,
+ 700: #03705b ,
+ 800: #00604C,
+ 900: #004433,
+
+ // Defining the contrast colours. These are used in the text that is displayed in the foreground
+ contrast: (
+   50: rgba(black, 0.87),
+   100: rgba(black, 0.87),
+   200: rgba(black, 0.87),
+   300: rgba(black, 0.87),
+   400: rgba(black, 0.87),
+   500: white,
+   600: white,
+   700: white,
+   800: white,
+   900: white
+ )
+);
+
+$custom-blue: (
+ 50: #e3f2fd,
+ 100: #bbdefb,
+ 200: #90caf9,
+ 300: #64b5f6,
+ 400: #42a5f5,
+ 500: #2095f3,
+ 600: #1e87e5,
+ 700: #1976d2,
+ 800: #1564c0,
+ 900: #0d46a1,
+
+ contrast: (
+   50: rgba(black, 0.87),
+   100: rgba(black, 0.87),
+   200: rgba(black, 0.87),
+   300: rgba(black, 0.87),
+   400: rgba(black, 0.87),
+   500: rgba(black, 0.87),
+   600: rgba(black, 0.87),
+   700: white,
+   800: white,
+   900: white
+ )
+);
+
+$custom-primary: mat.define-palette($custom-teal, 600);
+$custom-accent: mat.define-palette($custom-blue, 700);
+$custom-warn: mat.define-palette(mat.$red-palette);
+
+$custom-theme: mat.define-light-theme((
+  color: (
+    primary: $custom-primary,
+    accent: $custom-accent,
+    warn: $custom-warn
+  )
+));
+
+@include mat.core-theme($custom-theme);
+
+// Angular Material Component Themes
+@include mat.button-theme($custom-theme);
+@include mat.toolbar-theme($custom-theme);
+@include mat.icon-theme($custom-theme);
+@include mat.sidenav-theme($custom-theme);
+@include mat.dialog-theme($custom-theme);
+@include mat.form-field-theme($custom-theme);
+@include mat.tooltip-theme($custom-theme);
+@include mat.snack-bar-theme($custom-theme);
+@include mat.progress-spinner-theme($custom-theme);
+@include mat.menu-theme($custom-theme);
+
+/* ANGULAR MATERIAL AUTO DEFINED STYLE */
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+/* OWN STYLES */
+
+.snack-bar-error {
+  background: rgb(255, 0, 0);
+}
+
+.snack-bar-info {
+  background: #37474f;
+}
+
+.snack-bar-success {
+  background: #2e7d32;
+}
+
+.mat-snack-bar-container,
+.mat-simple-snackbar-action > .mat-button > .mat-button-wrapper {
+    color: white;
+}
+
+.mat-simple-snackbar-action > .mat-button {
+  border-left: 3px white;
+}
+
+.sidenav-container {
+  height: 100%;
+}
+
+.email-spinner {
+  height: 5px;
+  width: 5px;
+}
