@@ -8,6 +8,9 @@ import { HomeComponent } from './home/home.component';
 import { ToolbarComponent } from './toolbar/toolbar.component';
 import { LoginRegisterDialogComponent } from './toolbar/login-register-dialog/login-register-dialog.component';
 
+// Angular Material Components
+import { MatSidenavModule } from '@angular/material/sidenav';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -18,7 +21,8 @@ import { LoginRegisterDialogComponent } from './toolbar/login-register-dialog/lo
   imports: [
     BrowserModule,
     AppRoutingModule,
-    BrowserAnimationsModule
+    BrowserAnimationsModule,
+    MatSidenavModule
   ],
   providers: [],
   bootstrap: [AppComponent]

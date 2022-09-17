@@ -1,8 +1,8 @@
 export class SnackBarItem {
-    message: string;
-    action: SnackbarAction;
-    classType: SnackbarClassType;
-    duration: SnackbarDuration;
+    message: string | undefined;
+    action: SnackbarAction = SnackbarAction.Close;
+    classType: SnackbarClassType = SnackbarClassType.Success;
+    duration: SnackbarDuration = SnackbarDuration.Short;
 }
 
 export enum SnackbarAction {
