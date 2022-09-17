@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -16,9 +16,7 @@ export class LoadingService {
     checkingUsername$: this.loadingSubs.checkingUsername.asObservable()
   }
 
-  constructor() { }
-
   setIsLoading(loadingSubName: string, loading: boolean) {
-    this.loadingSubs[loadingSubName].next(loading);
+    this.loadingSubs[loadingSubName as keyof typeof this.loadingSubs].next(loading);
   }
 }

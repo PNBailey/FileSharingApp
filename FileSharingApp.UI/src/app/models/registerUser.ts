@@ -1,5 +1,5 @@
 export class RegisterUser {
-    username: string | undefined;
-    password: string | undefined;
-    email: string | undefined;
+    username: string;
+    password: string;
+    email: string;
 }

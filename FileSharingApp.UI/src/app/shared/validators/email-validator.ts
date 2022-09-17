@@ -7,7 +7,7 @@ import { LoadingService } from "src/app/services/loading.service";
 export class EmailValidator {
 
 static uniqueEmailValidatorFn(accountService: AccountService, loadingService: LoadingService): AsyncValidatorFn {
-    return (control: AbstractControl): Observable<ValidationErrors> => control.valueChanges
+    return (control: AbstractControl): Observable<ValidationErrors | {string : boolean} | null> => control.valueChanges
         .pipe(
             tap(() => loadingService.setIsLoading('checkingEmail', true)),
             debounceTime(400),

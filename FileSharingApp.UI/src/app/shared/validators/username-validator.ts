@@ -7,7 +7,7 @@ import { LoadingService } from "src/app/services/loading.service";
 export class UsernameValidator {
 
 static uniqueUsernameValidatorFn(accountService: AccountService, loadingService: LoadingService, loggingIn: boolean): AsyncValidatorFn {
-    return (control: AbstractControl): Observable<ValidationErrors> => control.valueChanges
+    return (control: AbstractControl): Observable<ValidationErrors | {string : boolean} | null> => control.valueChanges
         .pipe(
             tap(() => loadingService.setIsLoading('checkingUsername', true)),
             debounceTime(400),
