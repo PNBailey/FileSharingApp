@@ -1,5 +1,4 @@
 @use '../node_modules/@angular/material/' as mat;
-@import "../node_modules/bootstrap/scss/bootstrap";
 
 // Adding the Angular Material Core Mixin
 @include mat.core();
@@ -96,35 +95,3 @@ $custom-theme: mat.define-light-theme((
 
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
-
-/* OWN STYLES */
-
-.snack-bar-error {
-  background: rgb(255, 0, 0);
-}
-
-.snack-bar-info {
-  background: #37474f;
-}
-
-.snack-bar-success {
-  background: #2e7d32;
-}
-
-.mat-snack-bar-container,
-.mat-simple-snackbar-action > .mat-button > .mat-button-wrapper {
-    color: white;
-}
-
-.mat-simple-snackbar-action > .mat-button {
-  border-left: 3px white;
-}
-
-.sidenav-container {
-  height: 100%;
-}
-
-.email-spinner {
-  height: 5px;
-  width: 5px;
-}
