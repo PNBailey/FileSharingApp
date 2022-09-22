@@ -6,10 +6,10 @@
                 <mat-form-field appearance="fill">
                     <mat-label>Username</mat-label>
                     <input matInput type="text" formControlName="username">
-                    <mat-error *ngIf="loginForm.controls['username'].hasError('usernameUniquenessViolated') && loginForm.controls['username'].touched">
+                    <mat-error *ngIf="loginForm.controls['username'].hasError('usernameUniquenessViolated')">
                         No user found with this username. Please <strong>Register</strong> below
                     </mat-error>
-                    <mat-error *ngIf="loginForm.controls['username'].hasError('required')">
+                    <mat-error *ngIf="loginForm.controls['username'].hasError('required') && loginForm.controls['username'].touched">
                         Username is <strong>required</strong>
                     </mat-error>
                     <mat-spinner matSuffix [diameter]="18" *ngIf="loadingService.loadingObs.checkingUsername$ | async"></mat-spinner>
