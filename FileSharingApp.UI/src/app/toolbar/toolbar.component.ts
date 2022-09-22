@@ -6,7 +6,7 @@ import { LoginRegisterDialogComponent } from './login-register-dialog/login-regi
 @Component({
   selector: 'app-toolbar',
   templateUrl: './toolbar.component.html',
-  styleUrls: ['./toolbar.component.css']
+  styleUrls: ['./toolbar.component.scss']
 })
 export class ToolbarComponent implements OnInit {
   @Output() showSideNav = new EventEmitter();

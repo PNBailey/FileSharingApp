@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
-import { BehaviorSubject } from 'rxjs';
 import { AccountService } from 'src/app/services/account.service';
 import { LoadingService } from 'src/app/services/loading.service';
 import { EmailValidator } from 'src/app/shared/validators/email-validator';
@@ -9,14 +8,12 @@ import { UsernameValidator } from 'src/app/shared/validators/username-validator'
 @Component({
   selector: 'app-login-register-dialog',
   templateUrl: './login-register-dialog.component.html',
-  styleUrls: ['./login-register-dialog.component.css']
+  styleUrls: ['./login-register-dialog.component.scss']
 })
 export class LoginRegisterDialogComponent implements OnInit {
   register = false;
   registerForm: UntypedFormGroup;
   loginForm: UntypedFormGroup;
-  componentIsDestroyed: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
-  test = true;
 
   constructor(
     public accountService: AccountService, 
