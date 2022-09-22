@@ -8,15 +8,12 @@ import { ToolbarComponent } from './toolbar/toolbar.component';
 import { LoginRegisterDialogComponent } from './toolbar/login-register-dialog/login-register-dialog.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
+import { SharedModule } from './shared/shared.module';
 
 // Angular Material Components
 import {MatSidenavModule} from '@angular/material/sidenav';
 import {MatToolbarModule} from '@angular/material/toolbar';
-import {MatIconModule} from '@angular/material/icon';
 import {MatMenuModule} from '@angular/material/menu';
-import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
-import {MatFormFieldModule} from '@angular/material/form-field';
-import { SharedModule } from './shared/shared.module';
 
 @NgModule({
   declarations: [
@@ -31,10 +28,7 @@ import { SharedModule } from './shared/shared.module';
     BrowserAnimationsModule,
     MatSidenavModule,
     MatToolbarModule,
-    MatIconModule,
     MatMenuModule,
-    MatProgressSpinnerModule,
-    MatFormFieldModule,
     FormsModule,
     ReactiveFormsModule,
     HttpClientModule,
