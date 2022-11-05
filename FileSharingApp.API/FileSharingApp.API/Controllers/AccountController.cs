@@ -37,8 +37,9 @@ namespace FileSharingApp.API.Controllers
         [HttpGet("CheckUsername")]
         public async Task<ActionResult<bool>> CheckUsernameUnique([FromQuery]string username)
         {
-            _logger.LogInformation("Checking whether user is unique. Username: {0}", username);
+            _logger.LogInformation($"Checking whether username is unique. Username: {username}");
             var user = await _userManager.FindByNameAsync(username.ToLower());
+            _logger.LogInformation($"Username is unique (username: {username}): {user == null}");
             return user == null;
         }
 
@@ -46,23 +47,35 @@ namespace FileSharingApp.API.Controllers
         [HttpGet("CheckEmail")]
         public async Task<ActionResult<bool>> CheckEmailUnique([FromQuery] string email)
         {
+            _logger.LogInformation($"Checking whether email is unique. Email: {email}");
             var user = await _userManager.FindByEmailAsync(email.ToLower());
+            _logger.LogInformation($"Email is unique (email: {email}): {user == null}");
             return user == null;
         }
 
         [HttpPost("Register")]
         public async Task<ActionResult<UserDto>> RegisterUser([FromBody] RegisterDto registerDto)
         {
+            _logger.LogInformation($"Attempting to register user. Username: {registerDto.Username}. Email: {registerDto.Email}");
             var registerValidator = new RegisterDtoValidator(_userManager);
             await registerValidator.ValidateAndThrowAsync(registerDto);
+            _logger.LogInformation($"Register user API validation checks passed. Username: {registerDto.Username}");
 
             var user = _mapper.Map<AppUser>(registerDto);
             user.UserName = registerDto.Username.ToLower();
 
+            _logger.LogInformation($"Attempting to create user. Username: {registerDto.Username}. Email: {registerDto.Email}");
             var result = await _userManager.CreateAsync(user, registerDto.Password);
-            if (!result.Succeeded) return BadRequest(result.Errors);
-
+            if (!result.Succeeded) 
+            {
+                foreach(var error in result.Errors)
+                {
+                    _logger.LogError($"User creation failed. Error caused in User Manager. Error: {error}");
+                }
+                return BadRequest(result.Errors);
+            }
             var userDto = await CreateUserDto(user);
+            _logger.LogInformation($"User creation successful. Username: {registerDto.Username}. Email: {registerDto.Email}");
 
             return Ok(userDto);
         }
