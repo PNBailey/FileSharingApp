@@ -16,24 +16,28 @@ namespace FileSharingApp.API.Controllers
         private readonly SignInManager<AppUser> _signInManager;
         private readonly IMapper _mapper;
         private readonly JWTTokenGenerator _jwtTokenGnerator;
+        private readonly ILogger<AccountController> _logger;
 
         public AccountController(
             UserManager<AppUser?> userManager, 
             SignInManager<AppUser> signInManager, 
             IMapper mapper, 
             IConfiguration configuration,
-            JWTTokenGenerator jwtTokenGnerator)
+            JWTTokenGenerator jwtTokenGnerator,
+            ILogger<AccountController> logger)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _mapper = mapper;
             _jwtTokenGnerator = jwtTokenGnerator;
+            _logger = logger;
         }
 
         [AllowAnonymous]
         [HttpGet("CheckUsername")]
         public async Task<ActionResult<bool>> CheckUsernameUnique([FromQuery]string username)
         {
+            _logger.LogInformation("Checking whether user is unique. Username: {0}", username);
             var user = await _userManager.FindByNameAsync(username.ToLower());
             return user == null;
         }
@@ -67,7 +71,7 @@ namespace FileSharingApp.API.Controllers
         public async Task<ActionResult<UserDto>> LoginUser([FromBody] LoginDto loginDto)
         {
             var loginValidator = new LoginDtoValidator();
-            loginValidator.ValidateAndThrow(loginDto);
+            loginValidator.ValidateAndThrow(loginDto);  
 
             var user = await _userManager.FindByNameAsync(loginDto.Username);
             if (user == null)
@@ -92,14 +96,5 @@ namespace FileSharingApp.API.Controllers
 
             return userDto;
         }
-
-        ///// <summary>
-        ///// Signs out the currently logged in User;
-        ///// </summary>
-        //[HttpPost("Logout")]
-        //public async void Logout()
-        //{
-        //    await _signInManager.SignOutAsync();
-        //}
     }
 }
