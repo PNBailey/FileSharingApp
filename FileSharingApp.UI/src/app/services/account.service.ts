@@ -138,23 +138,14 @@ export class AccountService {
    * Logs a user out of the app
    */
   logout() {
-    this.http.post(`${this.baseUrl}/Logout`, {}).subscribe(() => {
       this.setLoggedOnUser(null);
-    }, error => {
-      this.messageHandlingService.displayMessage({
-        message: 'Unable to logout. An unkown error occured', 
-        action: SnackbarAction.Close, 
-        classType: SnackbarClassType.Error, 
-        duration: SnackbarDuration.Medium
-      });
-    });
   }
 
   /**
    * @remarks
    * Sets the logged on User
    */
-   setLoggedOnUser(user: User | null) {
+  setLoggedOnUser(user: User | null) {
     localStorage.setItem('user', JSON.stringify(user));
     this.loggedOnUser.next(user);
   }
