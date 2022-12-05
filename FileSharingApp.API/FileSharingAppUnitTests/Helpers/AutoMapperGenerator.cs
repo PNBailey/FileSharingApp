@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace FileSharingAppUnitTests.Helpers
 {
-    public class MockAutoMapperGenerator
+    public class AutoMapperGenerator
     {
         public static Mapper CreateAutoMapper()
         {

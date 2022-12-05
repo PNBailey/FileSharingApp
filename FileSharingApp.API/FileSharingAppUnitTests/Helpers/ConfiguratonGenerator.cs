@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace FileSharingAppUnitTests.Helpers
 {
-    public class MockConfiguratonGenerator
+    public class ConfiguratonGenerator
     {
-        public static IConfigurationRoot GenerateMockConfiguration()
+        public static IConfigurationRoot GenerateConfiguration()
         {
             var myConfig = new Dictionary<string, string>
             {

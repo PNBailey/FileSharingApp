@@ -1,13 +1,14 @@
 using API.Helpers;
 using FileSharingApp.API.Helpers;
 using FileSharingApp.API.Models;
+using FileSharingApp.API.Services;
+using FileSharingApp.API.Services.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using NLog;
 using NLog.Web;
-using System.Diagnostics;
 using System.Text;
 
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
@@ -89,7 +90,7 @@ try
         // User settings.
         options.User.AllowedUserNameCharacters =
         "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
-        options.User.RequireUniqueEmail = false;
+        options.User.RequireUniqueEmail = true;
     });
 
     builder.Services.AddControllers();
@@ -97,14 +98,18 @@ try
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddSwaggerGen();
 
+    // Adding services
+    builder.Services.AddScoped<IUserService, UserService>();
+
+
     // NLog: Setup NLog for Dependency injection
     builder.Logging.ClearProviders(); 
-    builder.Logging.SetMinimumLevel(Microsoft.Extensions.Logging.LogLevel.Trace);
     builder.Host.UseNLog();
 
     var app = builder.Build();
 
-    // Configure the HTTP request pipeline.
+    app.UseExceptionHandler("/error");
+
     if (app.Environment.IsDevelopment())
     {
         app.UseSwagger();

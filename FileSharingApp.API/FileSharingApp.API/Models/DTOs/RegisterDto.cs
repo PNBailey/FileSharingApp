@@ -1,23 +1,25 @@
-﻿namespace FileSharingApp.API.Models.DTOs
+﻿using FileSharingApp.API.Services.Interfaces;
+using FluentValidation;
+using NLog;
+
+namespace FileSharingApp.API.Models.DTOs
 {
-    /// <summary>
-    /// A Dto to register a <see cref="AppUser"/>.
-    /// </summary>
     public class RegisterDto
     {
-        /// <summary>
-        /// Gets or Sets the UserName of the <see cref="AppUser"/>.
-        /// </summary>
+        private static Logger _logger = LogManager.GetCurrentClassLogger();
+
         public string Username { get; set; } = string.Empty;
 
-        /// <summary>
-        /// Gets or Sets the <see cref="AppUser"/>s Password.
-        /// </summary>
         public string Password { get; set; } = string.Empty;
 
-        /// <summary>
-        /// Gets or Sets the <see cref="AppUser"/>s Email.
-        /// </summary>
         public string Email { get; set; } = string.Empty;
+
+        public async Task Validate(IUserService userService)
+        {
+            _logger.Info($"Attempting to validate Register Dto. Username: {Username}. Email: {Email}");
+
+            var registerValidator = new RegisterDtoValidator(userService);
+            await registerValidator.ValidateAndThrowAsync(this);
+        }
     }
 }
