@@ -10,12 +10,11 @@ export class MessageHandlingService {
 
   constructor(private snackbar: MatSnackBar) { }
 
-  displayMessage(snackBarItem: SnackBarItem) {
+  displayMessage(snackBarItem: SnackBarItem) {    
     this.snackbar.open(snackBarItem.message, snackBarItem.action, {
       panelClass: [snackBarItem.classType],
       duration: snackBarItem.duration,
       horizontalPosition: 'end'
     });
   }
-  
 }

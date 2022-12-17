@@ -43,15 +43,6 @@ export class AccountService {
           this.dialog.closeAll();
           this.router.navigate(['/home']);
         }
-      }),
-      catchError(err => {
-        this.messageHandlingService.displayMessage({
-          message: 'Unable to submit. There are errors on the form', 
-          action: SnackbarAction.Close, 
-          classType: SnackbarClassType.Error, 
-          duration: SnackbarDuration.Medium
-        });
-        return throwError(of(console.log(err)))
       })    
       ).subscribe();
   }

@@ -35,7 +35,7 @@ export class LoginRegisterDialogComponent implements OnInit {
   }
 
   loginUser() {
-    this.accountService.login(this.loginForm.value);
+    this.accountService.login(this.loginForm.value);    
   }
 
   buildRegisterForm() {
