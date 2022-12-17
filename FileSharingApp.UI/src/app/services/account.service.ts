@@ -2,12 +2,10 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
-import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
-import { catchError, tap } from 'rxjs/operators';
-import { SnackbarAction, SnackbarClassType, SnackbarDuration } from '../models/snackbar-item';
+import { BehaviorSubject, Observable, } from 'rxjs';
+import { tap } from 'rxjs/operators';
 import { User } from '../models/user';
 import { LoadingService } from './loading.service';
-import { MessageHandlingService } from './message-handling.service';
 interface RegisterUser {
   username: string;
   password: string;
@@ -29,14 +27,13 @@ export class AccountService {
 
   constructor(
     private http: HttpClient, 
-    private messageHandlingService: MessageHandlingService,
     private router: Router,
     public dialog: MatDialog,
     public loadingService: LoadingService) 
     { }
 
-  register(registerUser: RegisterUser) {
-    this.http.post<User>(`${this.baseUrl}/Register`, registerUser).pipe(
+  register(registerUser: RegisterUser) {    
+    return this.http.post<User>(`${this.baseUrl}/Register`, registerUser).pipe(
       tap(user => {
         if(user) {
           this.setLoggedOnUser(user),
@@ -44,7 +41,7 @@ export class AccountService {
           this.router.navigate(['/home']);
         }
       })    
-      ).subscribe();
+    );
   }
 
   checkUsernameUnique(username: string): Observable<boolean> {
@@ -56,7 +53,7 @@ export class AccountService {
   }
 
   login(loginUser: LoginUser) {
-    this.http.post<User>(`${this.baseUrl}/Login`, loginUser).pipe(
+    return this.http.post<User>(`${this.baseUrl}/Login`, loginUser).pipe(
       tap(user => {
         if(user) {
           this.setLoggedOnUser(user);
@@ -64,7 +61,7 @@ export class AccountService {
           this.router.navigate(['/home']);
         }
       })
-    ).subscribe();
+    );
   }
 
   logout() {

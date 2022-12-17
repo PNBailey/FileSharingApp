@@ -6,9 +6,7 @@
     <span class="spacer"></span>
     <div class="d-flex align-items-center">
       <ng-container *ngIf="(accountService.loggedOnUser$ | async) as user; else loginButton">
-        <p class="m-0">
           {{'Welcome ' + user.username}}
-        </p>
       </ng-container>
       <ng-template #loginButton>
         <button (click)="openDialog()" color="white" mat-button aria-label="Login button">
