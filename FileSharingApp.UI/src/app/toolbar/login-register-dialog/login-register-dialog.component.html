@@ -42,7 +42,7 @@
         </div>
         <div mat-dialog-actions align="end">
             <button mat-button mat-dialog-close>Cancel</button>
-            <button mat-button cdkFocusInitial (click)="loginUser()">Login</button>
+            <button mat-button cdkFocusInitial type="submit">Login</button>
         </div>
     </form>
 </div>
@@ -111,15 +111,7 @@
         </div>
         <div mat-dialog-actions align="end">
             <button mat-button mat-dialog-close>Cancel</button>
-            <button 
-            mat-button 
-            cdkFocusInitial
-            (click)="registerUser()">Register</button>
+            <button mat-button cdkFocusInitial type="submit">Register</button>
         </div>
     </form>
 </div>
-
-<!-- <ng-container *ngIf="loadingService.isLoading$ | async">
-    <div class="spinner-container">
-    </div>
-  </ng-container> -->
