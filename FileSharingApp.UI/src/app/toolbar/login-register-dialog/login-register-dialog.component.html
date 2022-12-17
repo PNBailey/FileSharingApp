@@ -9,7 +9,7 @@
                     <mat-error *ngIf="loginForm.controls['username'].hasError('usernameUniquenessViolated')">
                         No user found with this username. Please <strong>Register</strong> below
                     </mat-error>
-                    <mat-error *ngIf="loginForm.controls['username'].hasError('required') && loginForm.controls['username'].touched">
+                    <mat-error *ngIf="loginForm.controls['username'].hasError('required')">
                         Username is <strong>required</strong>
                     </mat-error>
                     <mat-spinner matSuffix [diameter]="18" *ngIf="loadingService.loadingObs.checkingUsername$ | async"></mat-spinner>
