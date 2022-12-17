@@ -100,6 +100,7 @@ try
 
     // Adding services
     builder.Services.AddScoped<IUserService, UserService>();
+    builder.Services.AddScoped<IErrorService, ErrorService>();
 
 
     // NLog: Setup NLog for Dependency injection

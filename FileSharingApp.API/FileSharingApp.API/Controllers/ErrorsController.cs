@@ -1,4 +1,5 @@
 ﻿using FileSharingApp.API.CustomExceptions;
+using FileSharingApp.API.Services.Interfaces;
 using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Diagnostics;
@@ -13,58 +14,33 @@ namespace FileSharingApp.API.Controllers
     public class ErrorsController : BaseController
     {
         private static Logger _logger = LogManager.GetCurrentClassLogger();
+        private readonly IErrorService errorService;
+
+        public ErrorsController(IErrorService errorService)
+        {
+            this.errorService = errorService;
+        }
 
         [Route("/error")]
         public IActionResult Error()
         {
-            var exceptionHandlerFeature = HttpContext.Features.Get<IExceptionHandlerFeature>()!;
+            IExceptionHandlerFeature handler = HttpContext.Features.Get<IExceptionHandlerFeature>()!;
 
-            var exceptionType = exceptionHandlerFeature.Error.GetType();
+            var exceptionType = handler.Error.GetType();
 
-            HttpStatusCode statusCode = getStatusCode(exceptionType);
-
-            _logger.Error(exceptionHandlerFeature.Error, exceptionHandlerFeature.Error.Message);
+            HttpStatusCode statusCode = errorService.GetStatusCode(exceptionType);
 
             return Problem(
-                detail: exceptionHandlerFeature.Error.StackTrace,
+                detail: handler.Error.StackTrace,
                 statusCode: (int)statusCode,
                 type: exceptionType.Name,
-                title: exceptionHandlerFeature.Error.Message);
+                title: handler.Error.Message);
         }
 
-        private HttpStatusCode getStatusCode(Type exceptionType)
+        [HttpPost("LogError")]
+        public void LogClientError(string message)
         {
-            if (exceptionType == typeof(UserNotFoundException))
-            {
-                return HttpStatusCode.NotFound;
-            }
-            else if (exceptionType == typeof(PasswordIncorrectException))
-            {
-                return HttpStatusCode.Unauthorized;
-            }
-            else if (exceptionType == typeof(ValidationException))
-            {
-                return HttpStatusCode.Forbidden;
-            }
-            else if (exceptionType == typeof(AggregateException))
-            {
-                var exceptionHandlerFeature = HttpContext.Features.Get<IExceptionHandlerFeature>()!;
-
-                AggregateException aggregateException = (AggregateException)exceptionHandlerFeature.Error;
-
-                if (aggregateException.InnerExceptions.Any(innerException => innerException is not UserManagerCreateUserException))
-                {
-                    return HttpStatusCode.InternalServerError;
-                }
-                else
-                {
-                    return HttpStatusCode.UnprocessableEntity;
-                }
-            }
-            else
-            {
-                return HttpStatusCode.InternalServerError;
-            }
+            _logger.Error(message);
         }
     }
 }
