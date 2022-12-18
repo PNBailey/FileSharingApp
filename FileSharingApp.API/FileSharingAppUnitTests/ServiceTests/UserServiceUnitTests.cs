@@ -58,25 +58,5 @@ namespace FileSharingAppUnitTests.ServiceTests
             //Assert
             Assert.False(result);
         }
-
-        //[Fact]
-        //public async void LoginUser_should_return_a_Bad_Request_when_User_Not_Found()
-        //{
-        //    //Arrange 
-        //    var mockUserManager = MockUserManagerGenerator.CreateMockUserManager();
-        //    var userService = UserServiceGenerator.CreateUserService(mockUserManager);
-        //    var loginDto = new LoginDto();
-        //    loginDto.Username = "Donna";
-        //    loginDto.Password = "Pa$$w0rd";
-        //    MockUserManagerGenerator.SetupFindByNameAsync(mockUserManager, loginDto.Username);
-        //    var sut = AccountControllerGenerator.CreateAccountController(mockUserManager, userService);
-
-        //    //Act
-        //    var actionResult = await sut.LoginUser(loginDto);
-
-        //    //Assert
-        //    var result = actionResult.Result as BadRequestObjectResult;
-        //    Assert.Equal((int)HttpStatusCode.BadRequest, result.StatusCode);
-        //}
     }
 }
