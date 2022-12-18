@@ -1,6 +1,4 @@
-﻿using FileSharingApp.API.CustomExceptions;
-using FileSharingApp.API.Services.Interfaces;
-using FluentValidation;
+﻿using FileSharingApp.API.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
@@ -15,16 +13,18 @@ namespace FileSharingApp.API.Controllers
     {
         private static Logger _logger = LogManager.GetCurrentClassLogger();
         private readonly IErrorService errorService;
+        private readonly IHttpContextAccessor httpContextAccessor;
 
-        public ErrorsController(IErrorService errorService)
+        public ErrorsController(IErrorService errorService, IHttpContextAccessor httpContextAccessor)
         {
             this.errorService = errorService;
+            this.httpContextAccessor = httpContextAccessor ?? throw new ArgumentNullException(nameof(httpContextAccessor));
         }
 
         [Route("/error")]
         public IActionResult Error()
         {
-            IExceptionHandlerFeature handler = HttpContext.Features.Get<IExceptionHandlerFeature>()!;
+            IExceptionHandlerFeature handler = this.httpContextAccessor.HttpContext!.Features.Get<IExceptionHandlerFeature>()!;
 
             var exceptionType = handler.Error.GetType();
 

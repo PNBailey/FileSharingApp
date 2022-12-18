@@ -21,6 +21,8 @@ logger.Debug("init main");
 
 try
 {
+    builder.Services.AddHttpContextAccessor();
+
     // Adding Authentication
     builder.Services.AddAuthentication(options =>
     {
