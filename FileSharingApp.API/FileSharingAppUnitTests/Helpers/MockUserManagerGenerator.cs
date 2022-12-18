@@ -33,11 +33,17 @@ namespace FileSharingAppUnitTests.Helpers
             mockUserManager.Setup(x => x.DeleteAsync(It.IsAny<AppUser>())).ReturnsAsync(IdentityResult.Success);
         }
 
-        public static void SetupCreateAsync(Mock<UserManager<AppUser?>> mockUserManager)
+        public static void SetupCreateAsyncSuccess(Mock<UserManager<AppUser?>> mockUserManager)
         {
             var mockUsers = MockUsersData.TestData;
 
             mockUserManager.Setup(x => x.CreateAsync(It.IsAny<AppUser>(), It.IsAny<string>())).ReturnsAsync(IdentityResult.Success).Callback<AppUser, string>((x, y) => mockUsers.Add(x));
+        }
+
+        public static void SetupCreateAsyncFailure(Mock<UserManager<AppUser?>> mockUserManager)
+        {
+            var mockUsers = MockUsersData.TestData;
+            mockUserManager.Setup(x => x.CreateAsync(It.IsAny<AppUser>(), It.IsAny<string>())).ReturnsAsync(IdentityResult.Failed(new IdentityError()));
         }
 
         public static void SetupUpdateAsync(Mock<UserManager<AppUser?>> mockUserManager)
@@ -57,6 +63,16 @@ namespace FileSharingAppUnitTests.Helpers
             var mockUsers = MockUsersData.TestData;
             var user = mockUsers.Find(user => user.Email == email);
             mockUserManager.Setup(x => x.FindByEmailAsync(It.IsAny<string>())).ReturnsAsync(user);
+        }
+
+        public static void SetupCheckPasswordAsyncIncorrect(Mock<UserManager<AppUser?>> mockUserManager)
+        {
+            mockUserManager.Setup(x => x.CheckPasswordAsync(It.IsAny<AppUser>(), It.IsAny<string>())).ReturnsAsync("Pa$$w0rd" == "Password");
+        }
+
+        public static void SetupCheckPasswordAsyncCorrect(Mock<UserManager<AppUser?>> mockUserManager)
+        {
+            mockUserManager.Setup(x => x.CheckPasswordAsync(It.IsAny<AppUser>(), It.IsAny<string>())).ReturnsAsync("Pa$$w0rd" == "Pa$$w0rd");
         }
 
         private static Mock<IUserStore<AppUser>> CreateIUserStoreMock()
