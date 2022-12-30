@@ -56,16 +56,16 @@ namespace FileSharingApp.API.Services
             return userDto;
         }
 
-        public void HandleUnsuccessfulUserCreation(IdentityResult result)
+        public AggregateException HandleUnsuccessfulUserCreation(IEnumerable<IdentityError> identityErrors)
         {
             var exceptions = new List<UserManagerCreateUserException>();
 
-            foreach (var error in result.Errors)
+            foreach (var error in identityErrors)
             {
                 exceptions.Add(new UserManagerCreateUserException($"{error}"));
             }
 
-            throw new AggregateException("User creation failed.", exceptions);
+            return new AggregateException("User creation failed.", exceptions);
         }
 
         public async Task<UserDto> CreateUserDto(AppUser user)

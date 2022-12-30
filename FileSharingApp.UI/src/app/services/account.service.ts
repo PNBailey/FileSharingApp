@@ -18,6 +18,7 @@ interface LoginUser {
 @Injectable({
   providedIn: 'root'
 })
+
 export class AccountService {
 
   baseUrl = "https://localhost:7249/api/Account"
@@ -52,7 +53,7 @@ export class AccountService {
     return this.http.get<boolean>(`${this.baseUrl}/CheckEmail?email=${email}`);
   }
 
-  login(loginUser: LoginUser) {
+  login(loginUser: LoginUser) {    
     return this.http.post<User>(`${this.baseUrl}/Login`, loginUser).pipe(
       tap(user => {
         if(user) {

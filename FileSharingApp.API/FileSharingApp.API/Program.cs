@@ -1,4 +1,5 @@
 using API.Helpers;
+using FileSharingApp.API.Data;
 using FileSharingApp.API.Helpers;
 using FileSharingApp.API.Models;
 using FileSharingApp.API.Services;
@@ -21,6 +22,8 @@ logger.Debug("init main");
 
 try
 {
+    builder.Services.AddHttpContextAccessor();
+
     // Adding Authentication
     builder.Services.AddAuthentication(options =>
     {

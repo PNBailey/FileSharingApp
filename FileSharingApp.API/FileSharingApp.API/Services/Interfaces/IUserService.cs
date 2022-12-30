@@ -17,7 +17,7 @@ namespace FileSharingApp.API.Services.Interfaces
 
         Task<UserDto> HandleSuccessfulUserCreation(AppUser newUser);
 
-        void HandleUnsuccessfulUserCreation(IdentityResult result);
+        AggregateException HandleUnsuccessfulUserCreation(IEnumerable<IdentityError> identityErrors);
 
         Task<AppUser> FindByNameAsync(string username);
 

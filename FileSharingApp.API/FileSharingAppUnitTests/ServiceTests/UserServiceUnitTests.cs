@@ -1,9 +1,12 @@
-﻿using FileSharingAppUnitTests.Helpers;
+﻿using FileSharingApp.API.CustomExceptions;
+using FileSharingAppUnitTests.Helpers;
+using Microsoft.AspNetCore.Identity;
+using Moq;
 using Xunit;
 
 namespace FileSharingAppUnitTests.ServiceTests
 {
-    public class UserServiceUnitTests
+    public class UserServiceUnitTests : BaseUnitTest
     {
         [Theory]
         [InlineData("test1@gmail.com")]
@@ -59,24 +62,21 @@ namespace FileSharingAppUnitTests.ServiceTests
             Assert.False(result);
         }
 
-        //[Fact]
-        //public async void LoginUser_should_return_a_Bad_Request_when_User_Not_Found()
-        //{
-        //    //Arrange 
-        //    var mockUserManager = MockUserManagerGenerator.CreateMockUserManager();
-        //    var userService = UserServiceGenerator.CreateUserService(mockUserManager);
-        //    var loginDto = new LoginDto();
-        //    loginDto.Username = "Donna";
-        //    loginDto.Password = "Pa$$w0rd";
-        //    MockUserManagerGenerator.SetupFindByNameAsync(mockUserManager, loginDto.Username);
-        //    var sut = AccountControllerGenerator.CreateAccountController(mockUserManager, userService);
+        [Fact]
+        public async void HandleUnsuccessfulUserCreation_should_return_aggregate_exception()
+        {
+            //Arrange 
+            var mockUserManager = MockUserManagerGenerator.CreateMockUserManager();
+            var sut = UserServiceGenerator.CreateUserService(mockUserManager);
+            var identityErrors = new List<IdentityError>();
+            identityErrors.Add(new IdentityError());
+            identityErrors.Add(new IdentityError());
 
-        //    //Act
-        //    var actionResult = await sut.LoginUser(loginDto);
+            //Act
+            var result = sut.HandleUnsuccessfulUserCreation(identityErrors);
 
-        //    //Assert
-        //    var result = actionResult.Result as BadRequestObjectResult;
-        //    Assert.Equal((int)HttpStatusCode.BadRequest, result.StatusCode);
-        //}
+            //Assert
+            Assert.IsType<AggregateException>(result);
+        }
     }
 }

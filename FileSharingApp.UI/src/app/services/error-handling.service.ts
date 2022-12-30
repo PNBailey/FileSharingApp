@@ -18,7 +18,6 @@ export enum ErrorCode {
   Forbidden = 403,
   NotFound = 404
 }
-
 @Injectable({
   providedIn: 'root'
 })
@@ -30,7 +29,7 @@ export class ErrorHandlingService implements ErrorHandler {
 
   constructor(private messageHandlingService: MessageHandlingService, private http: HttpClient) { }
 
-  handleError(error: any) {
+  handleError(error: any) {    
     this.error = error;   
     this.setDefaultErrorMessage();
     this.setCustomErrorMessage();
