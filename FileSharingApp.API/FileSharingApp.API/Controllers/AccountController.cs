@@ -53,14 +53,8 @@ namespace FileSharingApp.API.Controllers
 
             if (!result.Succeeded)
             {
-                var exceptions = new List<UserManagerCreateUserException>();
-
-                foreach (var error in result.Errors)
-                {
-                    exceptions.Add(new UserManagerCreateUserException($"{error}"));
-                }
-
-                throw new AggregateException("User creation failed.", exceptions);
+                AggregateException aggregateException = _userService.HandleUnsuccessfulUserCreation(result.Errors);
+                throw aggregateException;
             }
             else
             {
@@ -72,6 +66,7 @@ namespace FileSharingApp.API.Controllers
         public async Task<ActionResult<UserDto>> LoginUser([FromBody] LoginDto loginDto)
         {
             _logger.Info($"Login user end point hit. Username {loginDto.Username}");
+
             await loginDto.Validate(); 
 
             var user = await _userService.FindByNameAsync(loginDto.Username);

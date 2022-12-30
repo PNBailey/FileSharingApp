@@ -1,6 +1,7 @@
 ﻿using FileSharingApp.API.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using NLog;
 using System.Net;
@@ -11,34 +12,31 @@ namespace FileSharingApp.API.Controllers
     [ApiExplorerSettings(IgnoreApi = true)]
     public class ErrorsController : BaseController
     {
-        private static Logger _logger = LogManager.GetCurrentClassLogger();
         private readonly IErrorService errorService;
+        private static Logger _logger = LogManager.GetCurrentClassLogger();
         private readonly IHttpContextAccessor httpContextAccessor;
 
-        public ErrorsController(IErrorService errorService, IHttpContextAccessor httpContextAccessor)
+        public ErrorsController(IHttpContextAccessor httpContextAccessor, IErrorService errorService)
         {
-            this.errorService = errorService;
             this.httpContextAccessor = httpContextAccessor ?? throw new ArgumentNullException(nameof(httpContextAccessor));
+            this.errorService = errorService;
         }
 
         [Route("/error")]
         public IActionResult Error()
         {
-            IExceptionHandlerFeature handler = this.httpContextAccessor.HttpContext!.Features.Get<IExceptionHandlerFeature>()!;
-
-            var exceptionType = handler.Error.GetType();
-
-            HttpStatusCode statusCode = errorService.GetStatusCode(exceptionType);
+            var handler = this.httpContextAccessor.HttpContext!.Features.Get<IExceptionHandlerFeature>()!;
+            var exception = handler.Error;
 
             return Problem(
-                detail: handler.Error.StackTrace,
-                statusCode: (int)statusCode,
-                type: exceptionType.Name,
-                title: handler.Error.Message);
+                detail: exception.StackTrace,
+                statusCode: (int)errorService.GetStatusCode(exception),
+                type: exception.GetType().Name,
+                title: exception.Message);
         }
 
         [HttpPost("LogError")]
-        public void LogClientError(string message)
+        public void LogError(string message)
         {
             _logger.Error(message);
         }

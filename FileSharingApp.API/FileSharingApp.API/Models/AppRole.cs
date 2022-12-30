@@ -7,9 +7,6 @@ namespace FileSharingApp.API.Models
     /// </summary>
     public class AppRole : IdentityRole<int>
     {
-        /// <summary>
-        /// The <see cref="AppUserRole"/>s.
-        /// </summary>
         public ICollection<AppUserRole> UserRoles { get; set; } = null!;
     }
 }

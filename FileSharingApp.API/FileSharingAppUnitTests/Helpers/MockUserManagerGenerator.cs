@@ -23,7 +23,11 @@ namespace FileSharingAppUnitTests.Helpers
 
         private static List<string> getTestRoles()
         {
-            var roles = new List<string>();
+            var roles = new List<string>
+            {
+                "role 1",
+                "role 2"
+            };
 
             return roles;
         }

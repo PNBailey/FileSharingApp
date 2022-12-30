@@ -94,7 +94,7 @@ namespace FileSharingAppUnitTests
             var registerDto = new RegisterDto();
             registerDto.Username = "pauly";
             registerDto.Password = "Pa$$w0rd";
-            registerDto.Email = "TestEmail@gmail.com";
+            registerDto.Email = "Test2Email@gmail.com";
             MockUserManagerGenerator.SetupFindByNameAsync(mockUserManager, registerDto.Username);
             MockUserManagerGenerator.SetupFindByEmailAsync(mockUserManager, registerDto.Email);
             MockUserManagerGenerator.SetupCreateAsyncFailure(mockUserManager);

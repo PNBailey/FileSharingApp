@@ -1,18 +1,16 @@
 ﻿using FileSharingApp.API.CustomExceptions;
 using FileSharingApp.API.Services.Interfaces;
 using FluentValidation;
-using Microsoft.AspNetCore.Diagnostics;
-using NLog;
 using System.Net;
 
 namespace FileSharingApp.API.Services
 {
     public class ErrorService : IErrorService
     {
-        private IExceptionHandlerFeature _handler;
-
-        public HttpStatusCode GetStatusCode(Type exceptionType)
+        public HttpStatusCode GetStatusCode(Exception exception)
         {
+            var exceptionType = exception.GetType();
+
             if (exceptionType == typeof(UserNotFoundException))
             {
                 return HttpStatusCode.NotFound;
@@ -27,7 +25,7 @@ namespace FileSharingApp.API.Services
             }
             else if (exceptionType == typeof(AggregateException))
             {
-                AggregateException aggregateException = (AggregateException)_handler.Error;
+                AggregateException aggregateException = (AggregateException)exception;
 
                 if (aggregateException.InnerExceptions.Any(innerException => innerException is not UserManagerCreateUserException))
                 {

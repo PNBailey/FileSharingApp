@@ -9,14 +9,15 @@ namespace FileSharingAppUnitTests.Helpers
 {
     internal static class ErrorsControllerGenerator
     {
-        public static ErrorsController GenerateErrorsController(Mock<IExceptionHandlerFeature> exceptionHandlerFeatureMock)
+        public static ErrorsController GenerateErrorsController(Exception exception)
         {
-            ErrorService errorService = new ErrorService();
+            Mock<IExceptionHandlerFeature> exceptionHandlerFeatureMock = MockExceptionHandlerFeatureGenerator.GenerateExceptionHandlerFeatureMock(exception);
             Mock<IFeatureCollection>? featureCollectionMock = GenerateFeatureCollectionMock(exceptionHandlerFeatureMock);
             Mock<HttpContext> httpContextMock = GenerateHttpContextMock(featureCollectionMock);
             Mock<IHttpContextAccessor> httpContextAccessorMock = GenerateHttpContextAccessorMock(httpContextMock);
+            ErrorService errorService = ErrorServiceGenerator.GenerateErrorService();
 
-            return new ErrorsController(errorService, httpContextAccessorMock.Object);
+            return new ErrorsController(httpContextAccessorMock.Object, errorService);
         }
 
         private static Mock<IFeatureCollection> GenerateFeatureCollectionMock(Mock<IExceptionHandlerFeature> exceptionHandlerFeatureMock)
@@ -39,23 +40,6 @@ namespace FileSharingAppUnitTests.Helpers
 
             httpContextAccessorMock.Setup(ca => ca.HttpContext).Returns(httpContextMock.Object);
             return httpContextAccessorMock;
-        }
-
-        public static Mock<IExceptionHandlerFeature> GenerateExceptionHandlerFeatureMock(ApplicationException applicationException)
-        {
-            var exceptionHandlerFeatureMock = new Mock<IExceptionHandlerFeature>();
-
-            Exception thrownException;
-            try
-            {
-                throw applicationException;
-            }
-            catch (Exception ex)
-            {
-                thrownException = ex;
-            }
-            exceptionHandlerFeatureMock.Setup(ehf => ehf.Error).Returns(thrownException);
-            return exceptionHandlerFeatureMock;
         }
     }
 }

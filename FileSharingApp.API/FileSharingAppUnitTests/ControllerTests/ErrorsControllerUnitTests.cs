@@ -1,5 +1,8 @@
-﻿using FileSharingAppUnitTests.Helpers;
+﻿using FileSharingApp.API.Controllers;
+using FileSharingAppUnitTests.Helpers;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using Moq;
 using Xunit;
 
 namespace FileSharingAppUnitTests.ControllerTests
@@ -10,9 +13,8 @@ namespace FileSharingAppUnitTests.ControllerTests
         public void Error_end_point_should_return_a_problem_details_response()
         {
             //Arrange
-            var applicationException = new ApplicationException("This is a mocked exception");
-            var exceptionHandlerFeatureMock = ErrorsControllerGenerator.GenerateExceptionHandlerFeatureMock(applicationException);
-            var sut = ErrorsControllerGenerator.GenerateErrorsController(exceptionHandlerFeatureMock);
+            var exception = new ApplicationException("This is a mocked exception");
+            var sut = ErrorsControllerGenerator.GenerateErrorsController(exception);
 
             //Act
             var result = sut.Error();
@@ -26,9 +28,8 @@ namespace FileSharingAppUnitTests.ControllerTests
         public void Problem_details_detail_should_be_the_exception_stack_trace()
         {
             //Arrange
-            var applicationException = new ApplicationException("This is a mocked exception");
-            var exceptionHandlerFeatureMock = ErrorsControllerGenerator.GenerateExceptionHandlerFeatureMock(applicationException);
-            var sut = ErrorsControllerGenerator.GenerateErrorsController(exceptionHandlerFeatureMock);
+            var exception = new ApplicationException("This is a mocked exception");
+            var sut = ErrorsControllerGenerator.GenerateErrorsController(exception);
 
             //Act
             var result = sut.Error();
@@ -36,16 +37,15 @@ namespace FileSharingAppUnitTests.ControllerTests
             var problemDetails = objectResult!.Value as ProblemDetails;
 
             //Assert
-            Assert.Equal(applicationException.StackTrace, problemDetails!.Detail);
+            Assert.Equal(exception.StackTrace, problemDetails!.Detail);
         }
 
         [Fact]
         public void Problem_details_title_should_be_exception_message()
         {
             //Arrange
-            var applicationException = new ApplicationException("This is a mocked exception");
-            var exceptionHandlerFeatureMock = ErrorsControllerGenerator.GenerateExceptionHandlerFeatureMock(applicationException);
-            var sut = ErrorsControllerGenerator.GenerateErrorsController(exceptionHandlerFeatureMock);
+            var exception = new ApplicationException("This is a mocked exception");
+            var sut = ErrorsControllerGenerator.GenerateErrorsController(exception);
 
             //Act
             var result = sut.Error();
@@ -53,17 +53,15 @@ namespace FileSharingAppUnitTests.ControllerTests
             var problemDetails = objectResult!.Value as ProblemDetails;
 
             //Assert
-            Assert.Equal(applicationException.Message, problemDetails!.Title);
+            Assert.Equal(exception.Message, problemDetails!.Title);
         }
 
         [Fact]
         public void Problem_details_type_should_be_exception_name()
         {
             //Arrange
-            var applicationException = new ApplicationException("This is a mocked exception");
-            var exceptionHandlerFeatureMock = ErrorsControllerGenerator.GenerateExceptionHandlerFeatureMock(applicationException);
-            var sut = ErrorsControllerGenerator.GenerateErrorsController(exceptionHandlerFeatureMock);
-            var exceptionType = exceptionHandlerFeatureMock.Object.Error.GetType();
+            var exception = new ApplicationException("This is a mocked exception");
+            var sut = ErrorsControllerGenerator.GenerateErrorsController(exception); 
 
             //Act
             var result = sut.Error();
@@ -71,16 +69,15 @@ namespace FileSharingAppUnitTests.ControllerTests
             var problemDetails = objectResult!.Value as ProblemDetails;
 
             //Assert
-            Assert.Equal(exceptionType.Name, problemDetails!.Type);
+            Assert.Equal(exception.GetType().Name, problemDetails!.Type);
         }
 
         [Fact]
         public void Problem_details_status_code_should_be_500_by_default()
         {
             //Arrange
-            var applicationException = new ApplicationException("This is a mocked exception");
-            var exceptionHandlerFeatureMock = ErrorsControllerGenerator.GenerateExceptionHandlerFeatureMock(applicationException);
-            var sut = ErrorsControllerGenerator.GenerateErrorsController(exceptionHandlerFeatureMock);
+            var exception = new ApplicationException("This is a mocked exception");
+            var sut = ErrorsControllerGenerator.GenerateErrorsController(exception);
 
             //Act
             var result = sut.Error();
@@ -90,6 +87,5 @@ namespace FileSharingAppUnitTests.ControllerTests
             //Assert
             Assert.Equal(500, problemDetails!.Status);
         }
-
     }
 }

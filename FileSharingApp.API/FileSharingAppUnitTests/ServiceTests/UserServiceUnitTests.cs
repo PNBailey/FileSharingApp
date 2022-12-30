@@ -1,9 +1,12 @@
-﻿using FileSharingAppUnitTests.Helpers;
+﻿using FileSharingApp.API.CustomExceptions;
+using FileSharingAppUnitTests.Helpers;
+using Microsoft.AspNetCore.Identity;
+using Moq;
 using Xunit;
 
 namespace FileSharingAppUnitTests.ServiceTests
 {
-    public class UserServiceUnitTests
+    public class UserServiceUnitTests : BaseUnitTest
     {
         [Theory]
         [InlineData("test1@gmail.com")]
@@ -57,6 +60,23 @@ namespace FileSharingAppUnitTests.ServiceTests
 
             //Assert
             Assert.False(result);
+        }
+
+        [Fact]
+        public async void HandleUnsuccessfulUserCreation_should_return_aggregate_exception()
+        {
+            //Arrange 
+            var mockUserManager = MockUserManagerGenerator.CreateMockUserManager();
+            var sut = UserServiceGenerator.CreateUserService(mockUserManager);
+            var identityErrors = new List<IdentityError>();
+            identityErrors.Add(new IdentityError());
+            identityErrors.Add(new IdentityError());
+
+            //Act
+            var result = sut.HandleUnsuccessfulUserCreation(identityErrors);
+
+            //Assert
+            Assert.IsType<AggregateException>(result);
         }
     }
 }

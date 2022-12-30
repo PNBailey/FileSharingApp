@@ -1,8 +1,6 @@
-﻿using FileSharingApp.API.Controllers;
-using FileSharingApp.API.Models;
+﻿using AutoMapper;
+using FileSharingApp.API.Controllers;
 using FileSharingApp.API.Services;
-using Microsoft.AspNetCore.Identity;
-using Moq;
 
 namespace FileSharingAppUnitTests.Helpers
 {
@@ -10,9 +8,11 @@ namespace FileSharingAppUnitTests.Helpers
     {
         public static AccountController CreateAccountController(UserService userService)
         {
-            var autoMapper = AutoMapperGenerator.CreateAutoMapper();
+            MapperConfiguration mapperConfiguration = AutoMapperTestConfigGenerator.GenerateTestMapperConfig();
 
-            var accountController = new AccountController(
+            Mapper autoMapper = new Mapper(mapperConfiguration);
+
+            AccountController accountController = new AccountController(
                 autoMapper,
                 userService
             );

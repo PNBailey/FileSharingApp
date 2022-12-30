@@ -9,11 +9,11 @@ namespace FileSharingApp.API.Helpers
 {
     public class JWTTokenGenerator
     {
-        private readonly UserManager<AppUser> _userManager;
+        private readonly UserManager<AppUser?> _userManager;
         private readonly IConfiguration _configuration;
 
         public JWTTokenGenerator(
-            UserManager<AppUser> userManager,
+            UserManager<AppUser?> userManager,
             IConfiguration configuration)
         {
             _userManager = userManager;
