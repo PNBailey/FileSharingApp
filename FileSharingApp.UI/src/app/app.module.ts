@@ -8,7 +8,7 @@ import { ToolbarComponent } from './toolbar/toolbar.component';
 import { LoginRegisterDialogComponent } from './toolbar/login-register-dialog/login-register-dialog.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
-import { SharedModule } from './shared/shared.module';
+import { AngularMaterialModule } from './shared/angular-material.module';
 
 // Angular Material Components
 import {MatSidenavModule} from '@angular/material/sidenav';
@@ -32,13 +32,11 @@ import { ErrorHandlingService } from './services/error-handling.service';
     BrowserModule,
     AppRoutingModule,
     BrowserAnimationsModule,
-    MatSidenavModule,
-    MatToolbarModule,
-    MatMenuModule,
+    AngularMaterialModule,
     FormsModule,
     ReactiveFormsModule,
     HttpClientModule,
-    SharedModule
+    AngularMaterialModule
   ],
   providers: [
     {provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true},
