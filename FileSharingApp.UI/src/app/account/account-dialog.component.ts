@@ -2,7 +2,6 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { UntypedFormGroup } from '@angular/forms';
 import { combineLatest, Observable } from 'rxjs';
 import { AccountService } from 'src/app/account/account.service';
-import { LoadingService } from 'src/app/services/loading.service';
 
 export interface Action {
   type: string, 
@@ -33,8 +32,7 @@ export class AccountDialogComponent {
   })
 
   constructor(
-    public accountService: AccountService, 
-    public loadingService: LoadingService,
+    public accountService: AccountService
   ) { }
 
   onFormSubmit(form: UntypedFormGroup) {
