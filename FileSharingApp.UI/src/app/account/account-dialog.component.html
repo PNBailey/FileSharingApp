@@ -1,0 +1,74 @@
+<ng-container *ngIf="(accountAccessObs$ | async) as accountAccess">
+    <div *ngIf="(accountAccess.form) as form">
+        <form [formGroup]="accountAccess.form">
+            <h1 mat-dialog-title>{{accountAccess.action.type}}</h1>
+            <div mat-dialog-content>
+                <div class="row mb-2">
+                    <mat-form-field appearance="fill">
+                        <mat-label>Username</mat-label>
+                        <input matInput type="text" formControlName="username">
+                        <mat-error *ngIf="form.controls['username'].hasError('usernameUniquenessViolated') && accountAccess.action.type == 'Register'">
+                            Username is <strong>taken</strong>
+                        </mat-error>
+                        <mat-error *ngIf="form.controls['username'].hasError('usernameUniquenessViolated') && accountAccess.action.type == 'Login'">
+                            No user found with this username. Select <strong>register</strong> below
+                        </mat-error>
+                        <mat-error *ngIf="form.controls['username'].hasError('required')">
+                            Username is <strong>required</strong>
+                        </mat-error>
+                        <mat-spinner matSuffix [diameter]="18" *ngIf="loadingService.loadingObs.checkingUsername$ | async"></mat-spinner>
+                    </mat-form-field>
+                </div>
+                <div class="row mb-2">
+                    <mat-form-field appearance="fill">
+                        <mat-label>Password</mat-label>
+                        <input 
+                            matInput 
+                            type="password" 
+                            placeholder="Enter Password.."
+                            formControlName="password"
+                            matTooltip="Password must be a minimum of eight characters and contain at least one uppercase letter, one lowercase letter, one number and one special character"
+                            matTooltipPosition="before">
+                        <mat-error *ngIf="form.controls['password'].hasError('pattern')">
+                            Password is <strong>invalid</strong>
+                        </mat-error>
+                        <mat-error *ngIf="form.controls['password'].hasError('required')">
+                            Password is <strong>required</strong>
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+                <div class="row mb-3" *ngIf="form.contains('email')">
+                    <mat-form-field appearance="fill">
+                        <mat-label>Email</mat-label>
+                        <input matInput type="email" formControlName="email">
+                        <mat-error *ngIf="form.controls['email'].hasError('email')">
+                            Please enter a <strong>valid</strong> email address
+                        </mat-error>
+                        <mat-error *ngIf="form.controls['email'].hasError('required')">
+                            Email is <strong>required</strong>
+                        </mat-error>
+                        <mat-error *ngIf="form.controls['email'].hasError('emailUniquenessViolated')">
+                            An account with this email address already exists. Select login below to login
+                        </mat-error>
+                        <mat-spinner matSuffix [diameter]="18" *ngIf="loadingService.loadingObs.checkingEmail$ | async"></mat-spinner>
+                    </mat-form-field>
+                </div>
+            </div>
+            <div class="row mt-2">
+                <p class="d-flex justify-content-center">{{accountAccess.action.linkLabel}}
+                    <span
+                        role="link"
+                        tabindex="0"
+                        class="login-register-link"
+                        (keydown.enter)="toggleUserIsRegistering()"
+                        (click)="toggleUserIsRegistering()">{{accountAccess.action.linkText}}
+                    </span>
+                </p>
+            </div>
+            <div mat-dialog-actions align="end">
+                <button mat-button mat-dialog-close>Cancel</button>
+                <button mat-button cdkFocusInitial (click)="onFormSubmit(form)" type="submit">{{accountAccess.action.buttonAction}}</button>
+            </div>
+        </form>
+    </div>
+</ng-container>

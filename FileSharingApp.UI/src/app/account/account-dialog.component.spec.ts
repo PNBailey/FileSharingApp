@@ -3,7 +3,7 @@ import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { FormGroup, ReactiveFormsModule, UntypedFormBuilder } from "@angular/forms";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { AngularMaterialModule } from "src/app/shared/angular-material.module";
-import { LoginRegisterDialogComponent } from "./login-register-dialog.component";
+import { LoginRegisterDialogComponent } from "./account-dialog.component";
 
 describe('LoginRegisterDialogComponent', () => {
 let component: LoginRegisterDialogComponent;
