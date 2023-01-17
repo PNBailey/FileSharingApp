@@ -80,7 +80,7 @@ export class AccountService {
     switchMap(([userIsRegistering, formValue]) => this.login(formValue as LoginUser))
   ).subscribe();
 
-  OnAccountAccessFormSubmitted(formValue: RegisterUser | LoginUser) {
+  onAccountAccessFormSubmitted(formValue: RegisterUser | LoginUser) {
     this.accountAccessFormSubmitted.next(formValue);
   }
 

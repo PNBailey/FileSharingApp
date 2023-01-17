@@ -14,8 +14,7 @@ export interface Action {
 @Component({
   selector: 'app-login-register-dialog',
   templateUrl: './account-dialog.component.html',
-  styleUrls: ['./account-dialog.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  styleUrls: ['./account-dialog.component.scss']
 })
 
 export class AccountDialogComponent {
@@ -38,7 +37,7 @@ export class AccountDialogComponent {
   ) { }
 
   onFormSubmit(form: UntypedFormGroup) {
-    this.accountService.OnAccountAccessFormSubmitted(form.value);
+    this.accountService.onAccountAccessFormSubmitted(form.value);
   }
   
   toggleUserIsRegistering() {
