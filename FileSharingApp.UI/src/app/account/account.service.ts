@@ -3,8 +3,8 @@ import { Injectable } from '@angular/core';
 import { FormControl, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
-import { BehaviorSubject, Observable, } from 'rxjs';
-import { map, tap } from 'rxjs/operators';
+import { BehaviorSubject, combineLatest, Observable, Subject, } from 'rxjs';
+import { filter, map, switchMap, tap } from 'rxjs/operators';
 import { User } from '../models/user';
 import { LoadingService } from '../services/loading.service';
 import { ValidationService } from '../shared/validators/validation.service';
@@ -43,6 +43,9 @@ export class AccountService {
   private userIsRegistering: BehaviorSubject<boolean> = new BehaviorSubject(false);
   userIsRegistering$: Observable<boolean> = this.userIsRegistering.asObservable();
 
+  private accountAccessFormSubmitted: Subject<RegisterUser | LoginUser> = new Subject();
+  accountAccessFormSubmitted$: Observable<RegisterUser | LoginUser> = this.accountAccessFormSubmitted.asObservable();
+
   accountAccessForm$: Observable<UntypedFormGroup> = this.userIsRegistering$.pipe(
     map((userIsRegistering) => {
       const form = this.fb.group({
@@ -65,7 +68,21 @@ export class AccountService {
         buttonAction: userIsRegistering ? 'Register' : 'Login',
       }
     })
-  )
+  );
+
+  registerUser$ = combineLatest([this.userIsRegistering$, this.accountAccessFormSubmitted$]).pipe(
+    filter(([userIsRegistering, formValue]) => userIsRegistering),
+    switchMap(([userIsRegistering, formValue]) => this.register(formValue as RegisterUser))
+  ).subscribe();
+
+  loginUser$ = combineLatest([this.userIsRegistering$, this.accountAccessFormSubmitted$]).pipe(
+    filter(([userIsRegistering, formValue]) => !userIsRegistering),
+    switchMap(([userIsRegistering, formValue]) => this.login(formValue as LoginUser))
+  ).subscribe();
+
+  OnAccountAccessFormSubmitted(formValue: RegisterUser | LoginUser) {
+    this.accountAccessFormSubmitted.next(formValue);
+  }
 
   toggleUserIsRegistering() {
     this.userIsRegistering.next(!this.userIsRegistering.getValue());
