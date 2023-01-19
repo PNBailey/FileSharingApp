@@ -1,6 +1,6 @@
 <ng-container *ngIf="(accountAccessObs$ | async) as accountAccess">
     <div *ngIf="(accountAccess.form) as form">
-        <form [formGroup]="accountAccess.form">
+        <form [formGroup]="accountAccess.form" data-cy="form">
             <h1 mat-dialog-title>{{accountAccess.action.type}}</h1>
             <div mat-dialog-content>
                 <div class="row mb-2">

@@ -19,6 +19,8 @@ describe('AccountDialogComponent', () => {
         usernameInput: '[data-cy="username-input"]',
         passwordInput: '[data-cy="password-input"]',
         emailInput: '[data-cy="email-input"]',
+        form: '[data-cy="form"]',
+        formError: '[data-cy="form-error"]',
     }
 
     const validationService = {
@@ -122,6 +124,10 @@ describe('AccountDialogComponent', () => {
     it("form link label should contain correct text when user is registering", () => {
         cy.get(elementBindings.loginRegisterLink).click();
         cy.get(elementBindings.linkLabel).should('have.text', 'Already have an account? Login ');
+    });
+
+    it('form should contain no errors when it first initializes', () => {
+        cy.get(elementBindings.formError).should('have.length', 0);
     });
 
     it('form should have username already exists error when user already exists validator returns true', () => {
