@@ -11,6 +11,15 @@ describe('AccountDialogComponent', () => {
     const fb: FormBuilder = new FormBuilder();
     const userIsRegistering: BehaviorSubject<boolean> = new BehaviorSubject(false);
     const userIsRegistering$ = userIsRegistering.asObservable();
+    const elementBindings = {
+        submitButton: '[data-cy="submit-btn"]',
+        loginRegisterLink: '[data-cy="login-register-link"]',
+        accountFormControls: '[data-cy="account-form-control"]',
+        linkLabel: '[data-cy="link-label"]',
+        usernameInput: '[data-cy="username-input"]',
+        passwordInput: '[data-cy="password-input"]',
+        emailInput: '[data-cy="email-input"]',
+    }
 
     const validationService = {
         uniqueUsernameValidatorFn: () => {
@@ -80,30 +89,58 @@ describe('AccountDialogComponent', () => {
     });
 
     it("form submit button text should be 'Register' when user is registering", () => {
-        cy.get('[data-cy="login-register-link"]').click();
-        cy.get('[data-cy="submit-btn"]').should('have.text', 'Register');
+        cy.get(elementBindings.loginRegisterLink).click();
+        cy.get(elementBindings.submitButton).should('have.text', 'Register');
     });
 
     it("form submit button text should be 'Login' when user is logging in", () => {
-        cy.get('[data-cy="submit-btn"]').should('have.text', 'Login');
+        cy.get(elementBindings.submitButton).should('have.text', 'Login');
     });
 
     it('form should contain 3 form controls when user is registering', () => {
-        cy.get('[data-cy="login-register-link"]').click();
-        cy.get('[data-cy="account-form-control"]').should('have.length', 3);
+        cy.get(elementBindings.loginRegisterLink).click();
+        cy.get(elementBindings.accountFormControls).should('have.length', 3);
     });
 
     it('form should contain 2 form controls when user is logging in', () => {
-        cy.get('[data-cy="account-form-control"]').should('have.length', 2);
+        cy.get(elementBindings.accountFormControls).should('have.length', 2);
     });
 
-    it("link text should contain correct text when user is logging in", () => {
-        cy.get('[data-cy="login-register-link"]').should('have.text', 'Register ');
+    it("form link text should contain correct text when user is logging in", () => {
+        cy.get(elementBindings.loginRegisterLink).should('have.text', 'Register ');
     });
 
-    it("link text should contain correct text when user is registering", () => {
-        cy.get('[data-cy="login-register-link"]').click();
-        cy.get('[data-cy="login-register-link"]').should('have.text', 'Login ');
+    it("form link text should contain correct text when user is registering", () => {
+        cy.get(elementBindings.loginRegisterLink).click();
+        cy.get(elementBindings.loginRegisterLink).should('have.text', 'Login ');
+    });
+
+    it("form link label should contain correct text when user is logging in", () => {
+        cy.get(elementBindings.linkLabel).should('have.text', 'No account? Register ');
+    });
+
+    it("form link label should contain correct text when user is registering", () => {
+        cy.get(elementBindings.loginRegisterLink).click();
+        cy.get(elementBindings.linkLabel).should('have.text', 'Already have an account? Login ');
+    });
+
+    it('form should have username already exists error when user already exists validator returns true', () => {
+        //Arrange
+        cy.get(elementBindings.usernameInput).type('test name');
+        cy.get(elementBindings.submitButton).focus();
+
+        //Assert
+        cy.contains('No user found with this username. Select register below');
+    });
+
+    it('form should have email does not exist error when user not found by email validator returns true', () => {
+        //Arrange
+        cy.get(elementBindings.loginRegisterLink).click();
+        cy.get(elementBindings.emailInput).type('testEmail@email.com');
+        cy.get(elementBindings.submitButton).focus();
+
+        //Assert
+        cy.contains('An account with this email address already exists. Select login below to login');
     });
 });
     
