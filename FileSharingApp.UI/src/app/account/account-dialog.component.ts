@@ -29,7 +29,7 @@ export class AccountDialogComponent {
       form: accountAccessForm,
       action: accountAction
     }
-  })
+  });
 
   constructor(
     public accountService: AccountService,

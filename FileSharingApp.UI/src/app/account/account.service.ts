@@ -39,12 +39,12 @@ export class AccountService {
 
   private loggedOnUser: BehaviorSubject<null | User> = new BehaviorSubject<null | User>(null);
   loggedOnUser$: Observable<null | User> = this.loggedOnUser.asObservable();
-  
-  private userIsRegistering: BehaviorSubject<boolean> = new BehaviorSubject(false);
-  userIsRegistering$: Observable<boolean> = this.userIsRegistering.asObservable();
 
   private accountAccessFormSubmitted: Subject<RegisterUser | LoginUser> = new Subject();
   accountAccessFormSubmitted$: Observable<RegisterUser | LoginUser> = this.accountAccessFormSubmitted.asObservable();
+
+  private userIsRegistering: BehaviorSubject<boolean> = new BehaviorSubject(false);
+  userIsRegistering$: Observable<boolean> = this.userIsRegistering.asObservable();
 
   accountAccessForm$: Observable<UntypedFormGroup> = this.userIsRegistering$.pipe(
     map((userIsRegistering) => {

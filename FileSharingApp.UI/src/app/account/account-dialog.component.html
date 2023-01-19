@@ -4,7 +4,7 @@
             <h1 mat-dialog-title>{{accountAccess.action.type}}</h1>
             <div mat-dialog-content>
                 <div class="row mb-2">
-                    <mat-form-field appearance="fill">
+                    <mat-form-field data-cy="account-form-control" appearance="fill">
                         <mat-label>Username</mat-label>
                         <input matInput type="text" formControlName="username">
                         <mat-error *ngIf="form.controls['username'].hasError('usernameUniquenessViolated') && accountAccess.action.type == 'Register'">
@@ -20,7 +20,7 @@
                     </mat-form-field>
                 </div>
                 <div class="row mb-2">
-                    <mat-form-field appearance="fill">
+                    <mat-form-field data-cy="account-form-control" appearance="fill">
                         <mat-label>Password</mat-label>
                         <input 
                             matInput 
@@ -38,7 +38,7 @@
                     </mat-form-field>
                 </div>
                 <div class="row mb-3" *ngIf="form.contains('email')">
-                    <mat-form-field appearance="fill">
+                    <mat-form-field data-cy="account-form-control" class="email-form-control" appearance="fill">
                         <mat-label>Email</mat-label>
                         <input matInput type="email" formControlName="email">
                         <mat-error *ngIf="form.controls['email'].hasError('email')">
@@ -55,11 +55,12 @@
                 </div>
             </div>
             <div class="row mt-2">
-                <p class="d-flex justify-content-center">{{accountAccess.action.linkLabel}}
+                <p class="d-flex justify-content-center" data-cy="link-label">{{accountAccess.action.linkLabel}}
                     <span
                         role="link"
                         tabindex="0"
                         class="login-register-link"
+                        data-cy="login-register-link"
                         (keydown.enter)="toggleUserIsRegistering()"
                         (click)="toggleUserIsRegistering()">{{accountAccess.action.linkText}}
                     </span>
@@ -67,7 +68,7 @@
             </div>
             <div mat-dialog-actions align="end">
                 <button mat-button mat-dialog-close>Cancel</button>
-                <button mat-button cdkFocusInitial (click)="onFormSubmit(form)" type="submit">{{accountAccess.action.buttonAction}}</button>
+                <button data-cy="submit-btn" mat-button cdkFocusInitial (click)="onFormSubmit(form)" type="submit">{{accountAccess.action.buttonAction}}</button>
             </div>
         </form>
     </div>

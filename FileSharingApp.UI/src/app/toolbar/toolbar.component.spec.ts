@@ -9,6 +9,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatInputModule } from '@angular/material/input';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AngularMaterialModule } from '../shared/angular-material.module';
+import { UntypedFormBuilder } from '@angular/forms';
 
 describe('ToolbarComponent', () => {
   let component: ToolbarComponent;
@@ -16,6 +17,7 @@ describe('ToolbarComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
+      providers: [UntypedFormBuilder],
       imports: [ 
         HttpClientTestingModule,
         AngularMaterialModule,
