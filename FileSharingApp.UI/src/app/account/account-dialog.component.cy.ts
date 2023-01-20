@@ -21,10 +21,14 @@ describe('AccountDialogComponent', () => {
         emailInput: '[data-cy="email-input"]',
         form: '[data-cy="form"]',
         formError: '[data-cy="form-error"]',
+        emailCustomValidator: '[data-cy="email-custom-validator"]',
+        usernameCustomValidator: '[data-cy="username-custom-validator"]'
     }
 
+    const existingUsernames = ['John2, SallySteve, Star123'];
+
     const validationService = {
-        uniqueUsernameValidatorFn: () => {
+        uniqueUsernameValidatorFn: (usernameToFind: string) => {
             return of({'usernameUniquenessViolated': true});
         },
         uniqueEmailValidatorFn: () => {
@@ -139,6 +143,16 @@ describe('AccountDialogComponent', () => {
         cy.contains('No user found with this username. Select register below');
     });
 
+    it('form should not have username already exists error when user already exists validator returns null', () => {
+        //Arrange
+        cy.stub(validationService, 'uniqueUsernameValidatorFn').returns(of(null));
+        cy.get(elementBindings.usernameInput).type('test name');
+        cy.get(elementBindings.submitButton).focus();
+
+        //Assert
+        cy.contains('No user found with this username. Select register below');
+    });
+
     it('form should have email does not exist error when user not found by email validator returns true', () => {
         //Arrange
         cy.get(elementBindings.loginRegisterLink).click();
@@ -146,7 +160,17 @@ describe('AccountDialogComponent', () => {
         cy.get(elementBindings.submitButton).focus();
 
         //Assert
-        cy.contains('An account with this email address already exists. Select login below to login');
+        cy.get(elementBindings.usernameCustomValidator).should('have.length', 0);
+    });
+
+    it('form should not have email does not exist error when user not found by email validator returns null', () => {
+        //Arrange
+        cy.get(elementBindings.loginRegisterLink).click();
+        cy.stub(validationService, 'uniqueEmailValidatorFn').returns(of(null));
+        cy.get(elementBindings.emailInput).type('testEmail@email.com');
+        cy.get(elementBindings.submitButton).focus();
+
+        //Assert
+        cy.get(elementBindings.emailCustomValidator).should('have.length', 0);
     });
 });
-    
