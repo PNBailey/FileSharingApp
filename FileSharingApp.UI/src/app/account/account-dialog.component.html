@@ -6,7 +6,7 @@
                 <div class="row mb-2">
                     <mat-form-field data-cy="account-form-control" appearance="fill">
                         <mat-label>Username</mat-label>
-                        <input matInput type="text" data-cy="username-input" formControlName="username">
+                        <input matInput type="text" data-cy="username-input" formControlName="username" cdkFocusInitial>
                         <mat-error data-cy="form-error" *ngIf="form.controls['username'].hasError('usernameUniquenessViolated') && accountAccess.action.type == 'Register'">
                             Username is <strong>taken</strong>
                         </mat-error>
@@ -68,8 +68,8 @@
                 </p>
             </div>
             <div mat-dialog-actions align="end">
-                <button mat-button mat-dialog-close>Cancel</button>
-                <button data-cy="submit-btn" mat-button cdkFocusInitial (click)="onFormSubmit(form)" type="submit">{{accountAccess.action.buttonAction}}</button>
+                <button mat-button mat-dialog-close data-cy="cancel-btn">Cancel</button>
+                <button [disabled]="!form.valid" data-cy="submit-btn" mat-button (click)="onFormSubmit(form)" type="submit">{{accountAccess.action.buttonAction}}</button>
             </div>
         </form>
     </div>

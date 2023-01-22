@@ -14,12 +14,10 @@ interface RegisterUser {
   password: string;
   email: string;
 }
-
 interface LoginUser {
   username: string;
   password: string;
 }
-
 @Injectable({
   providedIn: 'root'
 })
@@ -39,9 +37,6 @@ export class AccountService {
 
   private loggedOnUser: BehaviorSubject<null | User> = new BehaviorSubject<null | User>(null);
   loggedOnUser$: Observable<null | User> = this.loggedOnUser.asObservable();
-
-  private accountAccessFormSubmitted: Subject<RegisterUser | LoginUser> = new Subject();
-  accountAccessFormSubmitted$: Observable<RegisterUser | LoginUser> = this.accountAccessFormSubmitted.asObservable();
 
   private userIsRegistering: BehaviorSubject<boolean> = new BehaviorSubject(false);
   userIsRegistering$: Observable<boolean> = this.userIsRegistering.asObservable();
@@ -69,20 +64,6 @@ export class AccountService {
       }
     })
   );
-
-  registerUser$ = combineLatest([this.userIsRegistering$, this.accountAccessFormSubmitted$]).pipe(
-    filter(([userIsRegistering, formValue]) => userIsRegistering),
-    switchMap(([userIsRegistering, formValue]) => this.register(formValue as RegisterUser))
-  ).subscribe();
-
-  loginUser$ = combineLatest([this.userIsRegistering$, this.accountAccessFormSubmitted$]).pipe(
-    filter(([userIsRegistering, formValue]) => !userIsRegistering),
-    switchMap(([userIsRegistering, formValue]) => this.login(formValue as LoginUser))
-  ).subscribe();
-
-  onAccountAccessFormSubmitted(formValue: RegisterUser | LoginUser) {
-    this.accountAccessFormSubmitted.next(formValue);
-  }
 
   toggleUserIsRegistering() {
     this.userIsRegistering.next(!this.userIsRegistering.getValue());

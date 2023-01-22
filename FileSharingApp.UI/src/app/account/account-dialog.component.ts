@@ -37,7 +37,11 @@ export class AccountDialogComponent {
   ) { }
 
   onFormSubmit(form: UntypedFormGroup) {
-    this.accountService.onAccountAccessFormSubmitted(form.value);
+    if(this.accountService.getUserIsRegisteringValue()) {
+      this.accountService.register(form.value);
+    } else {
+      this.accountService.login(form.value);
+    }
   }
   
   toggleUserIsRegistering() {

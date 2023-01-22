@@ -13,6 +13,7 @@ describe('AccountDialogComponent', () => {
     const userIsRegistering$ = userIsRegistering.asObservable();
     const elementBindings = {
         submitButton: '[data-cy="submit-btn"]',
+        cancelButton: '[data-cy="cancel-btn"]',
         loginRegisterLink: '[data-cy="login-register-link"]',
         accountFormControls: '[data-cy="account-form-control"]',
         linkLabel: '[data-cy="link-label"]',
@@ -25,10 +26,8 @@ describe('AccountDialogComponent', () => {
         usernameCustomValidator: '[data-cy="username-custom-validator"]'
     }
 
-    const existingUsernames = ['John2, SallySteve, Star123'];
-
     const validationService = {
-        uniqueUsernameValidatorFn: (usernameToFind: string) => {
+        uniqueUsernameValidatorFn: () => {
             return of({'usernameUniquenessViolated': true});
         },
         uniqueEmailValidatorFn: () => {
@@ -94,83 +93,121 @@ describe('AccountDialogComponent', () => {
         userIsRegistering.next(false);
     });
 
-    it("form submit button text should be 'Register' when user is registering", () => {
-        cy.get(elementBindings.loginRegisterLink).click();
-        cy.get(elementBindings.submitButton).should('have.text', 'Register');
-    });
-
-    it("form submit button text should be 'Login' when user is logging in", () => {
-        cy.get(elementBindings.submitButton).should('have.text', 'Login');
-    });
-
-    it('form should contain 3 form controls when user is registering', () => {
-        cy.get(elementBindings.loginRegisterLink).click();
-        cy.get(elementBindings.accountFormControls).should('have.length', 3);
-    });
-
-    it('form should contain 2 form controls when user is logging in', () => {
-        cy.get(elementBindings.accountFormControls).should('have.length', 2);
-    });
-
-    it("form link text should contain correct text when user is logging in", () => {
-        cy.get(elementBindings.loginRegisterLink).should('have.text', 'Register ');
-    });
-
-    it("form link text should contain correct text when user is registering", () => {
-        cy.get(elementBindings.loginRegisterLink).click();
-        cy.get(elementBindings.loginRegisterLink).should('have.text', 'Login ');
-    });
-
-    it("form link label should contain correct text when user is logging in", () => {
-        cy.get(elementBindings.linkLabel).should('have.text', 'No account? Register ');
-    });
-
-    it("form link label should contain correct text when user is registering", () => {
-        cy.get(elementBindings.loginRegisterLink).click();
-        cy.get(elementBindings.linkLabel).should('have.text', 'Already have an account? Login ');
-    });
-
-    it('form should contain no errors when it first initializes', () => {
-        cy.get(elementBindings.formError).should('have.length', 0);
-    });
-
-    it('form should have username already exists error when user already exists validator returns true', () => {
-        //Arrange
-        cy.get(elementBindings.usernameInput).type('test name');
-        cy.get(elementBindings.submitButton).focus();
-
-        //Assert
-        cy.contains('No user found with this username. Select register below');
-    });
-
-    it('form should not have username already exists error when user already exists validator returns null', () => {
-        //Arrange
-        cy.stub(validationService, 'uniqueUsernameValidatorFn').returns(of(null));
-        cy.get(elementBindings.usernameInput).type('test name');
-        cy.get(elementBindings.submitButton).focus();
-
-        //Assert
-        cy.contains('No user found with this username. Select register below');
-    });
-
-    it('form should have email does not exist error when user not found by email validator returns true', () => {
-        //Arrange
-        cy.get(elementBindings.loginRegisterLink).click();
-        cy.get(elementBindings.emailInput).type('testEmail@email.com');
-        cy.get(elementBindings.submitButton).focus();
-
-        //Assert
-        cy.get(elementBindings.usernameCustomValidator).should('have.length', 0);
-    });
-
-    it('form should not have email does not exist error when user not found by email validator returns null', () => {
-        //Arrange
-        cy.get(elementBindings.loginRegisterLink).click();
-        cy.stub(validationService, 'uniqueEmailValidatorFn').returns(of(null));
-        cy.get(elementBindings.emailInput).type('testEmail@email.com');
-        cy.get(elementBindings.submitButton).focus();
-
-        //Assert
-        cy.get(elementBindings.emailCustomValidator).should('have.length', 0);
+    describe('form', () => {
+        it('should contain 3 form controls when user is registering', () => {
+            cy.get(elementBindings.loginRegisterLink).click();
+            cy.get(elementBindings.accountFormControls).should('have.length', 3);
+        });
+        it('should contain 2 form controls when user is logging in', () => {
+            cy.get(elementBindings.accountFormControls).should('have.length', 2);
+        });     
+        it('should contain no errors when it first initializes', () => {
+            cy.get(elementBindings.formError).should('have.length', 0);
+        });
+        describe('submit button', () => {
+            it("text should be 'Register' when user is registering", () => {
+                cy.get(elementBindings.loginRegisterLink).click();
+                cy.get(elementBindings.submitButton).should('have.text', 'Register');
+            });
+            it("text should be 'Login' when user is logging in", () => {
+                cy.get(elementBindings.submitButton).should('have.text', 'Login');
+            });
+            it('should be disabled when form is invalid', () => {
+                cy.get(elementBindings.cancelButton).focus();
+                cy.get(elementBindings.submitButton).should('be.disabled');
+            });
+            it('should be enabled when form is valid', () => {
+                cy.get(elementBindings.loginRegisterLink).click();
+                cy.stub(validationService, 'uniqueEmailValidatorFn').returns(of(null));
+                cy.stub(validationService, 'uniqueUsernameValidatorFn').returns(of(null));
+                cy.get(elementBindings.usernameInput).type('kaka');
+                cy.get(elementBindings.passwordInput).type('Pa$$w0rd');
+                cy.get(elementBindings.emailInput).type('52pbailey@gmail.com');
+                cy.get(elementBindings.cancelButton).focus();
+                cy.get(elementBindings.submitButton).should('be.enabled');
+            });
+        });
+        describe('link text', () => {
+            it("should contain correct text when user is logging in", () => {
+                cy.get(elementBindings.loginRegisterLink).should('have.text', 'Register ');
+            });
+        
+            it("should contain correct text when user is registering", () => {
+                cy.get(elementBindings.loginRegisterLink).click();
+                cy.get(elementBindings.loginRegisterLink).should('have.text', 'Login ');
+            });        
+        });    
+        describe('link label', () => {
+            it("should contain correct text when user is logging in", () => {
+                cy.get(elementBindings.linkLabel).should('have.text', 'No account? Register ');
+            });
+        
+            it("should contain correct text when user is registering", () => {
+                cy.get(elementBindings.loginRegisterLink).click();
+                cy.get(elementBindings.linkLabel).should('have.text', 'Already have an account? Login ');
+            });        
+        });
+        describe('username form control', () => {
+            it('should have username already exists error when user already exists validator returns true', () => {
+                cy.get(elementBindings.usernameInput).type('test name');
+                cy.get(elementBindings.cancelButton).focus();
+                cy.contains('No user found with this username. Select register below');
+            });
+        
+            it('should not have username already exists error when user already exists validator returns null', () => {
+                cy.stub(validationService, 'uniqueUsernameValidatorFn').returns(of(null));
+                cy.get(elementBindings.usernameInput).type('test name');
+                cy.get(elementBindings.cancelButton).focus();
+                cy.contains('No user found with this username. Select register below');
+            });
+            it('should have username required error when no username provided', () => {
+                cy.get(elementBindings.usernameInput).focus();
+                cy.get(elementBindings.cancelButton).focus();
+                cy.contains('Username is required');
+            });        
+        });
+        describe('email form control', () => {
+            it('should have email does not exist error when user not found by email validator returns true', () => {
+                cy.get(elementBindings.loginRegisterLink).click();
+                cy.get(elementBindings.emailInput).type('testEmail@email.com');
+                cy.get(elementBindings.cancelButton).focus();
+                cy.get(elementBindings.usernameCustomValidator).should('have.length', 0);
+            });
+        
+            it('should not have email does not exist error when user not found by email validator returns null', () => {
+                cy.get(elementBindings.loginRegisterLink).click();
+                cy.stub(validationService, 'uniqueEmailValidatorFn').returns(of(null));
+                cy.get(elementBindings.emailInput).type('testEmail@email.com');
+                cy.get(elementBindings.cancelButton).focus();
+                cy.get(elementBindings.emailCustomValidator).should('have.length', 0);
+            });
+        
+            it('should have email required error when no email provided', () => {
+                cy.get(elementBindings.loginRegisterLink).click();
+                cy.get(elementBindings.emailInput).focus();
+                cy.get(elementBindings.cancelButton).focus();
+                cy.contains('Email is required');
+            });
+        
+            it('should have invalid email error when email is invalid', () => {
+                cy.get(elementBindings.loginRegisterLink).click();
+                cy.get(elementBindings.emailInput).type('TestEmailATemailDOTcom');
+                cy.get(elementBindings.cancelButton).focus();
+                cy.contains('Please enter a valid email');
+            });        
+        });
+        describe('password form cotrol', () => {
+            it('should have password required error when no password provided', () => {
+                cy.get(elementBindings.passwordInput).focus();
+                cy.get(elementBindings.cancelButton).focus();
+                cy.contains('Password is required');
+            });
+        
+            it('should have password pattern invalid error when password format is invalid', () => {
+                cy.get(elementBindings.passwordInput).type('pass');
+                cy.get(elementBindings.cancelButton).focus();
+                cy.contains('Password is invalid');
+            });        
+        });
     });
 });
