@@ -1,7 +1,7 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { AccountService } from '../services/account.service';
-import { LoginRegisterDialogComponent } from './login-register-dialog/login-register-dialog.component';
+import { AccountService } from '../account/account.service';
+import { AccountDialogComponent } from '../account/account-dialog.component';
 
 @Component({
   selector: 'app-toolbar',
@@ -23,7 +23,7 @@ export class ToolbarComponent implements OnInit {
   }
 
   openDialog(): void {
-    this.dialog.open(LoginRegisterDialogComponent, {
+    this.dialog.open(AccountDialogComponent, {
       width: '350px'
     });
   }

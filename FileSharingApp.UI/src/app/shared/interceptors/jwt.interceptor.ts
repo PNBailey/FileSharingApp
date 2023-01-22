@@ -7,7 +7,7 @@ import {
 } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { take, tap } from 'rxjs/operators';
-import { AccountService } from 'src/app/services/account.service';
+import { AccountService } from 'src/app/account/account.service';
 import { User } from 'src/app/models/user';
 
 @Injectable()
@@ -22,7 +22,7 @@ export class JwtInterceptor implements HttpInterceptor {
       take(1),
       tap(currentUser => {
         if(currentUser) { 
-          request = request.clone({ // This clones the request if there is a user and this then allows us to then set the headers
+          request = request.clone({
             setHeaders: {
               Authorization: `Bearer ${currentUser.token}`
             }
