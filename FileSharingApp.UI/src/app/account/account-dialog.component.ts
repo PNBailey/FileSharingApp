@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { Component } from '@angular/core';
 import { UntypedFormGroup } from '@angular/forms';
 import { combineLatest, Observable } from 'rxjs';
 import { AccountService } from 'src/app/account/account.service';
@@ -37,11 +37,7 @@ export class AccountDialogComponent {
   ) { }
 
   onFormSubmit(form: UntypedFormGroup) {
-    if(this.accountService.getUserIsRegisteringValue()) {
-      this.accountService.register(form.value);
-    } else {
-      this.accountService.login(form.value);
-    }
+    this.accountService.onAccountAccessFormSubmitted(form.value);
   }
   
   toggleUserIsRegistering() {
