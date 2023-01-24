@@ -23,7 +23,8 @@ describe('AccountDialogComponent', () => {
         form: '[data-cy="form"]',
         formError: '[data-cy="form-error"]',
         emailCustomValidator: '[data-cy="email-custom-validator"]',
-        usernameCustomValidator: '[data-cy="username-custom-validator"]'
+        usernameCustomValidator: '[data-cy="username-custom-validator"]',
+        title: '[data-cy="title"]'
     }
 
     const validationService = {
@@ -103,6 +104,15 @@ describe('AccountDialogComponent', () => {
         });     
         it('should contain no errors when it first initializes', () => {
             cy.get(elementBindings.formError).should('have.length', 0);
+        });
+        describe('title', () => {
+            it('should be Register when registering', () => {
+                cy.get(elementBindings.loginRegisterLink).click();
+                cy.get(elementBindings.title).contains('Register');
+            }); 
+            it('should be Login when logging in', () => {
+                cy.get(elementBindings.title).contains('Login');
+            }); 
         });
         describe('submit button', () => {
             it("text should be 'Register' when user is registering", () => {
