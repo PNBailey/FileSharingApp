@@ -3,22 +3,13 @@ import { Injectable } from '@angular/core';
 import { FormControl, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
-import { BehaviorSubject, combineLatest, Observable, Subject, } from 'rxjs';
-import { filter, map, switchMap, tap } from 'rxjs/operators';
+import { BehaviorSubject, Observable, Subject, } from 'rxjs';
+import { map, switchMap, tap } from 'rxjs/operators';
+import { LoginUser } from '../models/loginUser';
+import { RegisterUser } from '../models/registerUser';
 import { User } from '../models/user';
 import { LoadingService } from '../services/loading.service';
 import { ValidationService } from '../shared/validators/validation.service';
-
-interface RegisterUser {
-  username: string;
-  password: string;
-  email: string;
-}
-
-interface LoginUser {
-  username: string;
-  password: string;
-}
 
 @Injectable({
   providedIn: 'root'
@@ -70,15 +61,9 @@ export class AccountService {
     })
   );
 
-  registerUser$ = this.accountAccessFormSubmitted$.pipe(
-    filter(() => this.getUserIsRegisteringValue()),
-    switchMap((formValue) => this.register(formValue as RegisterUser))
-  ).subscribe();
-
-  loginUser$ = this.accountAccessFormSubmitted$.pipe(
-    filter(() => !this.getUserIsRegisteringValue()),
-    switchMap((formValue) => this.login(formValue as LoginUser))
-  ).subscribe();
+  handleAccountAccessFormSubmitted$ = this.accountAccessFormSubmitted$.pipe(
+      switchMap((formValue) => this.loginOrRegister(formValue))
+    ).subscribe();
 
   onAccountAccessFormSubmitted(formValue: RegisterUser | LoginUser) {
     this.accountAccessFormSubmitted.next(formValue);
@@ -92,8 +77,9 @@ export class AccountService {
     return this.userIsRegistering.getValue();
   }
 
-  register(registerUser: RegisterUser) {    
-    return this.http.post<User>(`${this.baseUrl}/Register`, registerUser).pipe(
+  loginOrRegister(user: RegisterUser | LoginUser) {
+    const url = this.getUserIsRegisteringValue() ? `${this.baseUrl}/Register` : `${this.baseUrl}/Login`;
+    return this.http.post<User>(url, user).pipe(
       tap(user => {
         if(user) {
           this.setLoggedOnUser(user),
@@ -101,18 +87,6 @@ export class AccountService {
           this.router.navigate(['/home']);
         }
       })    
-    );
-  }
-
-  login(loginUser: LoginUser) {    
-    return this.http.post<User>(`${this.baseUrl}/Login`, loginUser).pipe(
-      tap(user => {
-        if(user) {
-          this.setLoggedOnUser(user);
-          this.dialog.closeAll();
-          this.router.navigate(['/home']);
-        }
-      })
     );
   }
 
