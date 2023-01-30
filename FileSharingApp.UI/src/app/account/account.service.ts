@@ -4,7 +4,7 @@ import { FormControl, UntypedFormBuilder, UntypedFormGroup, Validators } from '@
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { BehaviorSubject, Observable, Subject, } from 'rxjs';
-import { map, switchMap, tap } from 'rxjs/operators';
+import { map, scan, startWith, switchMap, tap, withLatestFrom } from 'rxjs/operators';
 import { LoginUser } from '../models/loginUser';
 import { RegisterUser } from '../models/registerUser';
 import { User } from '../models/user';
@@ -26,7 +26,7 @@ export class AccountService {
     private validationService: ValidationService
   ) { }
 
-  baseUrl = "https://localhost:7249/api/Account";
+  private baseUrl = "https://localhost:7249/api/Account";
 
   private loggedOnUser: BehaviorSubject<null | User> = new BehaviorSubject<null | User>(null);
   loggedOnUser$: Observable<null | User> = this.loggedOnUser.asObservable();
@@ -34,9 +34,20 @@ export class AccountService {
   private accountAccessFormSubmitted: Subject<RegisterUser | LoginUser> = new Subject();
   accountAccessFormSubmitted$: Observable<RegisterUser | LoginUser> = this.accountAccessFormSubmitted.asObservable();
 
-  private userIsRegistering: BehaviorSubject<boolean> = new BehaviorSubject(false);
-  userIsRegistering$: Observable<boolean> = this.userIsRegistering.asObservable();
+  private userIsRegisteringToggle = new Subject<void>();
 
+  userIsRegistering$: Observable<boolean> = this.userIsRegisteringToggle.asObservable().pipe(
+    scan(previous => !previous, false),
+    startWith(false)
+  );
+    
+  private loginRegisterUrl$ = this.userIsRegistering$.pipe(
+    map(userIsRegistering => {
+      const loginRegisterUrl = userIsRegistering ?  `${this.baseUrl}/Register` : `${this.baseUrl}/Login`;
+      return loginRegisterUrl;
+    })
+  );
+  
   accountAccessForm$: Observable<UntypedFormGroup> = this.userIsRegistering$.pipe(
     map((userIsRegistering) => {
       const form = this.fb.group({
@@ -62,7 +73,8 @@ export class AccountService {
   );
 
   handleAccountAccessFormSubmitted$ = this.accountAccessFormSubmitted$.pipe(
-      switchMap((formValue) => this.loginOrRegister(formValue))
+      withLatestFrom(this.loginRegisterUrl$),
+      switchMap(([formValue, loginRegisterUrl]) => this.loginOrRegister(formValue, loginRegisterUrl))
     ).subscribe();
 
   onAccountAccessFormSubmitted(formValue: RegisterUser | LoginUser) {
@@ -70,15 +82,10 @@ export class AccountService {
   }
 
   toggleUserIsRegistering() {
-    this.userIsRegistering.next(!this.userIsRegistering.getValue());
+   this.userIsRegisteringToggle.next();
   }
 
-  getUserIsRegisteringValue() {
-    return this.userIsRegistering.getValue();
-  }
-
-  loginOrRegister(user: RegisterUser | LoginUser) {
-    const url = this.getUserIsRegisteringValue() ? `${this.baseUrl}/Register` : `${this.baseUrl}/Login`;
+  private loginOrRegister(user: RegisterUser | LoginUser, url: string) {
     return this.http.post<User>(url, user).pipe(
       tap(user => {
         if(user) {
