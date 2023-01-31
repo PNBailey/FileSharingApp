@@ -1,5 +1,5 @@
 import { TestBed } from "@angular/core/testing"
-import { Observable, skip } from "rxjs";
+import { observable, Observable, skip } from "rxjs";
 import { LoadingObsName, LoadingService } from "./loading.service";
 
 describe('LoadingService', () => {
@@ -24,6 +24,12 @@ describe('LoadingService', () => {
                 });
                 service.toggleLoadingObs(key);
             });
+        });
+    });
+    describe('getLoadingObs method', () => {
+        it('should return an observable', () => {
+            const loadingObs = service.getLoadingObs(LoadingObsName.CHECKING_EMAIL);
+            expect(loadingObs).toBeInstanceOf(Observable<boolean>);
         });
     });
 });
