@@ -16,7 +16,7 @@
                         <mat-error data-cy="form-error" *ngIf="form.controls['username'].hasError('required')">
                             Username is <strong>required</strong>
                         </mat-error>
-                        <mat-spinner matSuffix [diameter]="18" *ngIf="loadingService.loadingObs.checkingUsername$ | async"></mat-spinner>
+                        <mat-spinner matSuffix [diameter]="18" *ngIf="checkingUsername$ | async"></mat-spinner>
                     </mat-form-field>
                 </div>
                 <div class="row mb-2">
@@ -51,7 +51,7 @@
                         <mat-error data-cy="form-error email-custom-validator" *ngIf="form.controls['email'].hasError('emailUniquenessViolated')">
                             An account with this email address already exists. Select login below to login
                         </mat-error>
-                        <mat-spinner matSuffix [diameter]="18" *ngIf="loadingService.loadingObs.checkingEmail$ | async"></mat-spinner>
+                        <mat-spinner matSuffix [diameter]="18" *ngIf="checkingEmail$ | async"></mat-spinner>
                     </mat-form-field>
                 </div>
             </div>
