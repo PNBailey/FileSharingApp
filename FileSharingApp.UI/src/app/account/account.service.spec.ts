@@ -27,13 +27,12 @@ describe('Account Service', () => {
         httpMock = TestBed.inject(HttpTestingController); 
     });
     describe('accountAccessForm$ observable', () => {
-        it('should contain a login form when initialised', fakeAsync(() => {
-            flush();
+        it('should contain a login form when initialised', () => {
             service.accountAccessForm$.subscribe(accountAccessForm => {
                 expect(accountAccessForm.controls['username']).toBeTruthy();
                 expect(accountAccessForm.controls['password']).toBeTruthy();
             });
-        }));
+        });
         it('should contain a register form when userIsRegistering is toggled', () => {
             service.accountAccessForm$.pipe(skip(1))
                 .subscribe(accountAccessForm => {
@@ -54,7 +53,6 @@ describe('Account Service', () => {
             });
         });
         it('should contain the correct values when userIsRegistering is toggled', () => {
-            service.toggleUserIsRegistering();
             service.accountAction$.pipe(skip(1))
             .subscribe(accountAction => {
                 expect(accountAction.type).toEqual('Register');
@@ -62,6 +60,7 @@ describe('Account Service', () => {
                 expect(accountAction.linkText).toEqual('Login');
                 expect(accountAction.buttonAction).toEqual('Register');
             });
+            service.toggleUserIsRegistering();
         });
     });
     describe('onAccountAccessFormSubmitted method', () => {
@@ -92,15 +91,13 @@ describe('Account Service', () => {
                 expect(value).toEqual(false);
             });
         });
-        it('should contain true value when value is toggled', fakeAsync((done: DoneFn) => {
-            service.toggleUserIsRegistering();
-            flush();
+        it('should contain true value when value is toggled', () => {
             service.userIsRegistering$.pipe(skip(1))
             .subscribe(value => {
                 expect(value).toEqual(true);
-                done();
             });
-        }));
+            service.toggleUserIsRegistering();
+        });
     });
     describe('loginRegisterUrl$ observable', () => {
         it('should contain the register url when user is registering', () => {
