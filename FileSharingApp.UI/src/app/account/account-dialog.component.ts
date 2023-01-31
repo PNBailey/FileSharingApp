@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { UntypedFormGroup } from '@angular/forms';
 import { combineLatest, Observable } from 'rxjs';
 import { AccountService } from 'src/app/account/account.service';
-import { LoadingService } from '../services/loading.service';
+import { LoadingObsName, LoadingService } from '../services/loading.service';
 
 export interface Action {
   type: string, 
@@ -18,6 +18,14 @@ export interface Action {
 })
 
 export class AccountDialogComponent {
+  
+  constructor(
+    public accountService: AccountService,
+    public loadingService: LoadingService
+  ) { }
+
+  checkingUsername$ = this.loadingService.getLoadingObs(LoadingObsName.CHECKING_USERNAME);
+  checkingEmail$ = this.loadingService.getLoadingObs(LoadingObsName.CHECKING_EMAIL);
 
   accountAccessObs$: Observable<{userIsRegistering: boolean, form: UntypedFormGroup, action: Action}> = combineLatest(([
     this.accountService.userIsRegistering$, 
@@ -30,11 +38,6 @@ export class AccountDialogComponent {
       action: accountAction
     }
   });
-
-  constructor(
-    public accountService: AccountService,
-    public loadingService: LoadingService
-  ) { }
 
   onFormSubmit(form: UntypedFormGroup) {
     this.accountService.onAccountAccessFormSubmitted(form.value);

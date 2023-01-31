@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { AbstractControl, AsyncValidatorFn, ValidationErrors } from '@angular/forms';
 import { debounceTime, distinctUntilChanged, finalize, first, map, Observable, switchMap, tap } from 'rxjs';
-import { LoadingService } from 'src/app/services/loading.service';
+import { LoadingObsName, LoadingService } from 'src/app/services/loading.service';
 
 @Injectable({
   providedIn: 'root'
@@ -20,12 +20,12 @@ export class ValidationService {
     return (control: AbstractControl): Observable<ValidationErrors | {string : boolean} | null> => 
     control.valueChanges
         .pipe(
-            tap(() => this.loadingService.setIsLoading('checkingUsername', true)),
+            tap(() => this.loadingService.toggleLoadingObs(LoadingObsName.CHECKING_USERNAME)),
             debounceTime(400),
             distinctUntilChanged(),
             switchMap((controlValue) => this.checkUsernameUnique(controlValue)),
             map((unique: boolean) => ((unique && userIsRegistering) || (!unique && !userIsRegistering) ? null : {'usernameUniquenessViolated': true})),
-            finalize(() => this.loadingService.setIsLoading('checkingUsername', false)),
+            finalize(() => this.loadingService.toggleLoadingObs(LoadingObsName.CHECKING_USERNAME)),
             first()
         );
     }
@@ -33,12 +33,12 @@ export class ValidationService {
     uniqueEmailValidatorFn(): AsyncValidatorFn {
       return (control: AbstractControl): Observable<ValidationErrors | {string : boolean} | null> => control.valueChanges
           .pipe(
-              tap(() => this.loadingService.setIsLoading('checkingEmail', true)),
+              tap(() => this.loadingService.toggleLoadingObs(LoadingObsName.CHECKING_EMAIL)),
               debounceTime(400),
               distinctUntilChanged(),
               switchMap(value => this.checkEmailUnique(value)),
               map((unique: boolean) => (unique ? null : {'emailUniquenessViolated': true})),
-              finalize(() => this.loadingService.setIsLoading('checkingEmail', false)),
+              finalize(() => this.loadingService.toggleLoadingObs(LoadingObsName.CHECKING_EMAIL)),
               first()
           );
       }

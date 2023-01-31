@@ -1,22 +1,36 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { filter, Observable, scan, startWith, Subject } from 'rxjs';
 
+export enum LoadingObsName {
+  CHECKING_EMAIL = 'checkingEmail$',
+  CHECKING_USERNAME = 'checkingUsername$'
+}
 @Injectable({
   providedIn: 'root'
 })
+
 export class LoadingService {
 
-  private loadingSubs = {
-    checkingEmail: new BehaviorSubject<boolean>(false),
-    checkingUsername: new BehaviorSubject<boolean>(false)
+  private toggleLoadingObs$ = new Subject<LoadingObsName>();
+
+  private loadingObs: Map<LoadingObsName, Observable<boolean>> = new Map([
+    [LoadingObsName.CHECKING_EMAIL, this.setupObservable(LoadingObsName.CHECKING_EMAIL)],
+    [LoadingObsName.CHECKING_USERNAME, this.setupObservable(LoadingObsName.CHECKING_USERNAME)]
+  ]);
+
+  private setupObservable(loadingObs: LoadingObsName): Observable<boolean> {
+    return this.toggleLoadingObs$.pipe(
+      filter(loadingObservableType => loadingObservableType == loadingObs),
+      scan(previous => !previous, false),
+      startWith(false)
+    )
   }
 
-  loadingObs = {
-    checkingEmail$: this.loadingSubs.checkingEmail.asObservable(),
-    checkingUsername$: this.loadingSubs.checkingUsername.asObservable()
+  toggleLoadingObs(loadingObs: LoadingObsName) {
+    this.toggleLoadingObs$.next(loadingObs);
   }
 
-  setIsLoading(loadingSubName: string, loading: boolean) {
-    this.loadingSubs[loadingSubName as keyof typeof this.loadingSubs].next(loading);
+  getLoadingObs(loadingObsType: LoadingObsName) {
+    return this.loadingObs.get(loadingObsType);
   }
 }
