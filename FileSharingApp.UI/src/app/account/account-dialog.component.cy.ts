@@ -23,7 +23,8 @@ describe('AccountDialogComponent', () => {
         form: '[data-cy="form"]',
         formError: '[data-cy="form-error"]',
         emailCustomValidator: '[data-cy="email-custom-validator"]',
-        usernameCustomValidator: '[data-cy="username-custom-validator"]',
+        customValidatorUserNotFound: '[data-cy="username-custom-validator-no-user-found"]',
+        customValidatorUsernameTaken: '[data-cy="username-custom-validator-username-taken"]',
         title: '[data-cy="title"]'
     }
 
@@ -158,18 +159,36 @@ describe('AccountDialogComponent', () => {
             });        
         });
         describe('username form control', () => {
-            it('should have username already exists error when user already exists validator returns true', () => {
+            it('should have username taken error when user already exists validator returns true and user is registering', () => {
+                cy.get(elementBindings.loginRegisterLink).click();
                 cy.get(elementBindings.usernameInput).type('test name');
+                cy.stub(validationService, 'uniqueUsernameValidatorFn').returns(of({'usernameUniquenessViolated': true}));
                 cy.get(elementBindings.cancelButton).focus();
-                cy.contains('No user found with this username. Select register below');
+                cy.contains('Username is taken');
             });
         
-            it('should not have username already exists error when user already exists validator returns null', () => {
-                cy.stub(validationService, 'uniqueUsernameValidatorFn').returns(of(null));
+            it('should not have username taken error when user already exists validator returns null and user is registering', () => {
+                cy.get(elementBindings.loginRegisterLink).click();
                 cy.get(elementBindings.usernameInput).type('test name');
+                cy.stub(validationService, 'uniqueUsernameValidatorFn').returns(of(null));
+                cy.get(elementBindings.cancelButton).focus();
+                cy.get(elementBindings.customValidatorUsernameTaken).should('have.length', 0);
+            });
+
+            it('should have user not found error when user not found validator returns true and user is logging in', () => {
+                cy.get(elementBindings.usernameInput).type('test name');
+                cy.stub(validationService, 'uniqueUsernameValidatorFn').returns(of({'usernameUniquenessViolated': true}));
                 cy.get(elementBindings.cancelButton).focus();
                 cy.contains('No user found with this username. Select register below');
             });
+
+            it('should not have user not found error when user not found validator returns null and user is logging in', () => {
+                cy.get(elementBindings.usernameInput).type('test name');
+                cy.stub(validationService, 'uniqueUsernameValidatorFn').returns(of({'usernameUniquenessViolated': null}));
+                cy.get(elementBindings.cancelButton).focus();
+                cy.get(elementBindings.customValidatorUserNotFound).should('have.length', 0);
+            });
+
             it('should have username required error when no username provided', () => {
                 cy.get(elementBindings.usernameInput).focus();
                 cy.get(elementBindings.cancelButton).focus();
@@ -177,14 +196,14 @@ describe('AccountDialogComponent', () => {
             });        
         });
         describe('email form control', () => {
-            it('should have email does not exist error when user not found by email validator returns true', () => {
+            it('should have email already exists error when async email validator returns true', () => {
                 cy.get(elementBindings.loginRegisterLink).click();
                 cy.get(elementBindings.emailInput).type('testEmail@email.com');
                 cy.get(elementBindings.cancelButton).focus();
-                cy.get(elementBindings.usernameCustomValidator).should('have.length', 0);
+                cy.contains('An account with this email address already exists. Select login below to login');
             });
         
-            it('should not have email does not exist error when user not found by email validator returns null', () => {
+            it('should not have email already exists error when async email validator returns null', () => {
                 cy.get(elementBindings.loginRegisterLink).click();
                 cy.stub(validationService, 'uniqueEmailValidatorFn').returns(of(null));
                 cy.get(elementBindings.emailInput).type('testEmail@email.com');

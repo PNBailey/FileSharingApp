@@ -7,10 +7,10 @@
                     <mat-form-field data-cy="account-form-control" appearance="fill">
                         <mat-label>Username</mat-label>
                         <input matInput type="text" data-cy="username-input" formControlName="username" cdkFocusInitial>
-                        <mat-error data-cy="form-error" *ngIf="form.controls['username'].hasError('usernameUniquenessViolated') && accountAccess.action.type == 'Register'">
+                        <mat-error data-cy="form-error username-custom-validator-username-taken" *ngIf="form.controls['username'].hasError('usernameUniquenessViolated') && accountAccess.action.type == 'Register'">
                             Username is <strong>taken</strong>
                         </mat-error>
-                        <mat-error data-cy="form-error username-custom-validator" *ngIf="form.controls['username'].hasError('usernameUniquenessViolated') && accountAccess.action.type == 'Login'">
+                        <mat-error data-cy="form-error username-custom-validator-no-user-found" *ngIf="form.controls['username'].hasError('usernameUniquenessViolated') && accountAccess.action.type == 'Login'">
                             No user found with this username. Select <strong>register</strong> below
                         </mat-error>
                         <mat-error data-cy="form-error" *ngIf="form.controls['username'].hasError('required')">
