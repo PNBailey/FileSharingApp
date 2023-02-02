@@ -36,7 +36,7 @@ describe('AccountDialogComponent', () => {
             return of({'emailUniquenessViolated': true});
         }
     }
-
+    
     const accountAccessForm$ = userIsRegistering$.pipe(
         map((userIsRegistering) => {
             const form: UntypedFormGroup = fb.group({

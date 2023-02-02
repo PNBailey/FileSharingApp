@@ -9,19 +9,22 @@ describe('LoadingService', () => {
         service = TestBed.inject(LoadingService);
         loadingObservables = service['loadingObs'];
     });
-    it('all loading Observables should start with a false value', () => {
-        loadingObservables.forEach(loadingObs => {
-            loadingObs.subscribe(value => {
-                expect(value).toBeFalsy();
-            });
-        });
-    });
+    
     describe('toggleLoadingObs method', () => {
         it('should toggle the values of the observables', () => {
             loadingObservables.forEach((obs: Observable<boolean>, key: LoadingObsName) => {
-                obs.pipe(skip(1)).subscribe(value => {
+                obs.pipe().subscribe(value => {
                     expect(value).toBeTruthy();
                 });
+                service.toggleLoadingObs(key);
+            });
+        });
+        it('toggling the observables twice should return them to their original false value', () => {
+            loadingObservables.forEach((obs: Observable<boolean>, key: LoadingObsName) => {
+                obs.pipe((skip(1))).subscribe(value => {
+                    expect(value).toBeFalsy();
+                });
+                service.toggleLoadingObs(key);
                 service.toggleLoadingObs(key);
             });
         });
