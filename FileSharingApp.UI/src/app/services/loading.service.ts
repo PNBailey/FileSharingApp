@@ -18,19 +18,18 @@ export class LoadingService {
     [LoadingObsName.CHECKING_USERNAME, this.setupObservable(LoadingObsName.CHECKING_USERNAME)]
   ]);
 
-  private setupObservable(loadingObs: LoadingObsName): Observable<boolean> {
+  private setupObservable(loadingObsName: LoadingObsName): Observable<boolean> {
     return this.toggleLoadingObs$.pipe(
-      filter(loadingObservableType => loadingObservableType == loadingObs),
-      scan(previous => !previous, false),
-      startWith(false)
+      filter(loadingObservableToFilter => loadingObservableToFilter == loadingObsName),
+      scan(previous => !previous, false)
     )
   }
 
-  toggleLoadingObs(loadingObs: LoadingObsName) {
-    this.toggleLoadingObs$.next(loadingObs);
+  toggleLoadingObs(loadingObsName: LoadingObsName) {
+    this.toggleLoadingObs$.next(loadingObsName);
   }
 
-  getLoadingObs(loadingObsType: LoadingObsName) {
-    return this.loadingObs.get(loadingObsType);
+  getLoadingObs(loadingObsName: LoadingObsName) {
+    return this.loadingObs.get(loadingObsName);
   }
 }
