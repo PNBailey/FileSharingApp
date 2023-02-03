@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Output } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { AccountService } from '../account/account.service';
 import { AccountDialogComponent } from '../account/account-dialog.component';
@@ -8,15 +8,14 @@ import { AccountDialogComponent } from '../account/account-dialog.component';
   templateUrl: './toolbar.component.html',
   styleUrls: ['./toolbar.component.scss']
 })
-export class ToolbarComponent implements OnInit {
+export class ToolbarComponent {
   @Output() showSideNav = new EventEmitter();
 
   constructor(
-    public accountService: AccountService, 
+    private accountService: AccountService, 
     public dialog: MatDialog) { }
 
-  ngOnInit(): void {
-  }
+  loggedOnUser$ = this.accountService.loggedOnUser$;
 
   openSideNav() {
     this.showSideNav.emit();
@@ -28,8 +27,7 @@ export class ToolbarComponent implements OnInit {
     });
   }
 
-  logout() {
+  logout() {    
     this.accountService.logout();
   }
-
 }
