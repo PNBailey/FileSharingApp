@@ -1,11 +1,13 @@
 import { HttpClientTestingModule, HttpTestingController } from "@angular/common/http/testing";
-import { fakeAsync, flush, TestBed } from "@angular/core/testing";
+import { TestBed } from "@angular/core/testing";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { MatDialogModule } from "@angular/material/dialog";
 import { of, skip } from "rxjs";
 import { AccountService } from "./account.service";
 import { RouterTestingModule } from '@angular/router/testing';
 import { HomeComponent } from "../home/home.component";
+import { TestUser } from "../models/test-models/testUser";
+import { TestLoginUser } from "../models/test-models/testLoginUser";
 
 describe('Account Service', () => {
     let service: AccountService;
@@ -195,20 +197,3 @@ describe('Account Service', () => {
         });
     });
 });
-
-export class TestUser {
-    id: 1;
-    token: 'FakeToken';
-    username: 'test';
-}
-
-export class TestLoginUser {
-    password: 'Pa$$w0rd';
-    username:'test';
-}
-
-export class TestRegisterUser {
-    password: 'Pa$$w0rd';
-    username: 'test';
-    email:'testEmail@gmail.com';
-}

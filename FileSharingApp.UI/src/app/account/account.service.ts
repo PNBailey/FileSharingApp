@@ -32,11 +32,10 @@ export class AccountService {
   loggedOnUser$: Observable<null | User> = this.loggedOnUser.asObservable();
 
   private accountAccessFormSubmitted: Subject<RegisterUser | LoginUser> = new Subject();
-  accountAccessFormSubmitted$: Observable<RegisterUser | LoginUser> = this.accountAccessFormSubmitted.asObservable();
 
   private userIsRegisteringToggle = new Subject<void>();
 
-  userIsRegistering$: Observable<boolean> = this.userIsRegisteringToggle.asObservable().pipe(
+  userIsRegistering$: Observable<boolean> = this.userIsRegisteringToggle.pipe(
     scan(previous => !previous, false),
     startWith(false)
   );
@@ -47,15 +46,17 @@ export class AccountService {
       return loginRegisterUrl;
     })
   );
+
+  handleAccountAccessFormSubmitted$ = this.accountAccessFormSubmitted.pipe(
+    withLatestFrom(this.loginRegisterUrl$),
+    switchMap(([formValue, loginRegisterUrl]) => this.loginOrRegister(formValue, loginRegisterUrl))
+  ).subscribe();
   
   accountAccessForm$: Observable<UntypedFormGroup> = this.userIsRegistering$.pipe(
     map((userIsRegistering) => {
-      const form = this.fb.group({
-        'username': ['', [Validators.required], [this.validationService.uniqueUsernameValidatorFn(userIsRegistering)]],
-        'password': ['', [Validators.required, Validators.pattern("^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$")]]
-      });
+      const form = this.buildLoginForm(userIsRegistering);
       if(userIsRegistering) {
-        form.addControl('email', new FormControl('', [Validators.required, Validators.email], [this.validationService.uniqueEmailValidatorFn()]));
+        this.createEmailFormControl(form);
       } 
       return form;
     })
@@ -72,10 +73,9 @@ export class AccountService {
     })
   );
 
-  handleAccountAccessFormSubmitted$ = this.accountAccessFormSubmitted$.pipe(
-      withLatestFrom(this.loginRegisterUrl$),
-      switchMap(([formValue, loginRegisterUrl]) => this.loginOrRegister(formValue, loginRegisterUrl))
-    ).subscribe();
+  private createEmailFormControl(form: UntypedFormGroup) {
+    form.addControl('email', new FormControl('', [Validators.required, Validators.email], [this.validationService.uniqueEmailValidatorFn()]));
+  }
 
   onAccountAccessFormSubmitted(formValue: RegisterUser | LoginUser) {
     this.accountAccessFormSubmitted.next(formValue);
@@ -95,6 +95,13 @@ export class AccountService {
         }
       })    
     );
+  }
+
+  private buildLoginForm(userIsRegistering: boolean) {
+    return this.fb.group({
+      'username': ['', [Validators.required], [this.validationService.uniqueUsernameValidatorFn(userIsRegistering)]],
+      'password': ['', [Validators.required, Validators.pattern("^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$")]]
+    });
   }
 
   logout() {
