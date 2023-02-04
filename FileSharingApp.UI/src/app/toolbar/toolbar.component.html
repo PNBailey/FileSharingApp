@@ -1,5 +1,6 @@
 <mat-toolbar color="primary">
     <button
+      data-cy="menu-button"
       (click)="openSideNav()"
       mat-icon-button
       aria-label="Application menu button">
@@ -9,6 +10,7 @@
     <span class="spacer"></span>
     <div class="d-flex align-items-center">
       <button
+        data-cy="login-button"
         *ngIf="!(loggedOnUser$ | async)"
         (click)="openDialog()"
         color="white"
@@ -18,6 +20,7 @@
       </button>
       <button
         data-cy="open-user-menu-button"
+        *ngIf="loggedOnUser$ | async"
         mat-icon-button
         aria-label="User menu button"
         [matMenuTriggerFor]="menu">
@@ -25,11 +28,11 @@
       </button>
     </div>
 </mat-toolbar>
-<mat-menu #menu="matMenu">
-  <button mat-menu-item>Edit Profile</button>
+<mat-menu #menu="matMenu" data-cy="user-menu">
+  <button mat-menu-item data-cy="user-menu-button">Edit Profile</button>
   <button
     aria-label="Logout button"
-    data-cy='logout-button'
+    data-cy='user-menu-button'
     *ngIf="loggedOnUser$ | async"
     mat-menu-item
     (click)="logout()">Logout
