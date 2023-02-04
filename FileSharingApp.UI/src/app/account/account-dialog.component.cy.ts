@@ -3,6 +3,7 @@ import { FormBuilder, UntypedFormGroup, Validators, FormControl, ReactiveFormsMo
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { BehaviorSubject, of, map } from "rxjs";
 import { AngularMaterialModule } from "../shared/angular-material.module";
+import { setupCypressConfig } from "../shared/testing/cypress-config-setup/cypress-config-setup";
 import { AccountDialogComponent } from "./account-dialog.component";
 import { AccountService } from "./account.service";
 
@@ -69,16 +70,8 @@ describe('AccountDialogComponent', () => {
     };
 
     it('mounts', () => {
-        cy.mount(AccountDialogComponent, {
-            imports: [ 
-                HttpClientTestingModule, 
-                ReactiveFormsModule,
-                AngularMaterialModule,
-                BrowserAnimationsModule
-            ],
-            declarations: [ AccountDialogComponent ],
-            providers: [{provide: AccountService, useValue: accountService}]
-        })
+        cy.mount(AccountDialogComponent,
+        setupCypressConfig<AccountDialogComponent>())
     });
 
     beforeEach(() => {

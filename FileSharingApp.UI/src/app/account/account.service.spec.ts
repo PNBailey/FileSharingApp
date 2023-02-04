@@ -6,7 +6,7 @@ import { of, skip } from "rxjs";
 import { AccountService } from "./account.service";
 import { RouterTestingModule } from '@angular/router/testing';
 import { HomeComponent } from "../home/home.component";
-import { TestUser } from "../models/test-models/testUser";
+import { TestUser } from "../shared/testing/models/testUser";
 import { TestLoginUser } from "../models/test-models/testLoginUser";
 
 describe('Account Service', () => {
