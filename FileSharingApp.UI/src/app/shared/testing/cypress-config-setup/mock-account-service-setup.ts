@@ -1,8 +1,10 @@
 import { FormBuilder, UntypedFormGroup, Validators, FormControl } from "@angular/forms";
-import { Subject, Observable, scan, startWith, of, map } from "rxjs";
+import { Subject, Observable, scan, startWith, of, map, BehaviorSubject } from "rxjs";
+import { User } from "src/app/models/user";
 import { TestUser } from "../models/testUser";
+import { MockValidationService } from "./validation-service-setup";
 
-export function getMockAccountService() {
+export function getMockAccountService(mockValidationService: MockValidationService) {
 
     const fb = new FormBuilder();
     
@@ -12,15 +14,8 @@ export function getMockAccountService() {
         startWith(false)
     );
     
-    const mockLoggedOnUser$: Observable<TestUser | null> = of(new TestUser());
-    const mockValidationService = {
-        uniqueUsernameValidatorFn: () => {
-            return of({'usernameUniquenessViolated': true});
-        },
-        uniqueEmailValidatorFn: () => {
-            return of({'emailUniquenessViolated': true});
-        }
-    }
+    const mockLoggedOnUser: BehaviorSubject<null | TestUser> = new BehaviorSubject<null | TestUser>(new TestUser());
+    const mockLoggedOnUser$: Observable<null | User> = mockLoggedOnUser.asObservable();
     
     const mockaccountAccessForm$ = mockUserIsRegistering$.pipe(
         map((mockUserIsRegistering) => {
@@ -38,7 +33,7 @@ export function getMockAccountService() {
     const mockAccountService = {
         loggedOnUser$: mockLoggedOnUser$,
         logout: () => {
-            return null;
+            mockLoggedOnUser.next(null);
         },
         userIsRegistering$: mockUserIsRegistering$,
         accountAccessForm$: mockaccountAccessForm$,
@@ -51,7 +46,14 @@ export function getMockAccountService() {
                     buttonAction: mockUserIsRegistering ? 'Register' : 'Login',
                 }
             })
-        )
+        ),
+        userIsRegisteringToggle: mockToggleUserIsRegistering,
+        toggleUserIsRegistering: () => {
+            mockToggleUserIsRegistering.next();
+        },
+        setLoggedOnUser: () => {
+            return null;
+        }
     }
     return mockAccountService;
 }
