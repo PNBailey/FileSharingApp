@@ -1,7 +1,9 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { AccountService } from '../account/account.service';
 import { AccountDialogComponent } from '../account/account-dialog.component';
+import { Observable } from 'rxjs';
+import { User } from '../models/user';
 
 @Component({
   selector: 'app-toolbar',
@@ -9,13 +11,13 @@ import { AccountDialogComponent } from '../account/account-dialog.component';
   styleUrls: ['./toolbar.component.scss']
 })
 export class ToolbarComponent {
+
   @Output() showSideNav = new EventEmitter();
+  @Input() loggedOnUser$: Observable<User | null>;
 
   constructor(
     private accountService: AccountService, 
     public dialog: MatDialog) { }
-
-  loggedOnUser$ = this.accountService.loggedOnUser$;
 
   openSideNav() {
     this.showSideNav.emit();

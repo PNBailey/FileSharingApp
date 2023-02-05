@@ -1,6 +1,5 @@
 import { FormBuilder, UntypedFormGroup, Validators, FormControl } from "@angular/forms";
 import { Subject, Observable, scan, startWith, of, map, BehaviorSubject } from "rxjs";
-import { User } from "src/app/models/user";
 import { TestUser } from "../models/testUser";
 import { MockValidationService } from "./validation-service-setup";
 
@@ -15,7 +14,7 @@ export function getMockAccountService(mockValidationService: MockValidationServi
     );
     
     const mockLoggedOnUser: BehaviorSubject<null | TestUser> = new BehaviorSubject<null | TestUser>(new TestUser());
-    const mockLoggedOnUser$: Observable<null | User> = mockLoggedOnUser.asObservable();
+    const mockLoggedOnUser$: Observable<null | TestUser> = mockLoggedOnUser.asObservable();
     
     const mockaccountAccessForm$ = mockUserIsRegistering$.pipe(
         map((mockUserIsRegistering) => {
@@ -33,7 +32,7 @@ export function getMockAccountService(mockValidationService: MockValidationServi
     const mockAccountService = {
         loggedOnUser$: mockLoggedOnUser$,
         logout: () => {
-            mockLoggedOnUser.next(null);
+            return null;
         },
         userIsRegistering$: mockUserIsRegistering$,
         accountAccessForm$: mockaccountAccessForm$,
@@ -49,7 +48,7 @@ export function getMockAccountService(mockValidationService: MockValidationServi
         ),
         userIsRegisteringToggle: mockToggleUserIsRegistering,
         toggleUserIsRegistering: () => {
-            mockToggleUserIsRegistering.next();
+            return null;
         },
         setLoggedOnUser: () => {
             return null;

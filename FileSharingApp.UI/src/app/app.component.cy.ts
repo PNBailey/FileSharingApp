@@ -5,6 +5,11 @@ import { getMockAccountService } from "./shared/testing/cypress-config-setup/moc
 import { getValidationServiceMock } from "./shared/testing/cypress-config-setup/validation-service-setup";
 
 describe('AppComponent', () => {
+
+    const elementBindings = {
+        sidenavMenu: '[data-cy=sidenav-menu]'
+    }
+
     it('should mount', () => {
         cy.mount(AppComponent, setupCypressConfig<AppComponent>({
             providers: [

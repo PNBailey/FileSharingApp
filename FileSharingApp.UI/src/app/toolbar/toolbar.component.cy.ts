@@ -5,6 +5,7 @@ import { setupCypressConfig } from "../shared/testing/cypress-config-setup/cypre
 import { getMockAccountService } from "../shared/testing/cypress-config-setup/mock-account-service-setup";
 import { MatDialog } from "@angular/material/dialog";
 import { getValidationServiceMock } from "../shared/testing/cypress-config-setup/validation-service-setup";
+import { TestUser } from "../shared/testing/models/testUser";
 
 describe('ToolBarComponent', () => {
 
@@ -34,6 +35,9 @@ describe('ToolBarComponent', () => {
 
     beforeEach(() => {    
         cy.mount(ToolbarComponent, setupCypressConfig<ToolbarComponent>({
+            componentProperties: {
+                loggedOnUser$: of(new TestUser())
+            },
             providers: [
                 {provide: AccountService, useValue: accountService}
             ]
@@ -44,7 +48,6 @@ describe('ToolBarComponent', () => {
         it('should call the account service logout method', () => {
             cy.spy(accountService, 'logout').as('accountService-logout-method');
             cy.get(elementBindings.userMenuButton).click();
-            cy.wait(1000);
             cy.get(elementBindings.userMenuButtons).should('be.visible');
             cy.get(elementBindings.userMenuButtons).eq(1).click();
             cy.get('@accountService-logout-method').should('have.been.called');
@@ -54,7 +57,6 @@ describe('ToolBarComponent', () => {
     describe('menu button', () => {
         it('should emit the showSideNav event emitter', () => {
             cy.get(elementBindings.menuButton).click();
-            cy.wait(1000);
             cy.get('@showSideNavSpy').should('have.been.calledOnce');
         });
     });
@@ -64,15 +66,11 @@ describe('ToolBarComponent', () => {
             cy.get(elementBindings.loginButton).should('have.length', 0);
         });
         it('should be visible when user is not logged in', () => {
-            // cy.mount(ToolbarComponent, setupCypressConfig<ToolbarComponent>({
-            //     providers: [{
-            //         provide: AccountService, 
-            //         useValue: {loggedOnUser$: of(null)}
-            //     }]
-            // }));
-            cy.get(elementBindings.userMenuButton).click();
-            cy.get(elementBindings.userMenuButtons).eq(1).click();
-            cy.get(elementBindings.userMenuButton).click();
+            cy.mount(ToolbarComponent, setupCypressConfig<ToolbarComponent>({
+                providers: [
+                    {provide: AccountService, useValue: {loggedOnUser$: of(null)}}
+                ]
+            }));
             cy.get(elementBindings.loginButton).should('be.visible');
         });
         it('should call the MatDialog open method', () => {
@@ -84,7 +82,6 @@ describe('ToolBarComponent', () => {
             }));
             cy.spy(matDialog, 'open').as('matDialog-open-method');
             cy.get(elementBindings.loginButton).click();
-            cy.wait(1000);
             cy.get('@matDialog-open-method').should('have.been.called');
         });
     });
@@ -99,14 +96,12 @@ describe('ToolBarComponent', () => {
                     useValue: {loggedOnUser$: of(null)}
                 }]
             }));
-            cy.wait(1000);
             cy.get(elementBindings.userMenuButton).should('have.length', 0);
         });
     });
     describe('user menu', () => {
         it('should contain two buttons', () => {
             cy.get(elementBindings.userMenuButton).click();
-            cy.wait(1000);
             cy.get(elementBindings.userMenuButtons).should('have.length', 2);
         });
     });
