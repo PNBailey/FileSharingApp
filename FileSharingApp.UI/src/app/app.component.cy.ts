@@ -1,38 +1,26 @@
-// import { HttpClientTestingModule } from '@angular/common/http/testing';
-// import { TestBed } from '@angular/core/testing';
-// import { UntypedFormBuilder } from '@angular/forms';
-// import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-// import { RouterTestingModule } from '@angular/router/testing';
-// import { AppComponent } from './app.component';
-// import { AngularMaterialModule } from './shared/angular-material.module';
-// import { ToolbarComponent } from './toolbar/toolbar.component';
+import { AccountService } from "./account/account.service";
+import { AppComponent } from "./app.component";
+import { setupCypressConfig } from "./shared/testing/cypress-config-setup/cypress-config-setup";
+import { getMockAccountService } from "./shared/testing/cypress-config-setup/mock-account-service-setup";
+import { getValidationServiceMock } from "./shared/testing/cypress-config-setup/validation-service-setup";
 
-// describe('AppComponent', () => {
-//   beforeEach(async () => {
-//     await TestBed.configureTestingModule({
-//       providers: [UntypedFormBuilder],
-//       imports: [
-//         RouterTestingModule,
-//         HttpClientTestingModule,
-//         BrowserAnimationsModule,
-//         AngularMaterialModule
-//       ],
-//       declarations: [
-//         AppComponent,
-//         ToolbarComponent
-//       ],
-//     }).compileComponents();
-//   });
+describe('AppComponent', () => {
+    it('should mount', () => {
+        cy.mount(AppComponent, setupCypressConfig<AppComponent>({
+            providers: [
+                {provide: AccountService, useValue: accountService}
+            ]
+        }));
+    });
+    
+    const validationService = getValidationServiceMock();
+    const accountService = getMockAccountService(validationService);
 
-//   it('should create the app', () => {
-//     const fixture = TestBed.createComponent(AppComponent);
-//     const app = fixture.componentInstance;
-//     expect(app).toBeTruthy();
-//   });
-
-//   it(`should have as title 'FileSharingApp'`, () => {
-//     const fixture = TestBed.createComponent(AppComponent);
-//     const app = fixture.componentInstance;
-//     expect(app.title).toEqual('FileSharingApp');
-//   });
-// });
+    beforeEach(() => {
+        cy.mount(AppComponent, setupCypressConfig<AppComponent>({
+            providers: [
+                {provide: AccountService, useValue: accountService}
+            ]
+        }));
+    });
+});
