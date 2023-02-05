@@ -4,10 +4,12 @@ import { ToolbarComponent } from "./toolbar.component";
 import { setupCypressConfig } from "../shared/testing/cypress-config-setup/cypress-config-setup";
 import { getMockAccountService } from "../shared/testing/cypress-config-setup/mock-account-service-setup";
 import { MatDialog } from "@angular/material/dialog";
+import { getValidationServiceMock } from "../shared/testing/cypress-config-setup/validation-service-setup";
 
 describe('ToolBarComponent', () => {
 
-    const accountService = getMockAccountService();
+    const validationService = getValidationServiceMock();
+    const accountService = getMockAccountService(validationService);
 
     const matDialog = {
         open: () => null
@@ -24,10 +26,9 @@ describe('ToolBarComponent', () => {
 
     it('mounts', () => {
         cy.mount(ToolbarComponent, setupCypressConfig<ToolbarComponent>({
-            providers: [{
-                provide: AccountService, 
-                useValue: accountService
-            }]
+            providers: [
+                {provide: AccountService, useValue: accountService}
+            ]
         }));
     });
 
@@ -63,13 +64,15 @@ describe('ToolBarComponent', () => {
             cy.get(elementBindings.loginButton).should('have.length', 0);
         });
         it('should be visible when user is not logged in', () => {
-            cy.mount(ToolbarComponent, setupCypressConfig<ToolbarComponent>({
-                providers: [{
-                    provide: AccountService, 
-                    useValue: {loggedOnUser$: of(null)}
-                }]
-            }));
-            cy.wait(1000);
+            // cy.mount(ToolbarComponent, setupCypressConfig<ToolbarComponent>({
+            //     providers: [{
+            //         provide: AccountService, 
+            //         useValue: {loggedOnUser$: of(null)}
+            //     }]
+            // }));
+            cy.get(elementBindings.userMenuButton).click();
+            cy.get(elementBindings.userMenuButtons).eq(1).click();
+            cy.get(elementBindings.userMenuButton).click();
             cy.get(elementBindings.loginButton).should('be.visible');
         });
         it('should call the MatDialog open method', () => {

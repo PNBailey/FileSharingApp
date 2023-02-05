@@ -7,7 +7,8 @@ import { AccountService } from "./account.service";
 import { RouterTestingModule } from '@angular/router/testing';
 import { HomeComponent } from "../home/home.component";
 import { TestUser } from "../shared/testing/models/testUser";
-import { TestLoginUser } from "../models/test-models/testLoginUser";
+import { TestLoginUser } from "../shared/testing/models/testLoginUser";
+import { TestRegisterUser } from "../shared/testing/models/testRegisterUser";
 
 describe('Account Service', () => {
     let service: AccountService;

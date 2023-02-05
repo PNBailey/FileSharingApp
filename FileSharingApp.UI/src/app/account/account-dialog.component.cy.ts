@@ -4,14 +4,13 @@ import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { BehaviorSubject, of, map } from "rxjs";
 import { AngularMaterialModule } from "../shared/angular-material.module";
 import { setupCypressConfig } from "../shared/testing/cypress-config-setup/cypress-config-setup";
+import { getMockAccountService } from "../shared/testing/cypress-config-setup/mock-account-service-setup";
+import { getValidationServiceMock } from "../shared/testing/cypress-config-setup/validation-service-setup";
 import { AccountDialogComponent } from "./account-dialog.component";
 import { AccountService } from "./account.service";
 
 describe('AccountDialogComponent', () => {
 
-    const fb: FormBuilder = new FormBuilder();
-    const userIsRegistering: BehaviorSubject<boolean> = new BehaviorSubject(false);
-    const userIsRegistering$ = userIsRegistering.asObservable();
     const elementBindings = {
         submitButton: '[data-cy="submit-btn"]',
         cancelButton: '[data-cy="cancel-btn"]',
@@ -29,45 +28,8 @@ describe('AccountDialogComponent', () => {
         title: '[data-cy="title"]'
     }
 
-    const validationService = {
-        uniqueUsernameValidatorFn: () => {
-            return of({'usernameUniquenessViolated': true});
-        },
-        uniqueEmailValidatorFn: () => {
-            return of({'emailUniquenessViolated': true});
-        }
-    }
-    
-    const accountAccessForm$ = userIsRegistering$.pipe(
-        map((userIsRegistering) => {
-            const form: UntypedFormGroup = fb.group({
-            'username': ['', [Validators.required], [validationService.uniqueUsernameValidatorFn]],
-            'password': ['', [Validators.required, Validators.pattern("^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$")]]
-            });
-            if(userIsRegistering) {
-                form.addControl('email', new FormControl('', [Validators.required, Validators.email], [validationService.uniqueEmailValidatorFn]));
-            } 
-            return form;
-        })
-    )
-
-    const accountService = {
-        userIsRegistering$: userIsRegistering$,
-        accountAccessForm$: accountAccessForm$,
-        accountAction$: userIsRegistering$.pipe(
-            map(userIsRegistering => {
-                return {
-                    type: userIsRegistering ? 'Register' : 'Login',
-                    linkLabel: userIsRegistering ? 'Already have an account?' : 'No account?',
-                    linkText: userIsRegistering ? 'Login' : 'Register',
-                    buttonAction: userIsRegistering ? 'Register' : 'Login',
-                }
-            })
-        ),
-        toggleUserIsRegistering: () => {
-            userIsRegistering.next(!userIsRegistering.getValue());
-        }
-    };
+    const validationService = getValidationServiceMock();
+    const accountService = getMockAccountService(validationService);
 
     it('mounts', () => {
         cy.mount(AccountDialogComponent,
@@ -75,17 +37,12 @@ describe('AccountDialogComponent', () => {
     });
 
     beforeEach(() => {
-        cy.mount(AccountDialogComponent, {
-            imports: [ 
-                HttpClientTestingModule, 
-                ReactiveFormsModule,
-                AngularMaterialModule,
-                BrowserAnimationsModule
-            ],
-            declarations: [ AccountDialogComponent ],
-            providers: [{provide: AccountService, useValue: accountService}]
-        })
-        userIsRegistering.next(false);
+        cy.mount(AccountDialogComponent, setupCypressConfig<AccountDialogComponent>({
+            providers: [
+                {provide: AccountService, useValue: accountService}
+            ]
+        }));
+        accountService.toggleUserIsRegistering();
     });
 
     describe('form', () => {
