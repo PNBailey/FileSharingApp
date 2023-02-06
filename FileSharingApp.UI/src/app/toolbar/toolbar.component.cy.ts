@@ -6,6 +6,7 @@ import { getMockAccountService } from "../shared/testing/cypress-config-setup/mo
 import { MatDialog } from "@angular/material/dialog";
 import { getValidationServiceMock } from "../shared/testing/cypress-config-setup/validation-service-setup";
 import { TestUser } from "../shared/testing/models/testUser";
+import { MountConfig } from "cypress/angular";
 
 describe('ToolBarComponent', () => {
 
@@ -26,22 +27,11 @@ describe('ToolBarComponent', () => {
     }
 
     it('mounts', () => {
-        cy.mount(ToolbarComponent, setupCypressConfig<ToolbarComponent>({
-            providers: [
-                {provide: AccountService, useValue: accountService}
-            ]
-        }));
+        mountComponent();
     });
 
     beforeEach(() => {    
-        cy.mount(ToolbarComponent, setupCypressConfig<ToolbarComponent>({
-            componentProperties: {
-                loggedOnUser$: of(new TestUser())
-            },
-            providers: [
-                {provide: AccountService, useValue: accountService}
-            ]
-        }));
+        mountComponent();
     });
 
     describe('logout button', () => {
@@ -66,20 +56,11 @@ describe('ToolBarComponent', () => {
             cy.get(elementBindings.loginButton).should('have.length', 0);
         });
         it('should be visible when user is not logged in', () => {
-            cy.mount(ToolbarComponent, setupCypressConfig<ToolbarComponent>({
-                providers: [
-                    {provide: AccountService, useValue: {loggedOnUser$: of(null)}}
-                ]
-            }));
+            toggleLoggedOnUserValue();
             cy.get(elementBindings.loginButton).should('be.visible');
         });
         it('should call the MatDialog open method', () => {
-            cy.mount(ToolbarComponent, setupCypressConfig<ToolbarComponent>({
-                providers: [
-                    {provide: AccountService, useValue: {loggedOnUser$: of(null)}},
-                    {provide: MatDialog, useValue: matDialog}
-                ]
-            }));
+            toggleLoggedOnUserValue();
             cy.spy(matDialog, 'open').as('matDialog-open-method');
             cy.get(elementBindings.loginButton).click();
             cy.get('@matDialog-open-method').should('have.been.called');
@@ -90,12 +71,7 @@ describe('ToolBarComponent', () => {
             cy.get(elementBindings.userMenuButton).should('be.visible');
         });
         it('should not be visible when user is not logged in', () => {
-            cy.mount(ToolbarComponent, setupCypressConfig<ToolbarComponent>({
-                providers: [{
-                    provide: AccountService, 
-                    useValue: {loggedOnUser$: of(null)}
-                }]
-            }));
+            toggleLoggedOnUserValue();
             cy.get(elementBindings.userMenuButton).should('have.length', 0);
         });
     });
@@ -105,4 +81,26 @@ describe('ToolBarComponent', () => {
             cy.get(elementBindings.userMenuButtons).should('have.length', 2);
         });
     });
+
+    const mountComponent = (configOverride: MountConfig<ToolbarComponent> = {}) => {
+        cy.mount(ToolbarComponent, setupCypressConfig<ToolbarComponent>({
+            componentProperties: {
+                loggedOnUser$: of(new TestUser())
+            },
+            providers: [
+                {provide: AccountService, useValue: accountService},
+                {provide: MatDialog, useValue: matDialog}
+            ],
+            ...configOverride
+        }));
+    }
+
+    const toggleLoggedOnUserValue = () => {
+        mountComponent({
+            componentProperties: {
+                loggedOnUser$: of(null)
+            }
+        });
+    }
 });
+
