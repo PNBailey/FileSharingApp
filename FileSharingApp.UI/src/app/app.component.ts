@@ -9,6 +9,7 @@ import { AccountService } from './account/account.service';
 })
 export class AppComponent implements OnInit {
   title = 'FileSharingApp';
+  localStorageUser: User;
 
   constructor(
     private accountService: AccountService
@@ -21,9 +22,9 @@ export class AppComponent implements OnInit {
   }
 
   setCurrentUser() {
-    const user: User = JSON.parse(localStorage.getItem('user')!);
-    if(user) {
-      this.accountService.setLoggedOnUser(user);
+    this.localStorageUser = JSON.parse(localStorage.getItem('user')!);
+    if(this.localStorageUser) {
+      this.accountService.setLoggedOnUser(this.localStorageUser);
     }
   }
 }
