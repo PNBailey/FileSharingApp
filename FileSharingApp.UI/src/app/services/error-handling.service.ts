@@ -91,7 +91,7 @@ export class ErrorHandlingService implements ErrorHandler {
   }
 
   private displayErrorToUser() {
-    this.messageHandlingService.displayMessage({
+    this.messageHandlingService.onDisplayNewMessage({
       message: this.message,
       action: SnackbarAction.Close,
       classType: SnackbarClassType.Error,

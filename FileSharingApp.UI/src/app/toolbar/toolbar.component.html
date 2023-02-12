@@ -1,24 +1,40 @@
 <mat-toolbar color="primary">
-    <button (click)="openSideNav()" mat-icon-button class="example-icon" aria-label="Example icon-button with menu icon">
+    <button
+      data-cy="menu-button"
+      (click)="openSideNav()"
+      mat-icon-button
+      aria-label="Application menu button">
       <mat-icon>menu</mat-icon>
     </button>
     <span class="ml-3">File Sharing App</span>
     <span class="spacer"></span>
     <div class="d-flex align-items-center">
-      <ng-container *ngIf="(accountService.loggedOnUser$ | async) as user; else loginButton">
-          {{'Welcome ' + user.username}}
-      </ng-container>
-      <ng-template #loginButton>
-        <button (click)="openDialog()" color="white" mat-button aria-label="Login button">
-          Login
-        </button>
-      </ng-template>
-      <button mat-icon-button class="example-icon favorite-icon" aria-label="Example icon-button with heart icon" [matMenuTriggerFor]="menu">
-        <mat-icon>favorite</mat-icon>
+      <button
+        data-cy="login-button"
+        *ngIf="!(loggedOnUser$ | async)"
+        (click)="openDialog()"
+        color="white"
+        mat-button
+        aria-label="Login button">
+        Login
+      </button>
+      <button
+        data-cy="open-user-menu-button"
+        *ngIf="loggedOnUser$ | async"
+        mat-icon-button
+        aria-label="User menu button"
+        [matMenuTriggerFor]="menu">
+        <mat-icon>person</mat-icon>
       </button>
     </div>
 </mat-toolbar>
-<mat-menu #menu="matMenu">
-  <button mat-menu-item>Edit Profile</button>
-  <button mat-menu-item (click)="logout()">Logout</button>
+<mat-menu #menu="matMenu" data-cy="user-menu">
+  <button mat-menu-item data-cy="user-menu-button">Edit Profile</button>
+  <button
+    aria-label="Logout button"
+    data-cy='user-menu-button'
+    *ngIf="loggedOnUser$ | async"
+    mat-menu-item
+    (click)="logout()">Logout
+  </button>
 </mat-menu>

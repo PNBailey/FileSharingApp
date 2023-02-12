@@ -1,0 +1,81 @@
+import { HttpClient } from "@angular/common/http";
+import { HttpClientTestingModule, HttpTestingController } from "@angular/common/http/testing";
+import { TestBed } from "@angular/core/testing";
+import { MatSnackBarModule } from "@angular/material/snack-bar";
+import { SnackbarAction, SnackbarClassType, SnackbarDuration } from "../models/snackbar-item";
+import { ErrorCode, ErrorHandlingService, PASSWORD_INCORRECT_EXCEPTION, PASSWORD_INCORRECT_EXCEPTION_MESSAGE, USER_NOT_FOUND_EXCEPTION, USER_NOT_FOUND_EXCEPTION_MESSAGE, VALIDATION_EXCEPTION, VALIDATION_EXCEPTION_MESSAGE } from "./error-handling.service";
+import { MessageHandlingService } from "./message-handling.service";
+
+describe('ErrorHandlingService', () => {
+    let service: ErrorHandlingService;
+    let messageHandlingService = jasmine.createSpyObj('MessageHandlingService', ['onDisplayNewMessage']);
+    let httpMock: HttpTestingController;
+      
+    beforeEach(() => {
+        TestBed.configureTestingModule({
+            imports: [MatSnackBarModule, HttpClientTestingModule],
+            providers: [
+                {provide: MessageHandlingService, useValue: messageHandlingService}
+            ]
+        });
+        service = TestBed.inject(ErrorHandlingService);
+        httpMock = TestBed.inject(HttpTestingController);
+    });
+  
+    it('should set the custom error message for 401 Unauthorized', () => {
+        service.error = {status: ErrorCode.Unauthorized, error: { type: PASSWORD_INCORRECT_EXCEPTION }};
+        service['setCustomErrorMessage']();
+        expect(service.message).toEqual(PASSWORD_INCORRECT_EXCEPTION_MESSAGE);
+    });
+  
+    it('should set the custom error message for 403 Forbidden', () => {
+        service.error = {status: ErrorCode.Forbidden, error: { type: VALIDATION_EXCEPTION }};
+        service['setCustomErrorMessage']();
+        expect(service.message).toEqual(VALIDATION_EXCEPTION_MESSAGE);
+    });
+  
+    it('should set the custom error message for 404 NotFound', () => {
+        service.error = { status: ErrorCode.NotFound, error: { type: USER_NOT_FOUND_EXCEPTION } };
+        service['setCustomErrorMessage']();
+        expect(service.message).toEqual(USER_NOT_FOUND_EXCEPTION_MESSAGE);
+    });
+  
+    it('should set the default error message', () => {
+        service.error = { status: 500, message: 'An unexpected error occured: unexpected error' };
+        service['setDefaultErrorMessage']();
+        expect(service.message).toEqual('An unexpected error occured: unexpected error');
+    });
+  
+    it('should log the error to the back end', () => {
+        service.message = 'error message';
+        service['logError']();
+        const req = httpMock.expectOne(`https://localhost:7249/api/Errors/LogError?message=error message`);
+        expect(req.request.method).toEqual('POST');
+    });
+  
+    it('should display the error to the user', () => {
+        service.message = 'error message';
+        service['displayErrorToUser']();
+        expect(messageHandlingService.onDisplayNewMessage).toHaveBeenCalledWith({
+            message: 'error message',
+            action: SnackbarAction.Close,
+            classType: SnackbarClassType.Error,
+            duration: SnackbarDuration.Medium
+        });
+    });
+
+    it('handleError method should call correct private methods in the ErrorService', () => {
+        service['setDefaultErrorMessage'] = jasmine.createSpy();
+        service['setCustomErrorMessage'] = jasmine.createSpy();
+        service['logError'] = jasmine.createSpy();
+        service['displayErrorToUser'] = jasmine.createSpy();
+
+        service.handleError({message: 'error message'});
+        
+        expect(service['setDefaultErrorMessage']).toHaveBeenCalled();
+        expect(service['setCustomErrorMessage']).toHaveBeenCalled();
+        expect(service['logError']).toHaveBeenCalled();
+        expect(service['displayErrorToUser']).toHaveBeenCalled();
+    });
+  });
+  

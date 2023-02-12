@@ -1,22 +1,23 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { AccountService } from '../account/account.service';
 import { AccountDialogComponent } from '../account/account-dialog.component';
+import { Observable } from 'rxjs';
+import { User } from '../models/user';
 
 @Component({
   selector: 'app-toolbar',
   templateUrl: './toolbar.component.html',
   styleUrls: ['./toolbar.component.scss']
 })
-export class ToolbarComponent implements OnInit {
+export class ToolbarComponent {
+
   @Output() showSideNav = new EventEmitter();
+  @Input() loggedOnUser$: Observable<User | null>;
 
   constructor(
-    public accountService: AccountService, 
+    private accountService: AccountService, 
     public dialog: MatDialog) { }
-
-  ngOnInit(): void {
-  }
 
   openSideNav() {
     this.showSideNav.emit();
@@ -28,8 +29,7 @@ export class ToolbarComponent implements OnInit {
     });
   }
 
-  logout() {
+  logout() {    
     this.accountService.logout();
   }
-
 }

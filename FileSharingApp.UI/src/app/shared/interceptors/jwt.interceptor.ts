@@ -14,23 +14,22 @@ import { User } from 'src/app/models/user';
 export class JwtInterceptor implements HttpInterceptor {
 
   constructor(private accountService: AccountService) {}
+  newRequest: HttpRequest<unknown>;
 
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
-    let currentUser: User | null;
-
+    this.newRequest = request;
     this.accountService.loggedOnUser$.pipe(
       take(1),
-      tap(currentUser => {
+      tap(currentUser => {        
         if(currentUser) { 
-          request = request.clone({
+          this.newRequest = request.clone({
             setHeaders: {
               Authorization: `Bearer ${currentUser.token}`
             }
           })
         }
       }) 
-    ).subscribe(user => currentUser = user);
-    
-    return next.handle(request);
+      ).subscribe();
+    return next.handle(this.newRequest);
   }
 }

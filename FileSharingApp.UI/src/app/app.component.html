@@ -1,7 +1,7 @@
-<app-toolbar (showSideNav)="drawer.toggle()"></app-toolbar>
+<app-toolbar data-cy="toolbar" [loggedOnUser$]="loggedOnUser$" (showSideNav)="drawer.toggle()"></app-toolbar>
 <mat-sidenav-container class="sidenav-container">
-    <mat-sidenav #drawer mode="side">
-      <p class="mx-5 mt-3 mb-4">Menu</p>
+    <mat-sidenav data-cy="sidenav-menu" #drawer mode="side">
+      <p data-cy="first-menu-item" class="mx-5 mt-3 mb-4">Menu</p>
     </mat-sidenav>
     <mat-sidenav-content>
       <router-outlet></router-outlet>

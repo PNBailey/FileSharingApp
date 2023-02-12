@@ -9,20 +9,22 @@ import { AccountService } from './account/account.service';
 })
 export class AppComponent implements OnInit {
   title = 'FileSharingApp';
+  localStorageUser: User;
 
   constructor(
     private accountService: AccountService
     ) {}
+
+  loggedOnUser$ = this.accountService.loggedOnUser$;
 
   ngOnInit(): void {
     this.setCurrentUser();
   }
 
   setCurrentUser() {
-    const user: User = JSON.parse(localStorage.getItem('user')!);
-
-    if(user) {
-      this.accountService.setLoggedOnUser(user);
+    this.localStorageUser = JSON.parse(localStorage.getItem('user')!);
+    if(this.localStorageUser) {
+      this.accountService.setLoggedOnUser(this.localStorageUser);
     }
   }
 }
