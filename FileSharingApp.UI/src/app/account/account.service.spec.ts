@@ -6,9 +6,9 @@ import { of, skip } from "rxjs";
 import { AccountService } from "./account.service";
 import { RouterTestingModule } from '@angular/router/testing';
 import { HomeComponent } from "../home/home.component";
-import { TestUser } from "../shared/testing/models/testUser";
-import { TestLoginUser } from "../shared/testing/models/testLoginUser";
-import { TestRegisterUser } from "../shared/testing/models/testRegisterUser";
+import { User } from "../models/user";
+import { RegisterUser } from "../models/registerUser";
+import { LoginUser } from "../models/loginUser";
 
 describe('Account Service', () => {
     let service: AccountService;
@@ -68,7 +68,7 @@ describe('Account Service', () => {
     });
     describe('onAccountAccessFormSubmitted method', () => {
         it('should call the loginOrRegister method with the correct URL when the user is logging in', () => {
-            const loginUser = new TestLoginUser();
+            const loginUser = new LoginUser();
 
             service['loginOrRegister'] = jasmine.createSpy('service-loginOrRegister-method').and.returnValue(of(null));
 
@@ -77,7 +77,7 @@ describe('Account Service', () => {
             expect(service['loginOrRegister']).toHaveBeenCalledWith(loginUser, "https://localhost:7249/api/Account/Login");
         });
         it('should call the loginOrRegister method with the correct URL when the user is registering', () => {
-            const registerUser = new TestRegisterUser();
+            const registerUser = new RegisterUser();
 
             service.toggleUserIsRegistering();
 
@@ -119,8 +119,8 @@ describe('Account Service', () => {
     });
     describe('loginOrRegister method', () => {
         it('should send one POST http request and should return a user', () => {
-            const user = new TestUser();
-            const loginUser = new TestLoginUser();
+            const user = new User();
+            const loginUser = new LoginUser();
 
             service['loginOrRegister'](loginUser, "https://localhost:7249/api/Account/Login").subscribe(returnedUser => {
                 expect(returnedUser).toEqual(user);
@@ -131,8 +131,8 @@ describe('Account Service', () => {
             req.flush(user);
         });
         it('should call setLoggedOnUser method', () => {
-            const user = new TestUser();
-            const loginUser = new TestLoginUser();
+            const user = new User();
+            const loginUser = new LoginUser();
             
             service.setLoggedOnUser = jasmine.createSpy('service-setLoggedOnUser-method');
 
@@ -144,8 +144,8 @@ describe('Account Service', () => {
             req.flush(user);
         });
         it('should call dialog.closeAll method', () => {
-            const user = new TestUser();
-            const loginUser = new TestLoginUser();
+            const user = new User();
+            const loginUser = new LoginUser();
 
             service.dialog.closeAll = jasmine.createSpy('dialog-closeAll-method');
 
@@ -157,8 +157,8 @@ describe('Account Service', () => {
             req.flush(user);
         });
         it('should call the router.navigate method with the route to the home page', () => {
-            const user = new TestUser();
-            const loginUser = new TestLoginUser();
+            const user = new User();
+            const loginUser = new LoginUser();
             
             service['router'].navigate = jasmine.createSpy('service-navigate-method');
 
@@ -181,14 +181,14 @@ describe('Account Service', () => {
         it('should call the local storage setItem method with the correct arguments', () => {
             window.localStorage.setItem = jasmine.createSpy('window.localStorage.setItem-method');
 
-            const user = new TestUser();
+            const user = new User();
 
             service.setLoggedOnUser(user);
 
             expect(window.localStorage.setItem).toHaveBeenCalledWith('user', JSON.stringify(user));
         });
         it('should set the value of the loggedOnUser behavior subject', () => {
-            const user = new TestUser();
+            const user = new User();
 
             service.setLoggedOnUser(user);
 

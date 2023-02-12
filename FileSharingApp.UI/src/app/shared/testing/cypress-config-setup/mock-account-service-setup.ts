@@ -1,11 +1,16 @@
+import { HttpClient } from "@angular/common/http";
 import { FormBuilder, UntypedFormGroup, Validators, FormControl } from "@angular/forms";
-import { Subject, Observable, scan, startWith, of, map, BehaviorSubject } from "rxjs";
-import { TestUser } from "../models/testUser";
+import { Subject, Observable, scan, startWith, map, BehaviorSubject } from "rxjs";
+import { User } from "src/app/models/user";
+import { LoginUser } from "../models/LoginUser";
+import { RegisterUser } from "../models/RegisterUser";
+import { User } from "../models/User";
 import { MockValidationService } from "./validation-service-setup";
 
 export function getMockAccountService(mockValidationService: MockValidationService) {
 
     const fb = new FormBuilder();
+    // const http = new HttpClient(new MockHttpHandler());
     
     const mockToggleUserIsRegistering = new Subject<void>();
     const mockUserIsRegistering$: Observable<boolean> = mockToggleUserIsRegistering.pipe(
@@ -13,8 +18,8 @@ export function getMockAccountService(mockValidationService: MockValidationServi
         startWith(false)
     );
     
-    const mockLoggedOnUser: BehaviorSubject<null | TestUser> = new BehaviorSubject<null | TestUser>(new TestUser());
-    const mockLoggedOnUser$: Observable<null | TestUser> = mockLoggedOnUser.asObservable();
+    const mockLoggedOnUser: BehaviorSubject<null | User> = new BehaviorSubject<null | User>(new User());
+    const mockLoggedOnUser$: Observable<null | User> = mockLoggedOnUser.asObservable();
     
     const mockaccountAccessForm$ = mockUserIsRegistering$.pipe(
         map((mockUserIsRegistering) => {

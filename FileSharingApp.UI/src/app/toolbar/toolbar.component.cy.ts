@@ -5,8 +5,8 @@ import { setupCypressConfig } from "../shared/testing/cypress-config-setup/cypre
 import { getMockAccountService } from "../shared/testing/cypress-config-setup/mock-account-service-setup";
 import { MatDialog } from "@angular/material/dialog";
 import { getValidationServiceMock } from "../shared/testing/cypress-config-setup/validation-service-setup";
-import { TestUser } from "../shared/testing/models/testUser";
 import { MountConfig } from "cypress/angular";
+import { User } from "../models/user";
 
 describe('ToolBarComponent', () => {
 
@@ -85,7 +85,7 @@ describe('ToolBarComponent', () => {
     const mountComponent = (configOverride: MountConfig<ToolbarComponent> = {}) => {
         cy.mount(ToolbarComponent, setupCypressConfig<ToolbarComponent>({
             componentProperties: {
-                loggedOnUser$: of(new TestUser())
+                loggedOnUser$: of(new User())
             },
             providers: [
                 {provide: AccountService, useValue: accountService},

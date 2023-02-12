@@ -1,9 +1,9 @@
 import { AccountService } from "./account/account.service";
 import { AppComponent } from "./app.component";
+import { User } from "./models/user";
 import { setupCypressConfig } from "./shared/testing/cypress-config-setup/cypress-config-setup";
 import { getMockAccountService } from "./shared/testing/cypress-config-setup/mock-account-service-setup";
 import { getValidationServiceMock } from "./shared/testing/cypress-config-setup/validation-service-setup";
-import { TestUser } from "./shared/testing/models/testUser";
 
 describe('AppComponent', () => {
 
@@ -21,7 +21,7 @@ describe('AppComponent', () => {
     });
     
     beforeEach(() => {
-        cy.stub(window.localStorage, 'getItem').returns(JSON.stringify(new TestUser()));
+        cy.stub(window.localStorage, 'getItem').returns(JSON.stringify(new User()));
         cy.stub(accountService, 'setLoggedOnUser');
         mountComponent();
     });
