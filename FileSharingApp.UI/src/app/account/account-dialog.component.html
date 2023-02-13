@@ -1,7 +1,7 @@
 <ng-container *ngIf="(accountAccessObs$ | async) as accountAccess">
-    <div *ngIf="(accountAccess.form) as form">
+    <div *ngIf="(accountAccess.form) as form" class="overflow-hidden">
         <form [formGroup]="accountAccess.form" data-cy="form">
-            <h1 mat-dialog-title data-cy="title">{{accountAccess.action.type}}</h1>
+            <h1 mat-dialog-title data-cy="title" class="mb-4">{{accountAccess.action.type}}</h1>
             <div mat-dialog-content>
                 <div class="row mb-2">
                     <mat-form-field data-cy="account-form-control" appearance="fill">
@@ -11,7 +11,7 @@
                             Username is <strong>taken</strong>
                         </mat-error>
                         <mat-error data-cy="form-error username-custom-validator-no-user-found" *ngIf="form.controls['username'].hasError('usernameUniquenessViolated') && accountAccess.action.type == 'Login'">
-                            No user found with this username. Select <strong>register</strong> below
+                            No user found. Select <strong>register</strong> below
                         </mat-error>
                         <mat-error data-cy="form-error" *ngIf="form.controls['username'].hasError('required')">
                             Username is <strong>required</strong>
@@ -38,7 +38,7 @@
                         </mat-error>
                     </mat-form-field>
                 </div>
-                <div class="row mb-3" *ngIf="form.contains('email')">
+                <div class="row mb-2" *ngIf="form.contains('email')">
                     <mat-form-field data-cy="account-form-control" class="email-form-control" appearance="fill">
                         <mat-label>Email</mat-label>
                         <input matInput type="email" formControlName="email" data-cy="email-input">
@@ -49,13 +49,13 @@
                             Email is <strong>required</strong>
                         </mat-error>
                         <mat-error data-cy="form-error email-custom-validator" *ngIf="form.controls['email'].hasError('emailUniquenessViolated')">
-                            An account with this email address already exists. Select login below to login
+                            An account with this email address already exists. Select <strong>login</strong> below to login
                         </mat-error>
-                        <mat-spinner matSuffix [diameter]="18" *ngIf="checkingEmail$ | async"></mat-spinner>
+                        <mat-spinner class="mr-4" matSuffix [diameter]="18" *ngIf="checkingEmail$ | async"></mat-spinner>
                     </mat-form-field>
                 </div>
             </div>
-            <div class="row mt-2">
+            <div class="row">
                 <p class="d-flex justify-content-center" data-cy="link-label">{{accountAccess.action.linkLabel}}
                     <span
                         role="link"
@@ -67,7 +67,7 @@
                     </span>
                 </p>
             </div>
-            <div mat-dialog-actions align="end">
+            <div mat-dialog-actions align="end" class="mb-3">
                 <button mat-button mat-dialog-close data-cy="cancel-btn">Cancel</button>
                 <button [disabled]="!form.valid" data-cy="submit-btn" mat-button (click)="onFormSubmit(form)" type="submit">{{accountAccess.action.buttonAction}}</button>
             </div>

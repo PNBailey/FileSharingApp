@@ -1,5 +1,4 @@
 import { HttpClientTestingModule, HttpTestingController } from "@angular/common/http/testing";
-import { TestBed } from "@angular/core/testing";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { MatDialogModule } from "@angular/material/dialog";
 import { of, skip } from "rxjs";
@@ -9,6 +8,7 @@ import { HomeComponent } from "../home/home.component";
 import { User } from "../models/user";
 import { RegisterUser } from "../models/registerUser";
 import { LoginUser } from "../models/loginUser";
+import { TestBed } from "@angular/core/testing";
 
 describe('Account Service', () => {
     let service: AccountService;
