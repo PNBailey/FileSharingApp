@@ -1,16 +1,11 @@
-import { HttpClient } from "@angular/common/http";
 import { FormBuilder, UntypedFormGroup, Validators, FormControl } from "@angular/forms";
 import { Subject, Observable, scan, startWith, map, BehaviorSubject } from "rxjs";
 import { User } from "src/app/models/user";
-import { LoginUser } from "../models/LoginUser";
-import { RegisterUser } from "../models/RegisterUser";
-import { User } from "../models/User";
 import { MockValidationService } from "./validation-service-setup";
 
 export function getMockAccountService(mockValidationService: MockValidationService) {
 
     const fb = new FormBuilder();
-    // const http = new HttpClient(new MockHttpHandler());
     
     const mockToggleUserIsRegistering = new Subject<void>();
     const mockUserIsRegistering$: Observable<boolean> = mockToggleUserIsRegistering.pipe(
@@ -53,7 +48,7 @@ export function getMockAccountService(mockValidationService: MockValidationServi
         ),
         userIsRegisteringToggle: mockToggleUserIsRegistering,
         toggleUserIsRegistering: () => {
-            return null;
+            mockToggleUserIsRegistering.next();
         },
         setLoggedOnUser: () => {
             return null;

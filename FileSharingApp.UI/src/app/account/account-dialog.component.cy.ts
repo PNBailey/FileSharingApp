@@ -1,8 +1,4 @@
-import { HttpClientTestingModule } from "@angular/common/http/testing";
-import { FormBuilder, UntypedFormGroup, Validators, FormControl, ReactiveFormsModule } from "@angular/forms";
-import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
-import { BehaviorSubject, of, map } from "rxjs";
-import { AngularMaterialModule } from "../shared/angular-material.module";
+import { of } from "rxjs";
 import { setupCypressConfig } from "../shared/testing/cypress-config-setup/cypress-config-setup";
 import { getMockAccountService } from "../shared/testing/cypress-config-setup/mock-account-service-setup";
 import { getValidationServiceMock } from "../shared/testing/cypress-config-setup/validation-service-setup";
@@ -129,7 +125,7 @@ describe('AccountDialogComponent', () => {
                 cy.get(elementBindings.usernameInput).type('test name');
                 cy.stub(validationService, 'uniqueUsernameValidatorFn').returns(of({'usernameUniquenessViolated': true}));
                 cy.get(elementBindings.cancelButton).focus();
-                cy.contains('No user found with this username. Select register below');
+                cy.contains('No user found. Select register below');
             });
 
             it('should not have user not found error when user not found validator returns null and user is logging in', () => {
