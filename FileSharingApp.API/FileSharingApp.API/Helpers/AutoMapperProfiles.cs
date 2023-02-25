@@ -8,13 +8,18 @@ namespace API.Helpers
     {
         public AutoMapperProfiles()
         {
-            CreateMap<RegisterDto, AppUser>();
+            CreateMap<RegisterDto, AppUser>(MemberList.Source)
+                  .ForSourceMember(source => source.Password, opt => opt.DoNotValidate());
 
-            CreateMap<AppUser, UserDto>();
+            CreateMap<AppUser, UserDto>()
+                .ForMember(dest => dest.Name, opt => opt.Ignore())
+                .ForMember(dest => dest.Token, opt => opt.Ignore());
 
-            CreateMap<LoginDto, AppUser>();
+            CreateMap<LoginDto, AppUser>(MemberList.Source)
+                .ForSourceMember(source => source.Password, opt => opt.DoNotValidate());
 
-            CreateMap<AppUser, LoginDto>();
+            CreateMap<AppUser, LoginDto>()
+                .ForMember(dest => dest.Password, opt => opt.Ignore());
         }
     }
 }
