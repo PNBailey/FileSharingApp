@@ -1,11 +1,12 @@
-﻿using FileSharingApp.API.Models.Validators;
+﻿using FileSharingApp.API.Models.DTOs.Interfaces;
+using FileSharingApp.API.Models.Validators;
 using FileSharingApp.API.Services.Interfaces;
 using FluentValidation;
 using NLog;
 
 namespace FileSharingApp.API.Models.DTOs
 {
-    public class LoginDto
+    public class LoginDto : IValidateDto
     {
         private static Logger _logger = LogManager.GetCurrentClassLogger();
 

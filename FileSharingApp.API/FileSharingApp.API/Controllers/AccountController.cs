@@ -6,6 +6,7 @@ using FileSharingApp.API.Models.DTOs;
 using FileSharingApp.API.Services.Interfaces;
 using NLog;
 using FileSharingApp.API.CustomExceptions;
+using System.ComponentModel.DataAnnotations;
 
 namespace FileSharingApp.API.Controllers
 {
@@ -13,29 +14,32 @@ namespace FileSharingApp.API.Controllers
     {
         private static Logger _logger = LogManager.GetCurrentClassLogger();
 
-        private readonly IMapper _mapper;
-        private readonly IUserService _userService;
+        private readonly IMapper mapper;
+        private readonly IUserService userService;
+        private readonly IValidationService validationService;
 
         public AccountController(
             IMapper mapper, 
-            IUserService userService)
+            IUserService userService,
+            IValidationService validationService)
         {
-            _mapper = mapper;
-            _userService = userService;
+            this.mapper = mapper;
+            this.userService= userService;
+            this.validationService = validationService;
         }
 
         [AllowAnonymous]
         [HttpGet("CheckUsername")]
         public async Task<ActionResult<bool>> CheckUsernameUnique([FromQuery] string username)
         {
-            return Ok(await _userService.CheckUserDoesNotAlreadyExistByName(username));
+            return Ok(await this.userService.CheckUserDoesNotAlreadyExistByName(username));
         }
 
         [AllowAnonymous]
         [HttpGet("CheckEmail")]
         public async Task<ActionResult<bool>> CheckEmailUnique([FromQuery] string email)
         {
-            return Ok(await _userService.CheckUserDoesNotAlreadyExistByEmail(email));
+            return Ok(await this.userService.CheckUserDoesNotAlreadyExistByEmail(email));
         }
 
         [HttpPost("Register")]
@@ -43,22 +47,32 @@ namespace FileSharingApp.API.Controllers
         {
             _logger.Info($"Register user end point hit. Username {registerDto.Username}");
 
-            await registerDto.Validate(_userService);
+            await validationService.Validate(registerDto);
+
+            if (!await this.userService.CheckUserDoesNotAlreadyExistByName(registerDto.Username))
+            {
+                throw new ValidationException("Username already exists");
+            }
+            
+            if(!await this.userService.CheckUserDoesNotAlreadyExistByEmail(registerDto.Email))
+            {
+                throw new ValidationException("Email already exists");
+            }
 
             _logger.Info($"Register dto model validation complete. Attempting to create user. Username: {registerDto.Username}. Email: {registerDto.Email}");
 
-            var newUser = _mapper.Map<AppUser>(registerDto);
+            var newUser = this.mapper.Map<AppUser>(registerDto);
 
-            var result = await _userService.AttemptToCreateUser(newUser, registerDto.Password);
+            var result = await this.userService.AttemptToCreateUser(newUser, registerDto.Password);
 
             if (!result.Succeeded)
             {
-                AggregateException aggregateException = _userService.HandleUnsuccessfulUserCreation(result.Errors);
+                AggregateException aggregateException = this.userService.HandleUnsuccessfulUserCreation(result.Errors);
                 throw aggregateException;
             }
             else
             {
-                return Ok(await _userService.HandleSuccessfulUserCreation(newUser));
+                return Ok(await this.userService.HandleSuccessfulUserCreation(newUser));
             }
         }
 
@@ -67,18 +81,18 @@ namespace FileSharingApp.API.Controllers
         {
             _logger.Info($"Login user end point hit. Username {loginDto.Username}");
 
-            await loginDto.Validate(); 
+            await validationService.Validate(loginDto);
 
-            var user = await _userService.FindByNameAsync(loginDto.Username);
+            var user = await this.userService.FindByNameAsync(loginDto.Username);
             if (user == null)
             {
                 throw new UserNotFoundException($"No user found with the username: {loginDto.Username}");
             }
 
-            var passwordCorrect = await _userService.CheckPasswordAsync(user, loginDto.Password);
+            var passwordCorrect = await this.userService.CheckPasswordAsync(user, loginDto.Password);
             if (passwordCorrect)
             {
-                var userDto = await _userService.CreateUserDto(user);
+                var userDto = await this.userService.CreateUserDto(user);
                 _logger.Info($"User log in successful. Username {loginDto.Username}");
                 return Ok(userDto);
             } 

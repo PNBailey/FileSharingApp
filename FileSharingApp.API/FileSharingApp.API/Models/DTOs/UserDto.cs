@@ -2,9 +2,6 @@
 
 namespace FileSharingApp.API.Models.DTOs
 {
-    /// <summary>
-    /// A Dto for the <see cref="AppUser"/> Entity
-    /// </summary>
     public class UserDto
     {
         public int Id { get; set; }

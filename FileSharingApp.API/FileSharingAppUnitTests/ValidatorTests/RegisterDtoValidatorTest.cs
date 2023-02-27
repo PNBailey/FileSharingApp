@@ -1,11 +1,6 @@
 ﻿using FileSharingApp.API.Models.DTOs;
 using FileSharingAppUnitTests.Helpers;
 using FluentValidation.TestHelper;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Xunit;
 
 namespace FileSharingAppUnitTests.ValidatorTests
@@ -20,7 +15,7 @@ namespace FileSharingAppUnitTests.ValidatorTests
             var userService = UserServiceGenerator.CreateUserService(mockUserManager);
             var registerDto = new RegisterDto();
             registerDto.Username = "";
-            var registerDtoValidator = new RegisterDtoValidator(userService);
+            var registerDtoValidator = new RegisterDtoValidator();
 
             //Act
             var result = await registerDtoValidator.TestValidateAsync(registerDto);
@@ -37,7 +32,7 @@ namespace FileSharingAppUnitTests.ValidatorTests
             var userService = UserServiceGenerator.CreateUserService(mockUserManager);
             var registerDto = new RegisterDto();
             registerDto.Username = "James123";
-            var registerDtoValidator = new RegisterDtoValidator(userService);
+            var registerDtoValidator = new RegisterDtoValidator();
 
             //Act
             var result = await registerDtoValidator.TestValidateAsync(registerDto);
@@ -54,7 +49,7 @@ namespace FileSharingAppUnitTests.ValidatorTests
             var userService = UserServiceGenerator.CreateUserService(mockUserManager);
             var registerDto = new RegisterDto();
             registerDto.Password = "";
-            var registerDtoValidator = new RegisterDtoValidator(userService);
+            var registerDtoValidator = new RegisterDtoValidator();
             
             //Act
             var result = await registerDtoValidator.TestValidateAsync(registerDto);
@@ -71,7 +66,7 @@ namespace FileSharingAppUnitTests.ValidatorTests
             var userService = UserServiceGenerator.CreateUserService(mockUserManager);
             var registerDto = new RegisterDto();
             registerDto.Password = "Pa$$w0rd";
-            var registerDtoValidator = new RegisterDtoValidator(userService);
+            var registerDtoValidator = new RegisterDtoValidator();
 
             //Act
             var result = await registerDtoValidator.TestValidateAsync(registerDto);
@@ -88,7 +83,7 @@ namespace FileSharingAppUnitTests.ValidatorTests
             var userService = UserServiceGenerator.CreateUserService(mockUserManager);
             var registerDto = new RegisterDto();
             registerDto.Email = "";
-            var registerDtoValidator = new RegisterDtoValidator(userService);
+            var registerDtoValidator = new RegisterDtoValidator();
 
             //Act
             var result = await registerDtoValidator.TestValidateAsync(registerDto);
@@ -105,7 +100,7 @@ namespace FileSharingAppUnitTests.ValidatorTests
             var userService = UserServiceGenerator.CreateUserService(mockUserManager);
             var registerDto = new RegisterDto();
             registerDto.Email = "25tommy@gmail.com";
-            var registerDtoValidator = new RegisterDtoValidator(userService);
+            var registerDtoValidator = new RegisterDtoValidator();
 
             //Act
             var result = await registerDtoValidator.TestValidateAsync(registerDto);
