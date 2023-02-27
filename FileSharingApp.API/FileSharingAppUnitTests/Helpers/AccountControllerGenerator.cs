@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using FileSharingApp.API.Controllers;
 using FileSharingApp.API.Services;
+using FileSharingApp.API.Services.Interfaces;
+using Moq;
 
 namespace FileSharingAppUnitTests.Helpers
 {
@@ -12,9 +14,12 @@ namespace FileSharingAppUnitTests.Helpers
 
             Mapper autoMapper = new Mapper(mapperConfiguration);
 
+            Mock<IValidationService> mockValidationService = new Mock<IValidationService>();
+
             AccountController accountController = new AccountController(
                 autoMapper,
-                userService
+                userService,
+                mockValidationService.Object
             );
 
             return accountController;

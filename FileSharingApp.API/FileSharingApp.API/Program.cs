@@ -47,6 +47,9 @@ try
         };
     });
 
+    builder.Services.Configure<CloudinaryConfigOptions>(
+        configuration.GetSection(CloudinaryConfigOptions.CloudinaryConfig));
+
     builder.Services.AddCors(options =>
     {
         options.AddPolicy(name: MyAllowSpecificOrigins,
@@ -104,6 +107,7 @@ try
     // Adding services
     builder.Services.AddScoped<IUserService, UserService>();
     builder.Services.AddScoped<IErrorService, ErrorService>();
+    builder.Services.AddScoped<IPhotoService, PhotoService>();
 
 
     // NLog: Setup NLog for Dependency injection
