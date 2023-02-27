@@ -13,6 +13,9 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatMenuModule } from '@angular/material/menu';
+import { MatListModule } from '@angular/material/list';
+import { MatCardModule } from '@angular/material/card';
+
 
 // Components
 
@@ -29,7 +32,9 @@ import { MatMenuModule } from '@angular/material/menu';
     MatProgressSpinnerModule,
     MatToolbarModule,
     MatSidenavModule,
-    MatMenuModule
+    MatMenuModule,
+    MatListModule,
+    MatCardModule
   ], 
   exports: [
     MatIconModule,
@@ -41,7 +46,9 @@ import { MatMenuModule } from '@angular/material/menu';
     MatProgressSpinnerModule,
     MatToolbarModule,
     MatSidenavModule,
-    MatMenuModule
+    MatMenuModule,
+    MatListModule,
+    MatCardModule
   ]
 })
 export class AngularMaterialModule { }

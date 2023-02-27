@@ -12,13 +12,15 @@ import { AngularMaterialModule } from './shared/angular-material.module';
 
 // Interceptors
 import { JwtInterceptor } from './shared/interceptors/jwt.interceptor';
+import { EditProfileComponent } from './edit-profile/edit-profile.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     HomeComponent,
     ToolbarComponent,
-    AccountDialogComponent
+    AccountDialogComponent,
+    EditProfileComponent
   ],
   imports: [
     BrowserModule,
