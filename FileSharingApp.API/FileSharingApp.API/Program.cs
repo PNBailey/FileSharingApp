@@ -108,6 +108,7 @@ try
     builder.Services.AddScoped<IUserService, UserService>();
     builder.Services.AddScoped<IErrorService, ErrorService>();
     builder.Services.AddScoped<IPhotoService, PhotoService>();
+    builder.Services.AddScoped<IValidationService, ValidationService>();
 
 
     // NLog: Setup NLog for Dependency injection
