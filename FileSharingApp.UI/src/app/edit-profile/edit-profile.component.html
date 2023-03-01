@@ -1,13 +1,3 @@
-
-<div class="container d-flex justify-content-center my-5">
-    <mat-card class="profile-card rounded d-flex justify-content-center">
-        <img data-cy="profile-picture" class="p-2 rounded" mat-card-image src="{{ profilePictureUrl || 'https://res.cloudinary.com/filesharingapp/image/upload/v1676504732/Placeholder_user_image_t5klyw.jpg'}}">
-        <mat-card-content class="d-flex justify-content-center m-3">
-            <p data-cy="bio">{{bio}}</p>
-        </mat-card-content>
-        <mat-card-actions class="m-2 d-flex justify-content-center">
-            <button mat-button>LIKE</button>
-            <button mat-button>SHARE</button>
-        </mat-card-actions>
-    </mat-card>
+<div class="container d-flex justify-content-center align-items-center my-5">
+    <app-edit-profile-card></app-edit-profile-card>
 </div>
