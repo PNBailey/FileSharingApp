@@ -1,6 +1,8 @@
+import { Image } from "./image";
+
 export class User {
     id: number;
     username: string;
-    profilePictureUrl: string;
+    profilePicture: Image;
     token: string;
 }

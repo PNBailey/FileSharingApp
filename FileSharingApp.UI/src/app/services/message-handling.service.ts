@@ -18,10 +18,12 @@ export class MessageHandlingService {
   ).subscribe();
 
   onDisplayNewMessage(snackBarItem: SnackBarItem) {
+    console.log("trig");
+    
     this.displayNewMessage.next(snackBarItem);
   }
 
-  displayMessage(snackBarItem: SnackBarItem) {    
+  private displayMessage(snackBarItem: SnackBarItem) {    
     this.snackbar.open(snackBarItem.message, snackBarItem.action, {
       panelClass: [snackBarItem.classType],
       duration: snackBarItem.duration,

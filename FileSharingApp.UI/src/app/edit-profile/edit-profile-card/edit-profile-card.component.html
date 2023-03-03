@@ -1,5 +1,12 @@
 <mat-card class="profile-card rounded d-flex justify-content-center">
-    <div class="profile-picture-container">
+    <div class="profile-picture-container" (click)="fileUpload.click()">
+        <input
+          type="file"
+          class="d-none"
+          data-cy="file-input"
+          accept=".png, .jpg"
+          (change)="onFileSelected($event)"
+          #fileUpload>
         <img
             data-cy="profile-picture"
             class="p-2 rounded profile-picture"
