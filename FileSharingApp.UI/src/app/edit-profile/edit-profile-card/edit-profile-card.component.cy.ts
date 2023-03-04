@@ -10,12 +10,6 @@ describe("EditProfileComponent", () => {
     fileInput: '[data-cy="file-input"]'
   }
 
-  // const messageHandlingService = {
-  //   onDisplayNewMessage: (snackBarItem: SnackBarItem) => {
-  //     return null;
-  //   }
-  // }
-
   it("Mounts", () => {
     cy.mount(EditProfileCardComponent, setupCypressConfig<EditProfileCardComponent>());
   });

@@ -1,3 +1,6 @@
 <div class="container d-flex justify-content-center align-items-center my-5">
-    <app-edit-profile-card (incorrectFileTypeSelected)="displayIncorrectFileTypeMessage()" (newImageSelected)="uploadNewProfilePicture()"></app-edit-profile-card>
+    <app-edit-profile-card
+      (incorrectFileTypeSelected)="displayIncorrectFileTypeMessage()"
+      (newImageSelected)="uploadProfilePicture($event)">
+    </app-edit-profile-card>
 </div>

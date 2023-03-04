@@ -17,9 +17,7 @@ export class MessageHandlingService {
     tap(snackBarItem => this.displayMessage(snackBarItem))
   ).subscribe();
 
-  onDisplayNewMessage(snackBarItem: SnackBarItem) {
-    console.log("trig");
-    
+  onDisplayNewMessage(snackBarItem: SnackBarItem) {    
     this.displayNewMessage.next(snackBarItem);
   }
 

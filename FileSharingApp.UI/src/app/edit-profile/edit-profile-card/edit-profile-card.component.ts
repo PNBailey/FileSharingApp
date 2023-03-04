@@ -14,14 +14,14 @@ export class EditProfileCardComponent {
   @Input('bio') bio: string;
   @Input('profilePictureUrl') profilePictureUrl: string;
   @Output('incorrectFileTypeSelected') incorrectFileTypeSelected: EventEmitter<void> = new EventEmitter();
-  @Output('newImageSelected') newImageSelected: EventEmitter<void> = new EventEmitter();
+  @Output('newImageSelected') newImageSelected: EventEmitter<File> = new EventEmitter<File>();
 
   onFileSelected(event: any) {  
     const file: File = event.target.files[0];
     if(file.type != ValidFileTypes.JPG && file.type != ValidFileTypes.PNG) {
       this.incorrectFileTypeSelected.emit();
     } else {
-      this.newImageSelected.emit();
+      this.newImageSelected.emit(file);
     }
   }
 }

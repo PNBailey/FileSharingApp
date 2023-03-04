@@ -4,6 +4,7 @@ using FileSharingApp.API.Models.DTOs;
 using FileSharingApp.API.Services.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 using System.Text;
 
 namespace FileSharingApp.API.Controllers
@@ -43,10 +44,11 @@ namespace FileSharingApp.API.Controllers
             throw new NotImplementedException();
         }
 
-        [HttpPost("UploadProfilePicture")]
+        [HttpPost("Upload-Profile-Picture")]
         public ImageUploadResult UploadProfilePicture(IFormFile image)
         {
-            return this.photoService.UploadImage(image);
+            var result = this.photoService.UploadImage(image);
+            return result;
         }
     }
 }

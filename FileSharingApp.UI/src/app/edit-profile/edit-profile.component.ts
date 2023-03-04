@@ -1,6 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { SnackbarAction, SnackbarClassType, SnackbarDuration } from '../models/snackbar-item';
 import { MessageHandlingService } from '../services/message-handling.service';
+import { UserService } from '../services/user.service';
 
 @Component({
   selector: 'app-edit-profile',
@@ -9,7 +10,10 @@ import { MessageHandlingService } from '../services/message-handling.service';
 })
 export class EditProfileComponent {
 
-  constructor(private messageHandlingService: MessageHandlingService) {}
+  constructor(
+    private messageHandlingService: MessageHandlingService,
+    private userService: UserService
+  ) {}
 
   displayIncorrectFileTypeMessage() {
     this.messageHandlingService.onDisplayNewMessage({
@@ -20,7 +24,7 @@ export class EditProfileComponent {
     });
   }
 
-  uploadNewProfilePicture() {
-    
+  uploadProfilePicture(file: File) {  
+    this.userService.uploadProfilePicture(file).subscribe();
   }
 }
