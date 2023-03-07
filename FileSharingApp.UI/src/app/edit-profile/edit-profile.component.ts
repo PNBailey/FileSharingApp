@@ -9,7 +9,6 @@ import { UserService } from '../services/user.service';
   styleUrls: ['./edit-profile.component.css']
 })
 export class EditProfileComponent {
-
   constructor(
     private messageHandlingService: MessageHandlingService,
     private userService: UserService

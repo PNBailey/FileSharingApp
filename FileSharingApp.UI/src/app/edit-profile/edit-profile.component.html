@@ -1,5 +1,6 @@
 <div class="container d-flex justify-content-center align-items-center my-5">
     <app-edit-profile-card
+      data-cy="edit-profile-card-component"
       (incorrectFileTypeSelected)="displayIncorrectFileTypeMessage()"
       (newImageSelected)="uploadProfilePicture($event)">
     </app-edit-profile-card>

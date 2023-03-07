@@ -6,6 +6,7 @@ import { MatDialogModule } from "@angular/material/dialog";
 import { MatIconModule } from "@angular/material/icon";
 import { MatMenuModule } from "@angular/material/menu";
 import { MatSidenavModule } from "@angular/material/sidenav";
+import { MatSnackBarModule } from "@angular/material/snack-bar";
 import { MatToolbarModule } from "@angular/material/toolbar";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { RouterTestingModule } from "@angular/router/testing";
@@ -34,7 +35,8 @@ export function setupCypressConfig<Type>(overrideConfigOptions: MountConfig<Type
             BrowserAnimationsModule,
             RouterTestingModule,
             MatSidenavModule,
-            MatCardModule
+            MatCardModule,
+            MatSnackBarModule
         ],
         declarations: [AppComponent, ToolbarComponent, AccountDialogComponent, HomeComponent, EditProfileComponent, EditProfileCardComponent],
         ...overrideConfigOptions
