@@ -1,11 +1,12 @@
 ﻿using CloudinaryDotNet.Actions;
+using FileSharingApp.API.ExtensionMethods;
 using FileSharingApp.API.Models;
 using FileSharingApp.API.Models.DTOs;
 using FileSharingApp.API.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
-using System.Text;
 
 namespace FileSharingApp.API.Controllers
 {
@@ -44,10 +45,11 @@ namespace FileSharingApp.API.Controllers
             throw new NotImplementedException();
         }
 
+        [Authorize]
         [HttpPost("Upload-Profile-Picture")]
         public ImageUploadResult UploadProfilePicture(IFormFile image)
         {
-            var result = this.photoService.UploadImage(image);
+            var result = this.photoService.UploadImage(image, User.GetUserId());
             return result;
         }
     }

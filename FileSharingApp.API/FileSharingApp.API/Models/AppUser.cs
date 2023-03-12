@@ -8,9 +8,9 @@ namespace FileSharingApp.API.Models
     {
         public ICollection<AppUserRole> UserRoles { get; set; } = null!;
 
-        public string Bio { get; set; } = null!;
+        public string? Bio { get; set; }
 
-        public string ProfilePictureUrl { get; set; } = null!;
+        public string? ProfilePictureUrl { get; set; }
 
     }
 }

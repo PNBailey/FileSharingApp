@@ -1,4 +1,6 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Observable } from 'rxjs';
+import { User } from 'src/app/models/user';
 
 export enum ValidFileTypes {
   JPG = "image/jpeg",
@@ -11,8 +13,8 @@ export enum ValidFileTypes {
 })
 
 export class EditProfileCardComponent {
-  @Input('bio') bio: string;
-  @Input('profilePictureUrl') profilePictureUrl: string;
+  @Input('loggedOnUser$') loggedOnUser$: Observable<null | User>;
+
   @Output('incorrectFileTypeSelected') incorrectFileTypeSelected: EventEmitter<void> = new EventEmitter();
   @Output('newImageSelected') newImageSelected: EventEmitter<File> = new EventEmitter<File>();
 

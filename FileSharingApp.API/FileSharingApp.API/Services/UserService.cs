@@ -5,7 +5,6 @@ using FileSharingApp.API.Models;
 using FileSharingApp.API.Models.DTOs;
 using FileSharingApp.API.Services.Interfaces;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
 using NLog;
 
 namespace FileSharingApp.API.Services

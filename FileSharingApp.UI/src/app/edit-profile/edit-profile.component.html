@@ -2,6 +2,13 @@
     <app-edit-profile-card
       data-cy="edit-profile-card-component"
       (incorrectFileTypeSelected)="displayIncorrectFileTypeMessage()"
-      (newImageSelected)="uploadProfilePicture($event)">
+      (newImageSelected)="uploadProfilePicture($event)"
+      [loggedOnUser$]="loggedOnUser$">
     </app-edit-profile-card>
+    <mat-spinner
+      *ngIf="uploadingProfilePicture$ | async"
+      class="uploading-profile-picture-spinner"
+      matSuffix
+      [diameter]="25">
+    </mat-spinner>
 </div>

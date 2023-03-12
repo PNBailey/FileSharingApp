@@ -10,6 +10,6 @@ namespace FileSharingApp.API.Models.DTOs
 
         public string Name { get; set; } = string.Empty;
 
-        public JwtSecurityToken? Token { get; set; }
+        public string Token { get; set; } = string.Empty;
     }
 }

@@ -1,4 +1,4 @@
-<mat-card class="profile-card rounded d-flex justify-content-center">
+<mat-card class="profile-card rounded d-flex justify-content-center" *ngIf="(loggedOnUser$ | async) as user">
     <div class="profile-picture-container" (click)="fileUpload.click()">
         <input
           type="file"
@@ -11,7 +11,7 @@
             data-cy="profile-picture"
             class="p-2 rounded profile-picture"
             mat-card-image
-            src="{{ profilePictureUrl || 'https://res.cloudinary.com/filesharingapp/image/upload/v1676504732/Placeholder_user_image_t5klyw.jpg'}}">
+            src="{{ user.profilePictureUrl || 'https://res.cloudinary.com/filesharingapp/image/upload/v1676504732/Placeholder_user_image_t5klyw.jpg'}}">
         <div class="d-flex justify-content-end upload-icon-container">
             <mat-icon
                 aria-hidden="false"
@@ -22,7 +22,7 @@
         </div>
     </div>
     <mat-card-content class="d-flex justify-content-center m-3">
-        <p data-cy="bio">{{bio}}</p>
+        <p data-cy="bio" class="bio">{{user.bio}}</p>
     </mat-card-content>
     <mat-card-actions class="m-2 d-flex justify-content-center">
         <button mat-button>LIKE</button>

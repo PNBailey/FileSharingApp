@@ -48,3 +48,9 @@
     bottom: 0;
     height: 100%;
 }
+
+.bio {
+    max-inline-size: 276px;
+    overflow-wrap: break-word;
+    hyphens: auto;
+}

@@ -9,7 +9,7 @@ import { LoginUser } from '../models/loginUser';
 import { RegisterUser } from '../models/registerUser';
 import { User } from '../models/user';
 import { LoadingService } from '../services/loading.service';
-import { ValidationService } from '../shared/validators/validation.service';
+import { ValidationService } from '../services/validation.service';
 
 @Injectable({
   providedIn: 'root'
@@ -88,7 +88,7 @@ export class AccountService {
   private loginOrRegister(user: RegisterUser | LoginUser, url: string) {
     return this.http.post<User>(url, user).pipe(
       tap(user => {
-        if(user) {
+        if(user) {          
           this.setLoggedOnUser(user),
           this.dialog.closeAll();
           this.router.navigate(['/home']);
@@ -108,8 +108,8 @@ export class AccountService {
       this.setLoggedOnUser(null);
   }
 
-  setLoggedOnUser(user: User | null) {
+  setLoggedOnUser(user: Partial<User> | null) {    
     localStorage.setItem('user', JSON.stringify(user));
-    this.loggedOnUser.next(user);
+    this.loggedOnUser.next(user ? {...new User(), ...user} : null);
   }
 }
