@@ -41,41 +41,19 @@ namespace FileSharingApp.API.Services
         {
             var stream = image.OpenReadStream();
 
-            //var path = CreateUserFolder(userId);
-
             var imageUploadParams = new ImageUploadParams()
             {
                 File = new FileDescription(image.FileName, stream),
                 UseFilename = true,
                 UniqueFilename = false,
                 Overwrite = true,
-                Folder = userId.ToString()
+                Folder = userId.ToString(),
+                PublicId = $"{userId}-profile-picture",
+                Transformation = new Transformation().Height(500).Width(500).Crop("fill").Gravity("face")
             };
 
             var response = Cloudinary.Upload(imageUploadParams);
             return response;
         }
-
-        //public string CreateUserFolder(int userId)
-        //{
-        //    if (UserFolderAlreadyExists(userId))
-        //    {
-        //        return string.Empty;
-        //    }
-
-        //    var result = Cloudinary.CreateFolder(userId.ToString());
-
-        //    if(!result.Success)
-        //    {
-        //        throw new ImageUploadException("Error when creating folder within Cloudinary");
-        //    }
-
-        //    return result.Path;
-        //}
-
-        //private bool UserFolderAlreadyExists(int userId)
-        //{
-        //    return Cloudinary.GetResource(userId) != null;
-        //}
     }
 }
