@@ -45,24 +45,24 @@ namespace FileSharingAppUnitTests.ControllerTests
         }
         
         [Fact]
-        public async void UpdateUserProfilePicture_should_call_photo_service_upload_method()
+        public void UpdateUserProfilePicture_should_call_photo_service_upload_method()
         {
             var mockPhotoService = new Mock<IPhotoService>();
             var mockImageUploadResult = new ImageUploadResult();
-            mockPhotoService.Setup(x => x.UploadImage(It.IsAny<IFormFile>())).Returns(mockImageUploadResult);
+            mockPhotoService.Setup(x => x.UploadImage(It.IsAny<IFormFile>(), It.IsAny<int>())).Returns(mockImageUploadResult);
             var sut = new UserController(new Mock<IUserService>().Object, mockPhotoService.Object);
             var bytes = Encoding.UTF8.GetBytes("This is a dummy file");
             IFormFile mockImage = new FormFile(new MemoryStream(bytes), 0, bytes.Length, "", "TestImage");
             sut.UploadProfilePicture(mockImage);
-            mockPhotoService.Verify(x => x.UploadImage(mockImage), Times.Once);
+            mockPhotoService.Verify(x => x.UploadImage(mockImage, 1234), Times.Once);
         }
 
         [Fact]
-        public async void UpdateUserProfilePicture_should_return_an_ImageUploadResult()
+        public void UpdateUserProfilePicture_should_return_an_ImageUploadResult()
         {
             var mockPhotoService = new Mock<IPhotoService>();
             var mockImageUploadResult = new ImageUploadResult();
-            mockPhotoService.Setup(x => x.UploadImage(It.IsAny<IFormFile>())).Returns(mockImageUploadResult);
+            mockPhotoService.Setup(x => x.UploadImage(It.IsAny<IFormFile>(), It.IsAny<int>())).Returns(mockImageUploadResult);
             var sut = new UserController(new Mock<IUserService>().Object, mockPhotoService.Object);
             var bytes = Encoding.UTF8.GetBytes("This is a dummy file");
             IFormFile mockImage = new FormFile(new MemoryStream(bytes), 0, bytes.Length, "", "TestImage");

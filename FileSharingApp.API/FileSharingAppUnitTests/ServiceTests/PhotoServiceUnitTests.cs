@@ -32,7 +32,7 @@ namespace FileSharingAppUnitTests.ServiceTests
             var service = new PhotoServiceTestClass(mockCloudinaryConfig.Object);
             var bytes = Encoding.UTF8.GetBytes("This is a dummy file");
             IFormFile mockImage = new FormFile(new MemoryStream(bytes), 0, bytes.Length, "", "TestImage");
-            var result = service.UploadImage(mockImage);
+            var result = service.UploadImage(mockImage, 1234);
 
             Assert.IsType<ImageUploadResult>(result);
             Assert.Equal(HttpStatusCode.OK, result.StatusCode);
