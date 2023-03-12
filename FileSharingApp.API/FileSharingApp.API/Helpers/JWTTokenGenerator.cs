@@ -20,17 +20,22 @@ namespace FileSharingApp.API.Helpers
             _configuration = configuration;
         }
 
-        public async Task<JwtSecurityToken> CreateJWTToken(AppUser user)
+        public async Task<string> CreateJWTToken(AppUser user)
         {
-            var token = new JwtSecurityToken(
-                issuer: _configuration["JWT:ValidIssuer"],
-                audience: _configuration["JWT:ValidAudience"],
-                expires: DateTime.Now.AddHours(3),
-                claims: await GetUserClaims(user),
-                signingCredentials: CreateSigningCredentials()
-            );
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(await GetUserClaims(user)),
+                Expires = DateTime.Now.AddDays(7),
+                SigningCredentials = CreateSigningCredentials(),
+                Audience = _configuration["JWT:ValidAudience"],
+                Issuer = _configuration["JWT:ValidIssuer"]
+            };
 
-            return token;
+            var tokenHandler = new JwtSecurityTokenHandler();
+
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+
+            return tokenHandler.WriteToken(token);
         }
 
         private SigningCredentials CreateSigningCredentials()
@@ -46,19 +51,13 @@ namespace FileSharingApp.API.Helpers
             var userRoles = await _userManager.GetRolesAsync(user);
 
             var authClaims = new List<Claim>
-                {
-                    new Claim(ClaimTypes.Name, user.UserName),
-                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                };
-
-            if (userRoles.Any())
             {
-                foreach (var userRole in userRoles)
-                {
-                    authClaims.Add(new Claim(ClaimTypes.Role, userRole));
-                }
-            }
-          
+                new Claim(JwtRegisteredClaimNames.NameId, user.Id.ToString()),
+                new Claim(JwtRegisteredClaimNames.UniqueName, user.UserName)
+            };
+
+            authClaims.AddRange(userRoles.Select(role => new Claim(ClaimTypes.Role, role))); 
+
             return authClaims;
         }
     }
