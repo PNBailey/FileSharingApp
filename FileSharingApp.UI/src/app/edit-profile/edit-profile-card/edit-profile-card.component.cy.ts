@@ -1,4 +1,6 @@
+import { of } from "rxjs";
 import { SnackbarAction, SnackbarClassType, SnackbarDuration, SnackBarItem } from "src/app/models/snackbar-item";
+import { User } from "src/app/models/user";
 import { MessageHandlingService } from "src/app/services/message-handling.service";
 import { setupCypressConfig } from "src/app/shared/testing/cypress-config-setup/cypress-config-setup";
 import { EditProfileCardComponent } from "./edit-profile-card.component";
@@ -14,11 +16,17 @@ describe("EditProfileComponent", () => {
     cy.mount(EditProfileCardComponent, setupCypressConfig<EditProfileCardComponent>());
   });
 
+  const mockUser = new User();
+  mockUser.id = 0;
+  mockUser.bio = "test";
+  mockUser.profilePictureUrl = "";
+  mockUser.token = "testToken";
+  mockUser.username = "testUser";
+
   beforeEach(() => {
     cy.mount(EditProfileCardComponent, setupCypressConfig<EditProfileCardComponent>({
       componentProperties: {
-        bio: "test",
-        profilePictureUrl: undefined
+        loggedOnUser$: of(mockUser)
       }
     }));
   });
@@ -32,9 +40,10 @@ describe("EditProfileComponent", () => {
   });
 
   it("profile picture should be users profile picture", () => {
+    mockUser.profilePictureUrl = 'https://res.cloudinary.com/filesharingapp/image/upload/v1677632350/Application%20Assets/IMG_20200619_164656_k76jjw.jpg';
     cy.mount(EditProfileCardComponent, setupCypressConfig<EditProfileCardComponent>({
       componentProperties: {
-        profilePictureUrl: 'https://res.cloudinary.com/filesharingapp/image/upload/v1677632350/Application%20Assets/IMG_20200619_164656_k76jjw.jpg'
+        loggedOnUser$: of(mockUser)
       }
     }));
     cy.wait(1000);

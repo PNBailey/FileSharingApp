@@ -13,6 +13,7 @@ export enum ValidFileTypes {
 })
 
 export class EditProfileCardComponent {
+  
   @Input('loggedOnUser$') loggedOnUser$: Observable<null | User>;
 
   @Output('incorrectFileTypeSelected') incorrectFileTypeSelected: EventEmitter<void> = new EventEmitter();

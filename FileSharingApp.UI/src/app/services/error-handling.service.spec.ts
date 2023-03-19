@@ -10,7 +10,7 @@ describe('ErrorHandlingService', () => {
     let service: ErrorHandlingService;
     let messageHandlingService = jasmine.createSpyObj('MessageHandlingService', ['onDisplayNewMessage']);
     let httpMock: HttpTestingController;
-      
+    
     beforeEach(() => {
         TestBed.configureTestingModule({
             imports: [MatSnackBarModule, HttpClientTestingModule],
@@ -21,7 +21,7 @@ describe('ErrorHandlingService', () => {
         service = TestBed.inject(ErrorHandlingService);
         httpMock = TestBed.inject(HttpTestingController);
     });
-  
+    
     it('should set the custom error message for 401 Unauthorized', () => {
         service.error = {status: ErrorCode.Unauthorized, error: { type: PASSWORD_INCORRECT_EXCEPTION }};
         service['setCustomErrorMessage']();

@@ -1,5 +1,5 @@
-import { Component, Input } from '@angular/core';
-import { finalize, Observable, pipe, tap, withLatestFrom } from 'rxjs';
+import { Component } from '@angular/core';
+import { Observable, tap, withLatestFrom } from 'rxjs';
 import { AccountService } from '../account/account.service';
 import { SnackbarAction, SnackbarClassType, SnackbarDuration } from '../models/snackbar-item';
 import { User } from '../models/user';
@@ -12,6 +12,7 @@ import { UserService } from '../services/user.service';
   templateUrl: './edit-profile.component.html',
   styleUrls: ['./edit-profile.component.css']
 })
+
 export class EditProfileComponent {
   constructor(
     private messageHandlingService: MessageHandlingService,
@@ -37,11 +38,10 @@ export class EditProfileComponent {
     this.userService.uploadProfilePicture(file).pipe(
       withLatestFrom(this.loggedOnUser$),
       tap(([imageUploadResult, loggedOnUser]) => {
-        const profilePictureUrl = imageUploadResult.url;
-        this.accountService.setLoggedOnUser({
-          ...loggedOnUser,
-          profilePictureUrl
-        });
+        if(loggedOnUser) {
+          loggedOnUser.profilePictureUrl = imageUploadResult.url;
+        }
+        this.accountService.setLoggedOnUser(loggedOnUser);
       })
     ).subscribe();
   }

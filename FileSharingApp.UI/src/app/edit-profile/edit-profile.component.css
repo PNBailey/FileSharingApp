@@ -1,8 +1,12 @@
 .container {
-    max-width: 1000px;
+    width: fit-content;
 }
 
 .uploading-profile-picture-spinner {
     position: absolute;
-    top: 27%
+    top: 27%;
+}
+
+.divider {
+    max-width: 93%;
 }

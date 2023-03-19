@@ -4,4 +4,5 @@ export class User {
     bio: string;
     profilePictureUrl: string;
     token: string;
+    email: string;
 }

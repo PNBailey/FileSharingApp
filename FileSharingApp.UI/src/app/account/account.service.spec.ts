@@ -189,6 +189,8 @@ describe('Account Service', () => {
         });
         it('should set the value of the loggedOnUser behavior subject', () => {
             const user = new User();
+            user.id = 1;
+            user.bio = "testing";
 
             service.setLoggedOnUser(user);
 

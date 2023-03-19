@@ -24,7 +24,7 @@ describe('UserService', () => {
       var file = new File([""], "filename", { type: 'text/html' });
       service.uploadProfilePicture(file).subscribe(() => {
       });
-      const req = httpMock.expectOne(`https://localhost:7249/api/User/Upload-Profile-Picture`).toHaveBeenCalledWith(file);
+      const req = httpMock.expectOne(`https://localhost:7249/api/User/Upload-Profile-Picture`);
       expect(req.request.method).toEqual('POST');
     });
   })

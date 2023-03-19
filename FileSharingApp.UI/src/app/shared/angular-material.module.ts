@@ -15,6 +15,8 @@ import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatListModule } from '@angular/material/list';
 import { MatCardModule } from '@angular/material/card';
+import {MatTabsModule} from '@angular/material/tabs';
+import {MatDividerModule} from '@angular/material/divider';
 
 
 // Components
@@ -34,7 +36,9 @@ import { MatCardModule } from '@angular/material/card';
     MatSidenavModule,
     MatMenuModule,
     MatListModule,
-    MatCardModule
+    MatCardModule,
+    MatTabsModule,
+    MatDividerModule
   ], 
   exports: [
     MatIconModule,
@@ -48,7 +52,9 @@ import { MatCardModule } from '@angular/material/card';
     MatSidenavModule,
     MatMenuModule,
     MatListModule,
-    MatCardModule
+    MatCardModule,
+    MatTabsModule,
+    MatDividerModule
   ]
 })
 export class AngularMaterialModule { }
