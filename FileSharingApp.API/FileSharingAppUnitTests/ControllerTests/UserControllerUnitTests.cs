@@ -3,6 +3,7 @@ using FileSharingApp.API.Controllers;
 using FileSharingApp.API.Models;
 using FileSharingApp.API.Services.Interfaces;
 using FileSharingAppUnitTests.Helpers;
+using FileSharingAppUnitTests.Helpers.ModelMocks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Moq;
@@ -16,49 +17,53 @@ namespace FileSharingAppUnitTests.ControllerTests
         [Fact]
         public async void UpdateUser_should_call_UserService_UpdateUser_Method()
         {
-            var mockUserService = new Mock<IUserService>();
-            var identityResult = IdentityResult.Success;
-            var task = Task.FromResult(identityResult);
-            mockUserService.Setup(x => x.UpdateUser(It.IsAny<AppUser>())).Returns(task);
-            var user = new AppUser();
-            var sut = new UserController(mockUserService.Object, new Mock<IPhotoService>().Object);
-            var result = await sut.Update(user);
-            mockUserService.Verify(x => x.UpdateUser(user), Times.Once);
+            var mockUser = MockUserGenerator.GenerateMockUser();
+            var mockUserService = MockUserServiceGenerator.GenerateMockUserService(mockUser);
+            var sut = UserControllerGenerator.GenerateUserController(mockUserService);
+            var result = await sut.Update(mockUser);
+            mockUserService.Verify(x => x.UpdateUser(mockUser), Times.Once);
         }
         
         [Fact]
         public async void UpdateUser_should_return_an_Identity_Result()
         {
-            var mockUserService = new Mock<IUserService>();
-            var identityResult = IdentityResult.Success;
-            var task = Task.FromResult(identityResult);
-            mockUserService.Setup(x => x.UpdateUser(It.IsAny<AppUser>())).Returns(task);
             var user = new AppUser();
-            var sut = new UserController(mockUserService.Object, new Mock<IPhotoService>().Object);
+            var sut = UserControllerGenerator.GenerateUserController();
             var result = await sut.Update(user);
-            Assert.IsType<IdentityResult>(identityResult);
+            Assert.IsType<IdentityResult>(result);
         }
         
         [Fact]
-        public void UpdateUserProfilePicture_should_call_photo_service_upload_method()
+        public async void UpdateUserProfilePicture_should_call_photo_service_upload_method()
         {
             var mockPhotoService = MockPhotoServiceGenerator.GenerateMockPhotoService();
             var sut = UserControllerGenerator.GenerateUserController(mockPhotoService);
             var bytes = Encoding.UTF8.GetBytes("This is a dummy file");
             IFormFile mockImage = new FormFile(new MemoryStream(bytes), 0, bytes.Length, "", "TestImage");
-            sut.UploadProfilePicture(mockImage);
+            await sut.UploadProfilePicture(mockImage);
             mockPhotoService.Verify(x => x.UploadImage(mockImage, 1234), Times.Once);
         }
 
         [Fact]
         public void UpdateUserProfilePicture_should_return_an_ImageUploadResult()
         {
-            var mockPhotoService = MockPhotoServiceGenerator.GenerateMockPhotoService();
-            var sut = UserControllerGenerator.GenerateUserController(mockPhotoService);
+            var sut = UserControllerGenerator.GenerateUserController();
             var bytes = Encoding.UTF8.GetBytes("This is a dummy file");
             IFormFile mockImage = new FormFile(new MemoryStream(bytes), 0, bytes.Length, "", "TestImage");
             var result = sut.UploadProfilePicture(mockImage);
-            Assert.IsType<ImageUploadResult>(result);
+            Assert.IsType<ImageUploadResult>(result.Result);
+        }
+
+        [Fact]
+        public async void UpdateUserProfilePicture_should_call_user_service_update_method_if_upload_was_successful()
+        {
+            var mockUser = MockUserGenerator.GenerateMockUser();
+            var mockUserService = MockUserServiceGenerator.GenerateMockUserService(mockUser);
+            var sut = UserControllerGenerator.GenerateUserController(mockUserService);
+            var bytes = Encoding.UTF8.GetBytes("This is a dummy file");
+            IFormFile mockImage = new FormFile(new MemoryStream(bytes), 0, bytes.Length, "", "TestImage");
+            await sut.UploadProfilePicture(mockImage);
+            mockUserService.Verify(x => x.UpdateUser(mockUser), Times.Once);
         }
     }
 }

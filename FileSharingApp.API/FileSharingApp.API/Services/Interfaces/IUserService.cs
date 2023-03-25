@@ -24,5 +24,7 @@ namespace FileSharingApp.API.Services.Interfaces
         Task<bool> CheckPasswordAsync(AppUser user, string password);
 
         Task<IdentityResult> UpdateUser(AppUser user);
+
+        Task<AppUser> FindByIdAsync(int userId);
     }
 }

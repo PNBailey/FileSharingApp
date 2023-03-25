@@ -14,11 +14,13 @@ namespace FileSharingApp.API.Controllers
     {
         private readonly IUserService userService;
         private readonly IPhotoService photoService;
+        private readonly UserManager<AppUser> userManager;
 
-        public UserController(IUserService userService, IPhotoService photoService)
+        public UserController(IUserService userService, IPhotoService photoService, UserManager<AppUser?> userManager)
         {
             this.userService = userService;
             this.photoService = photoService;
+            this.userManager = userManager;
         }
 
         [HttpGet]
@@ -47,9 +49,15 @@ namespace FileSharingApp.API.Controllers
 
         [Authorize]
         [HttpPost("Upload-Profile-Picture")]
-        public ImageUploadResult UploadProfilePicture(IFormFile image)
+        public async Task<ImageUploadResult> UploadProfilePicture(IFormFile image)
         {
             var result = this.photoService.UploadImage(image, User.GetUserId());
+            if(result.Error == null)
+            {
+                var user = await this.userService.FindByIdAsync(User.GetUserId());
+                user.ProfilePictureUrl = result.PublicId;
+                await this.userService.UpdateUser(user);
+            }
             return result;
         }
     }

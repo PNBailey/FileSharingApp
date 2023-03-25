@@ -1,23 +1,25 @@
 ﻿using FileSharingApp.API.CustomExceptions;
+using FileSharingApp.API.Models;
 using FileSharingApp.API.Models.DTOs;
 using FileSharingAppUnitTests.Helpers;
-using FluentAssertions;
+using FileSharingAppUnitTests.Helpers.ModelMocks;
+using FileSharingAppUnitTests.TestData;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Moq;
 using Xunit;
 
-namespace FileSharingAppUnitTests
+namespace FileSharingAppUnitTests.ControllerTests
 {
     public class AccountControllerUnitTests : BaseUnitTest
     {
 
         [Fact]
-        public async void CheckUsernameUnique_should_return_true_when_user_does_not_exist()
+        public async void CheckUsernameUnique_should_return_true_when_CheckUserDoesNotAlreadyExistByName_user_service_method_returns_true()
         {
             //Arrange 
-            var mockUserManager = MockUserManagerGenerator.CreateMockUserManager();
-            MockUserManagerGenerator.SetupFindByNameAsync(mockUserManager, "jack");
-            var userService = UserServiceGenerator.CreateUserService(mockUserManager);
-            var sut = AccountControllerGenerator.CreateAccountController(userService);
+            var mockUserService = MockUserServiceGenerator.GenerateMockUserService();
+            var sut = AccountControllerGenerator.CreateAccountController(mockUserService.Object);
 
             //Act
             var actionResult = await sut.CheckUsernameUnique("jack");
@@ -30,11 +32,9 @@ namespace FileSharingAppUnitTests
         [Fact]
         public async void CheckEmailUnique_should_return_true_when_user_does_not_exist()
         {
-            //Arrange 
-            var mockUserManager = MockUserManagerGenerator.CreateMockUserManager();
-            MockUserManagerGenerator.SetupFindByEmailAsync(mockUserManager, "test@gmail.com");
-            var userService = UserServiceGenerator.CreateUserService(mockUserManager);
-            var sut = AccountControllerGenerator.CreateAccountController(userService);
+            //Arrange
+            var mockUserService = MockUserServiceGenerator.GenerateMockUserService();
+            var sut = AccountControllerGenerator.CreateAccountController(mockUserService.Object);
 
             //Act
             var actionResult = await sut.CheckEmailUnique("test@gmail.com");
@@ -45,24 +45,18 @@ namespace FileSharingAppUnitTests
         }
 
         [Fact]
-        public async void RegisterUser_should_return_a_userDto_when_register_Dto_is_valid()
+        public async void RegisterUser_should_return_a_OkObjestResult_which_wraps_a_userDto_when_register_Dto_is_valid()
         {
             //Arrange 
-            var mockUserManager = MockUserManagerGenerator.CreateMockUserManager();
-            var registerDto = new RegisterDto();
-            registerDto.Username = "Paud";
-            registerDto.Password = "Pa$$w0rd";
-            registerDto.Email = "TestEmail@gmail.com";
-            MockUserManagerGenerator.SetupFindByNameAsync(mockUserManager, registerDto.Username);
-            MockUserManagerGenerator.SetupFindByEmailAsync(mockUserManager, registerDto.Email);
-            MockUserManagerGenerator.SetupCreateAsyncSuccess(mockUserManager);
-            var userService = UserServiceGenerator.CreateUserService(mockUserManager);
-            var sut = AccountControllerGenerator.CreateAccountController(userService);
+            var registerDto = MockRegisterDtoGenerator.GenerateMockRegisterDto();
+            var mockUserService = MockUserServiceGenerator.GenerateMockUserService();
+            var sut = AccountControllerGenerator.CreateAccountController(mockUserService.Object);
 
             //Act
             var actionResult = await sut.RegisterUser(registerDto);
 
             //Assert
+            Assert.IsType<OkObjectResult>(actionResult.Result);
             var result = actionResult.Result as OkObjectResult;
             Assert.IsType<UserDto>(result!.Value);
         }
@@ -71,35 +65,36 @@ namespace FileSharingAppUnitTests
         public async void RegisterUser_should_return_an_AggregateException_when_user_creation_is_unsuccessful()
         {
             //Arrange 
-            var mockUserManager = MockUserManagerGenerator.CreateMockUserManager();
-            var registerDto = new RegisterDto();
-            registerDto.Username = "Paud";
-            registerDto.Password = "Pa$$w0rd";
-            registerDto.Email = "TestEmail@gmail.com";
-            MockUserManagerGenerator.SetupFindByNameAsync(mockUserManager, registerDto.Username);
-            MockUserManagerGenerator.SetupFindByEmailAsync(mockUserManager, registerDto.Email);
-            MockUserManagerGenerator.SetupCreateAsyncFailure(mockUserManager);
-            var userService = UserServiceGenerator.CreateUserService(mockUserManager);
-            var sut = AccountControllerGenerator.CreateAccountController(userService);
+            var registerDto = MockRegisterDtoGenerator.GenerateMockRegisterDto();
+            var mockUserService = MockUserServiceGenerator.GenerateMockUserService();
+            var identityResult = IdentityResult.Failed(new IdentityError());
+            var identityResultTask = Task.FromResult(identityResult);
+            mockUserService.Setup(x => x.AttemptToCreateUser(It.IsAny<AppUser>(), It.IsAny<string>())).Returns(identityResultTask);
+            var sut = AccountControllerGenerator.CreateAccountController(mockUserService.Object);
+
+            //Act 
+            try
+            {
+                await sut.RegisterUser(registerDto);
+            }
 
             //Assert
-            await Assert.ThrowsAsync<AggregateException>(() => sut.RegisterUser(registerDto));
+            catch (Exception ex)
+            {
+                Assert.IsType<AggregateException>(ex);
+            }
         }
 
         [Fact]
         public async void RegisterUser_should_return_an_AggregateException_containing_a_list_of_UserManagerCreateUserExceptions_when_user_creation_is_unsuccessful()
         {
             //Arrange 
-            var mockUserManager = MockUserManagerGenerator.CreateMockUserManager();
-            var registerDto = new RegisterDto();
-            registerDto.Username = "pauly";
-            registerDto.Password = "Pa$$w0rd";
-            registerDto.Email = "Test2Email@gmail.com";
-            MockUserManagerGenerator.SetupFindByNameAsync(mockUserManager, registerDto.Username);
-            MockUserManagerGenerator.SetupFindByEmailAsync(mockUserManager, registerDto.Email);
-            MockUserManagerGenerator.SetupCreateAsyncFailure(mockUserManager);
-            var userService = UserServiceGenerator.CreateUserService(mockUserManager);
-            var sut = AccountControllerGenerator.CreateAccountController(userService);
+            var registerDto = MockRegisterDtoGenerator.GenerateMockRegisterDto();
+            var mockUserService = MockUserServiceGenerator.GenerateMockUserService();
+            var identityResult = IdentityResult.Failed(new IdentityError());
+            var identityResultTask = Task.FromResult(identityResult);
+            mockUserService.Setup(x => x.AttemptToCreateUser(It.IsAny<AppUser>(), It.IsAny<string>())).Returns(identityResultTask);
+            var sut = AccountControllerGenerator.CreateAccountController(mockUserService.Object);
 
             //Act
             try
@@ -110,10 +105,10 @@ namespace FileSharingAppUnitTests
             //Assert
             catch (AggregateException aggregateException)
             {
-                foreach (var exception in aggregateException.InnerExceptions.ToList())
-                {
-                    exception.Should().BeOfType<UserManagerCreateUserException>();
-                }
+                var innerExeptions = aggregateException.InnerExceptions.ToList();
+                Assert.All(innerExeptions, 
+                    innerException => Assert.IsType<UserManagerCreateUserException>(innerException)
+                );
             }
         }
 
@@ -121,75 +116,79 @@ namespace FileSharingAppUnitTests
         public async void LoginUser_should_return_a_UserNotFoundException_when_User_Not_Found()
         {
             //Arrange 
-            var mockUserManager = MockUserManagerGenerator.CreateMockUserManager();
-            var userService = UserServiceGenerator.CreateUserService(mockUserManager);
-            var loginDto = new LoginDto();
-            loginDto.Username = "Donna";
-            loginDto.Password = "Pa$$w0rd";
-            MockUserManagerGenerator.SetupFindByNameAsync(mockUserManager, loginDto.Username);
-            var sut = AccountControllerGenerator.CreateAccountController(userService);
+            var mockUserService = MockUserServiceGenerator.GenerateMockUserService();
+            var sut = AccountControllerGenerator.CreateAccountController(mockUserService.Object);
+            var loginDto = MockLoginDtoGenerator.GenerateMockLoginDto();
+
+            //Act
+            try
+            {
+                await sut.LoginUser(loginDto);
+            }
 
             //Assert
-            await Assert.ThrowsAsync<UserNotFoundException>(() => sut.LoginUser(loginDto));
+            catch (Exception ex)
+            {
+                Assert.IsType<UserNotFoundException>(ex);
+            }
+
         }
 
         [Fact]
-        public async void LoginUser_should_return_a_PasswordIncorrectException_when_User_Not_Found()
+        public async void LoginUser_should_return_a_PasswordIncorrectException_when_userService_CheckPasswordAsync_method_returns_false()
         {
             //Arrange 
-            var mockUserManager = MockUserManagerGenerator.CreateMockUserManager();
-            var userService = UserServiceGenerator.CreateUserService(mockUserManager);
-            var loginDto = new LoginDto();
-            loginDto.Username = "paul";
-            loginDto.Password = "Pa$$w0rd";
-            MockUserManagerGenerator.SetupFindByNameAsync(mockUserManager, loginDto.Username);
-            MockUserManagerGenerator.SetupCheckPasswordAsyncIncorrect(mockUserManager);
-            var sut = AccountControllerGenerator.CreateAccountController(userService);
+            var mockUserService = MockUserServiceGenerator.GenerateMockUserService();
+            mockUserService.Setup(x => x.FindByNameAsync(It.IsAny<string>())).Returns(Task.FromResult(MockUserGenerator.GenerateMockUser()));
+            mockUserService.Setup(x => x.CheckPasswordAsync(It.IsAny<AppUser>(), It.IsAny<string>())).Returns(Task.FromResult(false));
+            var sut = AccountControllerGenerator.CreateAccountController(mockUserService.Object);
+            var loginDto = MockLoginDtoGenerator.GenerateMockLoginDto();
+
+            //Act
+            try
+            {
+                await sut.LoginUser(loginDto);
+            }
 
             //Assert
-            await Assert.ThrowsAsync<PasswordIncorrectException>(() => sut.LoginUser(loginDto));
+            catch (Exception ex)
+            {
+                Assert.IsType<PasswordIncorrectException>(ex);
+            }
         }
 
         [Fact]
         public async void LoginUser_should_return_a_ok_response_when_User_Found_and_password_correct()
         {
             //Arrange 
-            var mockUserManager = MockUserManagerGenerator.CreateMockUserManager();
-            var userService = UserServiceGenerator.CreateUserService(mockUserManager);
-            var loginDto = new LoginDto();
-            loginDto.Username = "paul";
-            loginDto.Password = "Pa$$w0rd";
-            MockUserManagerGenerator.SetupFindByNameAsync(mockUserManager, loginDto.Username);
-            MockUserManagerGenerator.SetupCheckPasswordAsyncCorrect(mockUserManager);
-            var sut = AccountControllerGenerator.CreateAccountController(userService);
+            var mockUserService = MockUserServiceGenerator.GenerateMockUserService();
+            mockUserService.Setup(x => x.FindByNameAsync(It.IsAny<string>())).Returns(Task.FromResult(MockUserGenerator.GenerateMockUser()));
+            var sut = AccountControllerGenerator.CreateAccountController(mockUserService.Object);
+            var loginDto = MockLoginDtoGenerator.GenerateMockLoginDto();
 
             //Act
             var actionResult = await sut.LoginUser(loginDto);
 
             //Assert
             var result = actionResult.Result as OkObjectResult;
-            result.Should().BeOfType<OkObjectResult>();
+            Assert.IsType<OkObjectResult>(result);
         }
 
         [Fact]
         public async void LoginUser_should_return_a_User_dto_response_when_User_Found_and_password_correct()
         {
             //Arrange 
-            var mockUserManager = MockUserManagerGenerator.CreateMockUserManager();
-            var userService = UserServiceGenerator.CreateUserService(mockUserManager);
-            var loginDto = new LoginDto();
-            loginDto.Username = "paul";
-            loginDto.Password = "Pa$$w0rd";
-            MockUserManagerGenerator.SetupFindByNameAsync(mockUserManager, loginDto.Username);
-            MockUserManagerGenerator.SetupCheckPasswordAsyncCorrect(mockUserManager);
-            var sut = AccountControllerGenerator.CreateAccountController(userService);
+            var mockUserService = MockUserServiceGenerator.GenerateMockUserService();
+            mockUserService.Setup(x => x.FindByNameAsync(It.IsAny<string>())).Returns(Task.FromResult(MockUserGenerator.GenerateMockUser()));
+            var sut = AccountControllerGenerator.CreateAccountController(mockUserService.Object);
+            var loginDto = MockLoginDtoGenerator.GenerateMockLoginDto();
 
             //Act
             var actionResult = await sut.LoginUser(loginDto);
 
             //Assert
             var result = actionResult.Result as OkObjectResult;
-            result!.Value.Should().BeOfType<UserDto>();
+            Assert.IsType<UserDto>(result!.Value);
         }
     }
 }

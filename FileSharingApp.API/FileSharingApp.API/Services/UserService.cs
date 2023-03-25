@@ -78,7 +78,28 @@ namespace FileSharingApp.API.Services
 
         public async Task<AppUser> FindByNameAsync(string username)
         {
-            return await _userManager.FindByNameAsync(username);
+            var user = await _userManager.FindByNameAsync(username);
+            if (user == null)
+            {
+                throw new UserNotFoundException($"no user found with username: {username}");
+            }
+            else
+            {
+                return user;
+            }
+        }
+
+        public async Task<AppUser> FindByIdAsync(int userId)
+        {
+            var user = await _userManager.FindByIdAsync(userId.ToString());
+            if(user == null)
+            {
+                throw new UserNotFoundException($"no user found with id: {userId}");
+            } 
+            else
+            {
+                return user;
+            }
         }
 
         public async Task<bool> CheckPasswordAsync(AppUser user, string password)
