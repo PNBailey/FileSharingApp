@@ -13,7 +13,7 @@ describe('EditProfileComponent', () => {
     const elementBindings = {
         editProfileCardComponent: '[data-cy="edit-profile-card-component"]',
         container: '[data-cy="container"]',
-        uploadingProfilePictureSpinner: '[data-cy="uploading-profile-picture-spinner"]'
+        updatingProfileSpinner: '[data-cy="updating-profile-spinner"]'
     }
 
     const messageHandlingService = {
@@ -66,21 +66,21 @@ describe('EditProfileComponent', () => {
         cy.get('@userService-uploadProfilePicture-method').should('have.been.called');
     });
 
-    it('uploading profile picture loading spinner should be displayed when image is uploading', () => {
+    it('updating profile loading spinner should be displayed when image is uploading', () => {
         cy.mount(EditProfileComponent, setupCypressConfig<EditProfileComponent>({
             componentProperties: {
-                uploadingProfilePicture$: of(true)
+                updatingProfile$: of(true)
             }
         }));
-        cy.get(elementBindings.uploadingProfilePictureSpinner).should('be.visible');
+        cy.get(elementBindings.updatingProfileSpinner).should('be.visible');
     });
 
     it('uploading profile picture loading spinner should not be displayed when image is not uploading', () => {
         cy.mount(EditProfileComponent, setupCypressConfig<EditProfileComponent>({
             componentProperties: {
-                uploadingProfilePicture$: of(false)
+                updatingProfile$: of(false)
             }
         }));
-        cy.get(elementBindings.uploadingProfilePictureSpinner).should('have.length', 0);
+        cy.get(elementBindings.updatingProfileSpinner).should('have.length', 0);
     });
 });
