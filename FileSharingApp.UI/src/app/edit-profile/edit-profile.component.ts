@@ -23,7 +23,7 @@ export class EditProfileComponent {
 
   loggedOnUser$: Observable<null | User > = this.accountService.loggedOnUser$;
   
-  uploadingProfilePicture$ = this.loadingService.getLoadingObs(LoadingObsName.UPLOADING_PROFILE_PICTURE);
+  updatingProfile$ = this.loadingService.getLoadingObs(LoadingObsName.UPDATING_PROFILE);
 
   displayIncorrectFileTypeMessage() {
     this.messageHandlingService.onDisplayNewMessage({
@@ -38,11 +38,32 @@ export class EditProfileComponent {
     this.userService.uploadProfilePicture(file).pipe(
       withLatestFrom(this.loggedOnUser$),
       tap(([imageUploadResult, loggedOnUser]) => {
-        if(loggedOnUser) {
+        if(loggedOnUser && imageUploadResult.error == null) {
           loggedOnUser.profilePictureUrl = imageUploadResult.url;
+          this.displayUserUpdatedMessage();
         }
         this.accountService.setLoggedOnUser(loggedOnUser);
       })
     ).subscribe();
+  }
+  
+  infoUpdated(updatedUser: User) {
+    this.userService.updateUserInfo(updatedUser).pipe(
+      tap((res: any) => {
+        if(res.succeeded) {
+          this.accountService.setLoggedOnUser(updatedUser);
+          this.displayUserUpdatedMessage();
+        }
+      })
+    ).subscribe();    
+  }
+
+  private displayUserUpdatedMessage() {
+    this.messageHandlingService.onDisplayNewMessage({
+      message: "Successfully Updated",
+      action: SnackbarAction.Close,
+      classType: SnackbarClassType.Success,
+      duration: SnackbarDuration.Medium
+    });
   }
 }

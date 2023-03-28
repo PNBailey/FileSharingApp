@@ -6,21 +6,19 @@ using FileSharingApp.API.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
 
 namespace FileSharingApp.API.Controllers
 {
+    [Authorize]
     public class UserController : BaseController
     {
         private readonly IUserService userService;
         private readonly IPhotoService photoService;
-        private readonly UserManager<AppUser> userManager;
 
-        public UserController(IUserService userService, IPhotoService photoService, UserManager<AppUser?> userManager)
+        public UserController(IUserService userService, IPhotoService photoService)
         {
             this.userService = userService;
             this.photoService = photoService;
-            this.userManager = userManager;
         }
 
         [HttpGet]
@@ -36,9 +34,9 @@ namespace FileSharingApp.API.Controllers
         }
 
         [HttpPut("Update")]
-        public async Task<IdentityResult> Update([FromBody] AppUser user)
+        public async Task<IdentityResult> Update([FromBody] AppUser updatedUser)
         {
-            return await this.userService.UpdateUser(user);
+            return await this.userService.UpdateUser(updatedUser);
         }
 
         [HttpDelete("{id}")]
@@ -47,7 +45,6 @@ namespace FileSharingApp.API.Controllers
             throw new NotImplementedException();
         }
 
-        [Authorize]
         [HttpPost("Upload-Profile-Picture")]
         public async Task<ImageUploadResult> UploadProfilePicture(IFormFile image)
         {
@@ -55,7 +52,7 @@ namespace FileSharingApp.API.Controllers
             if(result.Error == null)
             {
                 var user = await this.userService.FindByIdAsync(User.GetUserId());
-                user.ProfilePictureUrl = result.PublicId;
+                user.ProfilePictureUrl = result.Url.ToString();
                 await this.userService.UpdateUser(user);
             }
             return result;

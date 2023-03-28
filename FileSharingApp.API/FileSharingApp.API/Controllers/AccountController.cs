@@ -42,6 +42,7 @@ namespace FileSharingApp.API.Controllers
             return Ok(await this.userService.CheckUserDoesNotAlreadyExistByEmail(email));
         }
 
+        [AllowAnonymous]
         [HttpPost("Register")]
         public async Task<ActionResult<UserDto>> RegisterUser([FromBody] RegisterDto registerDto)
         {
@@ -76,6 +77,7 @@ namespace FileSharingApp.API.Controllers
             }
         }
 
+        [AllowAnonymous]
         [HttpPost("Login")]
         public async Task<ActionResult<UserDto>> LoginUser([FromBody] LoginDto loginDto)
         {
@@ -89,8 +91,8 @@ namespace FileSharingApp.API.Controllers
                 throw new UserNotFoundException($"No user found with the username: {loginDto.Username}");
             }
 
-            var passwordCorrect = await this.userService.CheckPasswordAsync(user, loginDto.Password);
-            if (passwordCorrect)
+            var signInResult = await this.userService.SignIn(user, loginDto.Password);
+            if (signInResult.Succeeded)
             {
                 var userDto = await this.userService.CreateUserDto(user);
                 _logger.Info($"User log in successful. Username {loginDto.Username}");

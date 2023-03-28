@@ -10,6 +10,12 @@
                     data-cy="form-control"
                     formControlName="username"
                     cdkFocusInitial>
+                <mat-error
+                    data-cy="form-error username-custom-validator-username-taken"
+                    *ngIf="form.controls['username'].hasError('usernameUniquenessViolated')">
+                    Username is <strong>taken</strong>
+                </mat-error>
+                <mat-spinner matSuffix [diameter]="18" *ngIf="checkingUsername$ | async"></mat-spinner>
             </mat-form-field>
         </div>
         <div class="row">
@@ -44,6 +50,13 @@
         </div>
     </form>
     <div class="d-flex justify-content-end mt-4">
-        <button color="primary" [disabled]="form.invalid" mat-raised-button>Save Changes</button>
+        <button
+          (click)="updateInfo()"
+          type="submit"
+          color="primary"
+          [disabled]="form.invalid || !form.dirty"
+          mat-raised-button>
+          Save Changes
+        </button>
      </div>
 </div>

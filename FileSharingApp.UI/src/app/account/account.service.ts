@@ -88,7 +88,7 @@ export class AccountService {
   private loginOrRegister(user: RegisterUser | LoginUser, url: string) {
     return this.http.post<User>(url, user).pipe(
       tap(user => {
-        if(user) {          
+        if(user) {                 
           this.setLoggedOnUser(user),
           this.dialog.closeAll();
           this.router.navigate(['/home']);
@@ -105,7 +105,7 @@ export class AccountService {
   }
 
   logout() {
-      this.setLoggedOnUser(null);
+    this.setLoggedOnUser(null);
   }
 
   setLoggedOnUser(user: Partial<User> | null) {    
