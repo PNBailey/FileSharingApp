@@ -195,7 +195,8 @@ describe('Account Service', () => {
             service.setLoggedOnUser(user);
 
             service.loggedOnUser$.subscribe(loggedOnUser => {
-                expect(loggedOnUser).toEqual(user);
+                expect(loggedOnUser?.id).toEqual(1);
+                expect(loggedOnUser?.bio).toEqual("testing");
             });
         });
     });

@@ -14,6 +14,7 @@ import { MountConfig } from "cypress/angular";
 import { AccountDialogComponent } from "src/app/account/account-dialog.component";
 import { AppComponent } from "src/app/app.component";
 import { EditProfileCardComponent } from "src/app/edit-profile/edit-profile-card/edit-profile-card.component";
+import { EditProfileInfoComponent } from "src/app/edit-profile/edit-profile-info/edit-profile-info.component";
 import { EditProfileComponent } from "src/app/edit-profile/edit-profile.component";
 import { HomeComponent } from "src/app/home/home.component";
 import { ToolbarComponent } from "src/app/toolbar/toolbar.component";
@@ -38,7 +39,7 @@ export function setupCypressConfig<Type>(overrideConfigOptions: MountConfig<Type
             MatCardModule,
             MatSnackBarModule
         ],
-        declarations: [AppComponent, ToolbarComponent, AccountDialogComponent, HomeComponent, EditProfileComponent, EditProfileCardComponent],
+        declarations: [AppComponent, ToolbarComponent, AccountDialogComponent, HomeComponent, EditProfileComponent, EditProfileCardComponent, EditProfileInfoComponent],
         ...overrideConfigOptions
     }
     return config;
