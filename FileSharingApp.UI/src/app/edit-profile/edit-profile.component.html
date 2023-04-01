@@ -26,7 +26,11 @@
                 <mat-icon class="me-2">info</mat-icon>
                 Info
               </ng-template>
-              <app-edit-profile-info [loggedOnUser$]="loggedOnUser$" (infoUpdated)="infoUpdated($event)"></app-edit-profile-info>
+              <app-edit-profile-info
+                [loggedOnUser$]="loggedOnUser$"
+                (infoUpdated)="infoUpdated($event)"
+                data-cy="edit-profile-info-component">
+              </app-edit-profile-info>
             </mat-tab>
           <mat-tab>
             <ng-template mat-tab-label>

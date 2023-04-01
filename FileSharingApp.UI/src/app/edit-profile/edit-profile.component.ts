@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { Observable, tap, withLatestFrom } from 'rxjs';
 import { AccountService } from '../account/account.service';
+import { IdentityResult } from '../models/identityResult';
 import { SnackbarAction, SnackbarClassType, SnackbarDuration } from '../models/snackbar-item';
 import { User } from '../models/user';
 import { LoadingObsName, LoadingService } from '../services/loading.service';
@@ -49,12 +50,12 @@ export class EditProfileComponent {
   
   infoUpdated(updatedUser: User) {
     this.userService.updateUserInfo(updatedUser).pipe(
-      tap((res: any) => {
+      tap((res: IdentityResult) => {
         if(res.succeeded) {
           this.accountService.setLoggedOnUser(updatedUser);
           this.displayUserUpdatedMessage();
         }
-      })
+      })  
     ).subscribe();    
   }
 

@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { finalize } from 'rxjs';
+import { IdentityResult } from '../models/identityResult';
 import { User } from '../models/user';
 import { LoadingObsName, LoadingService } from './loading.service';
 
@@ -25,7 +26,7 @@ export class UserService {
 
   updateUserInfo(updatedUser: User) {
     this.loadingService.toggleLoadingObs(LoadingObsName.UPDATING_PROFILE);
-    return this.http.put(`${this.baseUrl}Update`, updatedUser).pipe(
+    return this.http.put<IdentityResult>(`${this.baseUrl}Update`, updatedUser).pipe(
       finalize(() => {
         this.loadingService.toggleLoadingObs(LoadingObsName.UPDATING_PROFILE)
       })

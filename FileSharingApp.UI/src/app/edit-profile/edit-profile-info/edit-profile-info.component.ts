@@ -30,23 +30,14 @@ export class EditProfileInfoComponent implements OnInit {
     this.userInfoForm$ = this.loggedOnUser$.pipe(
       map(user => {
         const form = this.fb.group({
-          'bio': this.fb.control('', [Validators.maxLength(256)]),
-          'username': this.fb.control('', [Validators.required], [this.validationService.uniqueUsernameValidatorFn(true, user?.username)]),
-          'email': this.fb.control('', [Validators.required])
+          'bio': this.fb.control(user?.bio, [Validators.maxLength(256)]),
+          'username': this.fb.control(user?.username, [Validators.required], [this.validationService.uniqueUsernameValidatorFn(true, user?.username)]),
+          'email': this.fb.control(user?.email, [Validators.required])
         })
         this.reactToFormValueChanges(form);
-        this.addInitialValues(form, user);
         return form;
       })
     )
-  }
-
-  private addInitialValues(form: UntypedFormGroup, user: User | null) {
-    form.patchValue({
-      bio: user?.bio,
-      username: user?.username,
-      email: user?.email
-    }, {emitEvent: false});
   }
 
   private reactToFormValueChanges(form: UntypedFormGroup) {
@@ -56,7 +47,7 @@ export class EditProfileInfoComponent implements OnInit {
         this.updatedUser = {
           ...originalUser,
           ...formValue
-        } as User;        
+        } as User;                
       })
     ).subscribe();
   }

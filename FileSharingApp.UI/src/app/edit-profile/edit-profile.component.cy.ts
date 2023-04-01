@@ -1,5 +1,7 @@
-import { of } from "rxjs";
+import { of, tap } from "rxjs";
+import { IdentityResult } from "../models/identityResult";
 import { SnackbarAction, SnackbarClassType, SnackbarDuration, SnackBarItem } from "../models/snackbar-item";
+import { User } from "../models/user";
 import { MessageHandlingService } from "../services/message-handling.service";
 import { UserService } from "../services/user.service";
 import { setupCypressConfig } from "../shared/testing/cypress-config-setup/cypress-config-setup";
@@ -13,7 +15,8 @@ describe('EditProfileComponent', () => {
     const elementBindings = {
         editProfileCardComponent: '[data-cy="edit-profile-card-component"]',
         container: '[data-cy="container"]',
-        updatingProfileSpinner: '[data-cy="updating-profile-spinner"]'
+        updatingProfileSpinner: '[data-cy="updating-profile-spinner"]',
+        editProfileInfoComponent: '[data-cy="edit-profile-info-component"]'
     }
 
     const messageHandlingService = {
@@ -25,8 +28,31 @@ describe('EditProfileComponent', () => {
     const userService = {
         uploadProfilePicture: (file: File) => {
             return of(null);
+        },
+        updateUserInfo: (updatedUser: User) => {
+            const identityResult = new IdentityResult();
+            identityResult.succeeded = true;
+            return of(identityResult).pipe(
+                tap((res: IdentityResult) => {
+                  if(res.succeeded) {
+                    accountService.setLoggedOnUser(new User());
+                    messageHandlingService.onDisplayNewMessage({
+                        message: "Successfully Updated",
+                        action: SnackbarAction.Close,
+                        classType: SnackbarClassType.Success,
+                        duration: SnackbarDuration.Medium
+                      });
+                  }
+                })
+            )
         }
     }
+
+    const accountService = {
+        setLoggedOnUser: (user: User) => {
+            return null;
+        }
+    };
 
     beforeEach(() => {
         cy.mount(EditProfileComponent, setupCypressConfig<EditProfileComponent>({
@@ -75,12 +101,48 @@ describe('EditProfileComponent', () => {
         cy.get(elementBindings.updatingProfileSpinner).should('be.visible');
     });
 
-    it('uploading profile picture loading spinner should not be displayed when image is not uploading', () => {
+    it('updating profile loading spinner should not be displayed when profile is not updating', () => {
         cy.mount(EditProfileComponent, setupCypressConfig<EditProfileComponent>({
             componentProperties: {
                 updatingProfile$: of(false)
             }
         }));
         cy.get(elementBindings.updatingProfileSpinner).should('have.length', 0);
+    });
+
+    it('UserService updateUserInfo method is called when infoUpdated event is triggered', () => {
+        cy.spy(userService, 'updateUserInfo').as('userService-updateUserInfo-method');
+        cy.get(elementBindings.editProfileInfoComponent).then((editProfileInfoComponent) => {
+            editProfileInfoComponent.css({
+                width: '600px',
+                height: '600px'
+            });
+        });
+        cy.get(elementBindings.editProfileInfoComponent).trigger('infoUpdated', {force: true});
+        cy.get('@userService-updateUserInfo-method').should('have.been.called');
+    });
+
+    it('AccountService updateUserInfo method is called when infoUpdated event is triggered', () => {
+        cy.spy(accountService, 'setLoggedOnUser').as('accountService-setLoggedOnUser-method');
+        cy.get(elementBindings.editProfileInfoComponent).then((editProfileInfoComponent) => {
+            editProfileInfoComponent.css({
+                width: '600px',
+                height: '600px'
+            });
+        });
+        cy.get(elementBindings.editProfileInfoComponent).trigger('infoUpdated', {force: true});
+        cy.get('@accountService-setLoggedOnUser-method').should('have.been.called');
+    });
+
+    it('messageHandlingService onDisplayNewMessage method is called when infoUpdated event is triggered', () => {
+        cy.spy(messageHandlingService, 'onDisplayNewMessage').as('messageHandlingService-onDisplayNewMessage-method');
+        cy.get(elementBindings.editProfileInfoComponent).then((editProfileInfoComponent) => {
+            editProfileInfoComponent.css({
+                width: '600px',
+                height: '600px'
+            });
+        });
+        cy.get(elementBindings.editProfileInfoComponent).trigger('infoUpdated', {force: true});
+        cy.get('@messageHandlingService-onDisplayNewMessage-method').should('have.been.called');
     });
 });
