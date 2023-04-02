@@ -2,9 +2,6 @@
 
 namespace FileSharingApp.API.Models.DTOs
 {
-    /// <summary>
-    /// A Dto for the <see cref="AppUser"/> Entity
-    /// </summary>
     public class UserDto
     {
         public int Id { get; set; }
@@ -13,6 +10,13 @@ namespace FileSharingApp.API.Models.DTOs
 
         public string Name { get; set; } = string.Empty;
 
-        public JwtSecurityToken? Token { get; set; }
+        public string Token { get; set; } = string.Empty;
+
+        public string? ProfilePictureUrl { get; set; }
+
+        public string Email { get; set; } = string.Empty;
+
+        public string SecurityStamp { get; set; } = string.Empty;
+
     }
 }

@@ -15,7 +15,7 @@ namespace FileSharingApp.API.Services
             {
                 return HttpStatusCode.NotFound;
             }
-            else if (exceptionType == typeof(PasswordIncorrectException))
+            else if (exceptionType == typeof(SignInException))
             {
                 return HttpStatusCode.Unauthorized;
             }

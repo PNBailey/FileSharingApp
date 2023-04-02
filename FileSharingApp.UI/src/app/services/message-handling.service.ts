@@ -17,11 +17,11 @@ export class MessageHandlingService {
     tap(snackBarItem => this.displayMessage(snackBarItem))
   ).subscribe();
 
-  onDisplayNewMessage(snackBarItem: SnackBarItem) {
+  onDisplayNewMessage(snackBarItem: SnackBarItem) {    
     this.displayNewMessage.next(snackBarItem);
   }
 
-  displayMessage(snackBarItem: SnackBarItem) {    
+  private displayMessage(snackBarItem: SnackBarItem) {    
     this.snackbar.open(snackBarItem.message, snackBarItem.action, {
       panelClass: [snackBarItem.classType],
       duration: snackBarItem.duration,

@@ -22,10 +22,10 @@ namespace FileSharingAppUnitTests.ServiceTests
         }
         
         [Fact]
-        public void GetStatusCode_should_return_403_unauthorizd_status_code_when_exception_is_of_type_PasswordIncorrectException()
+        public void GetStatusCode_should_return_403_unauthorizd_status_code_when_exception_is_of_type_SignInException()
         {
             //Arrange
-            var exception = new PasswordIncorrectException("Test exception");
+            var exception = new SignInException("Test exception");
             var errorService = ErrorServiceGenerator.GenerateErrorService();
 
             //Act
@@ -54,9 +54,9 @@ namespace FileSharingAppUnitTests.ServiceTests
         {
             //Arrange
 
-            var innerExceptionList = new List<PasswordIncorrectException>();
-            innerExceptionList.Add(new PasswordIncorrectException("Exception test 1"));
-            innerExceptionList.Add(new PasswordIncorrectException("Exception test 2"));
+            var innerExceptionList = new List<SignInException>();
+            innerExceptionList.Add(new SignInException("Exception test 1"));
+            innerExceptionList.Add(new SignInException("Exception test 2"));
             var exception =  new AggregateException(innerExceptionList);
             var errorService = ErrorServiceGenerator.GenerateErrorService();
 

@@ -1,0 +1,59 @@
+<div class="mt-5 pe-3 pb-3" *ngIf="(userInfoForm$ | async) as form">
+    <form [formGroup]="form">
+        <div class="row">
+            <mat-form-field>
+                <mat-label>Username</mat-label>
+                <input
+                    matInput
+                    type="text"
+                    data-cy="username-input"
+                    formControlName="username"
+                    cdkFocusInitial>
+                <mat-error
+                    data-cy="form-error username-custom-validator-username-taken"
+                    *ngIf="form.controls['username'].hasError('usernameUniquenessViolated')">
+                    Username is <strong>taken</strong>
+                </mat-error>
+                <mat-spinner matSuffix [diameter]="18" *ngIf="checkingUsername$ | async"></mat-spinner>
+            </mat-form-field>
+        </div>
+        <div class="row">
+            <mat-form-field>
+                <mat-label>Email</mat-label>
+                <input
+                    matInput
+                    type="email"
+                    data-cy="email-input"
+                    formControlName="email"
+                    cdkFocusInitial>                    
+            </mat-form-field>
+        </div>    
+        <div class="row">
+            <mat-form-field>
+                <mat-label>Bio</mat-label>
+                <textarea
+                    maxlength="256"
+                    cdkTextareaAutosize
+                    matInput
+                    type="text"
+                    data-cy="bio-input"
+                    formControlName="bio"
+                    placeholder="Write something about yourself..."
+                    cdkFocusInitial
+                    #bio>
+                </textarea>
+                <mat-hint align="end">{{bio.value.length + '/256'}}</mat-hint>
+            </mat-form-field>
+        </div>
+    </form>
+    <div class="d-flex justify-content-end mt-4">
+        <button
+          (click)="updateInfo()"
+          type="submit"
+          color="primary"
+          [disabled]="form.invalid || !form.dirty"
+          mat-raised-button>
+          Save Changes
+        </button>
+     </div>
+</div>

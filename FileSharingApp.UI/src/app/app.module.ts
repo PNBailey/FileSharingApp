@@ -12,13 +12,19 @@ import { AngularMaterialModule } from './shared/angular-material.module';
 
 // Interceptors
 import { JwtInterceptor } from './shared/interceptors/jwt.interceptor';
+import { EditProfileComponent } from './edit-profile/edit-profile.component';
+import { EditProfileCardComponent } from './edit-profile/edit-profile-card/edit-profile-card.component';
+import { EditProfileInfoComponent } from './edit-profile/edit-profile-info/edit-profile-info.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     HomeComponent,
     ToolbarComponent,
-    AccountDialogComponent
+    AccountDialogComponent,
+    EditProfileComponent,
+    EditProfileCardComponent,
+    EditProfileInfoComponent,
   ],
   imports: [
     BrowserModule,

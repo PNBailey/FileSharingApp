@@ -11,10 +11,12 @@ namespace FileSharingAppUnitTests.Helpers
     {
         internal static UserService CreateUserService(Mock<UserManager<AppUser?>> mockUserManager)
         {
-            MapperConfiguration mapperConfiguration = AutoMapperTestConfigGenerator.GenerateTestMapperConfig();
-            Mapper autoMapper = new Mapper(mapperConfiguration); var config = ConfiguratonGenerator.GenerateConfiguration();
+            var mapperConfiguration = AutoMapperTestConfigGenerator.GenerateTestMapperConfig();
+            var autoMapper = new Mapper(mapperConfiguration); 
+            var config = ConfiguratonGenerator.GenerateConfiguration();
+            var mockSignInManager = MockSignInManagerGenerator.CreateMockSignInManager(mockUserManager);
             var jwtTokenGenerator = new JWTTokenGenerator(mockUserManager.Object, config);
-            return new UserService(mockUserManager.Object, autoMapper, jwtTokenGenerator);
+            return new UserService(mockUserManager.Object, autoMapper, jwtTokenGenerator, mockSignInManager.Object);
         }
     }
 }

@@ -14,7 +14,7 @@ using System.Text;
 
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 var builder = WebApplication.CreateBuilder(args);
-ConfigurationManager configuration = builder.Configuration;
+var configuration = builder.Configuration;
 var logger = NLog.LogManager.Setup().LoadConfigurationFromAppSettings().GetCurrentClassLogger();
 logger.Debug("init main");
 
@@ -23,6 +23,22 @@ logger.Debug("init main");
 try
 {
     builder.Services.AddHttpContextAccessor();
+
+
+    builder.Services.Configure<CloudinaryConfigOptions>(
+        configuration.GetSection(CloudinaryConfigOptions.CloudinaryConfig));
+
+    builder.Services.AddCors(options =>
+    {
+        options.AddPolicy(name: MyAllowSpecificOrigins,
+            builder =>
+            {
+                builder.WithOrigins("http://localhost:4200")
+                    .AllowAnyHeader()
+                    .AllowAnyMethod()
+                    .AllowCredentials();
+            });
+    });
 
     // Adding Authentication
     builder.Services.AddAuthentication(options =>
@@ -45,17 +61,6 @@ try
             ValidIssuer = configuration["JWT:ValidIssuer"],
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JWT:Secret"]))
         };
-    });
-
-    builder.Services.AddCors(options =>
-    {
-        options.AddPolicy(name: MyAllowSpecificOrigins,
-            builder =>
-            {
-                builder.WithOrigins("http://localhost:4200")
-                    .AllowAnyHeader()
-                    .AllowAnyMethod();
-            });
     });
 
     builder.Services.AddDbContext<DataContext>(opt =>
@@ -97,13 +102,14 @@ try
     });
 
     builder.Services.AddControllers();
-    // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddSwaggerGen();
 
     // Adding services
     builder.Services.AddScoped<IUserService, UserService>();
     builder.Services.AddScoped<IErrorService, ErrorService>();
+    builder.Services.AddScoped<IPhotoService, PhotoService>();
+    builder.Services.AddScoped<IValidationService, ValidationService>();
 
 
     // NLog: Setup NLog for Dependency injection
@@ -111,7 +117,6 @@ try
     builder.Host.UseNLog();
 
     var app = builder.Build();
-
     app.UseExceptionHandler("/error");
 
     if (app.Environment.IsDevelopment())
@@ -119,11 +124,10 @@ try
         app.UseSwagger();
         app.UseSwaggerUI();
     }
-
-    app.UseRouting();
+    app.UseAuthentication();
     app.UseCors(MyAllowSpecificOrigins);
     app.UseHttpsRedirection();
-    app.UseAuthentication();
+    app.UseRouting();
     app.UseAuthorization();
     app.MapControllers();
     app.Run();

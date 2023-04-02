@@ -39,7 +39,7 @@ describe('MessageHandlingService', () => {
             snackBarItem.duration = SnackbarDuration.Medium;
             snackBarItem.message = 'test';
 
-            service.displayMessage(snackBarItem);
+            service['displayMessage'](snackBarItem);
 
             expect(service['snackbar'].open).toHaveBeenCalledWith(
                 snackBarItem.message, 
@@ -54,7 +54,7 @@ describe('MessageHandlingService', () => {
     });
     describe('newMessageReceived$ Observable', () => {
         it('should call the displayMessage method', () => {
-            service.displayMessage = jasmine.createSpy('service-displayMethod-method');
+            service['displayMessage'] = jasmine.createSpy('service-displayMethod-method');
             const snackBarItem = new SnackBarItem();
             snackBarItem.action = SnackbarAction.Open;
             snackBarItem.classType = SnackbarClassType.Error;
@@ -63,7 +63,7 @@ describe('MessageHandlingService', () => {
 
             service.onDisplayNewMessage(snackBarItem);
 
-            expect(service.displayMessage).toHaveBeenCalledWith(snackBarItem);
+            expect(service['displayMessage']).toHaveBeenCalledWith(snackBarItem);
         });
     });
 });

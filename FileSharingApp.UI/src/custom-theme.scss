@@ -95,6 +95,10 @@ $custom-theme: mat.define-light-theme((
 @include mat.snack-bar-theme($custom-theme);
 @include mat.progress-spinner-theme($custom-theme);
 @include mat.menu-theme($custom-theme);
+@include mat.card-theme($custom-theme);
+@include mat.divider-theme($custom-theme);
+@include mat.tabs-theme($custom-theme);
+@include mat.input-theme($custom-theme);
 
 /* ANGULAR MATERIAL AUTO DEFINED STYLE */
 

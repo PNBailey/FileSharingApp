@@ -189,11 +189,14 @@ describe('Account Service', () => {
         });
         it('should set the value of the loggedOnUser behavior subject', () => {
             const user = new User();
+            user.id = 1;
+            user.bio = "testing";
 
             service.setLoggedOnUser(user);
 
             service.loggedOnUser$.subscribe(loggedOnUser => {
-                expect(loggedOnUser).toEqual(user);
+                expect(loggedOnUser?.id).toEqual(1);
+                expect(loggedOnUser?.bio).toEqual("testing");
             });
         });
     });

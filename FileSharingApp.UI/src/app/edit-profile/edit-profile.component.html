@@ -1,0 +1,52 @@
+<mat-card class="container mt-4">
+  <div class="spinner-container" *ngIf="updatingProfile$ | async">
+    <mat-spinner
+      data-cy="updating-profile-spinner"
+      class="updating-profile-spinner"
+      matSuffix
+      [diameter]="25">
+    </mat-spinner>
+  </div>
+  <mat-card-header>
+    <mat-card-title>Edit Profile</mat-card-title>
+  </mat-card-header>
+  <mat-divider class="mt-2 mb-4"></mat-divider>
+  <mat-card-content class="mb-4">
+      <div class="d-flex justify-content-center" data-cy="container">
+        <app-edit-profile-card
+          class="me-5"
+          data-cy="edit-profile-card-component"
+          (incorrectFileTypeSelected)="displayIncorrectFileTypeMessage()"
+          (newImageSelected)="uploadProfilePicture($event)"
+          [loggedOnUser$]="loggedOnUser$">
+        </app-edit-profile-card>
+        <mat-tab-group class="ml-4">
+            <mat-tab>
+              <ng-template mat-tab-label>
+                <mat-icon class="me-2">info</mat-icon>
+                Info
+              </ng-template>
+              <app-edit-profile-info
+                [loggedOnUser$]="loggedOnUser$"
+                (infoUpdated)="infoUpdated($event)"
+                data-cy="edit-profile-info-component">
+              </app-edit-profile-info>
+            </mat-tab>
+          <mat-tab>
+            <ng-template mat-tab-label>
+              <mat-icon class="me-2">description</mat-icon>
+              Files
+            </ng-template>
+            Content 2
+          </mat-tab>
+          <mat-tab>
+            <ng-template mat-tab-label>
+              <mat-icon class="me-2">groups</mat-icon>
+              Groups
+            </ng-template>
+            Content 3
+          </mat-tab>
+        </mat-tab-group>
+      </div>
+  </mat-card-content>
+</mat-card>

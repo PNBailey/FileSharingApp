@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { AbstractControl, AsyncValidatorFn, ValidationErrors } from '@angular/forms';
-import { debounceTime, distinctUntilChanged, finalize, first, map, Observable, switchMap, tap } from 'rxjs';
+import { debounceTime, distinctUntilChanged, finalize, first, map, Observable, of, switchMap, tap, withLatestFrom } from 'rxjs';
 import { LoadingObsName, LoadingService } from 'src/app/services/loading.service';
 
 @Injectable({
@@ -16,18 +16,29 @@ export class ValidationService {
     private http: HttpClient
   ) {}
 
-  uniqueUsernameValidatorFn(userIsRegistering: boolean): AsyncValidatorFn {
+  uniqueUsernameValidatorFn(mustBeUnique: boolean, originalUsername: string | null = null): AsyncValidatorFn {
     return (control: AbstractControl): Observable<ValidationErrors | {string : boolean} | null> => 
     control.valueChanges
-        .pipe(
-            tap(() => this.loadingService.toggleLoadingObs(LoadingObsName.CHECKING_USERNAME)),
-            debounceTime(400),
-            distinctUntilChanged(),
-            switchMap((controlValue) => this.checkUsernameUnique(controlValue)),
-            map((unique: boolean) => ((unique && userIsRegistering) || (!unique && !userIsRegistering) ? null : {'usernameUniquenessViolated': true})),
-            finalize(() => this.loadingService.toggleLoadingObs(LoadingObsName.CHECKING_USERNAME)),
-            first()
-        );
+      .pipe(
+        debounceTime(400),
+        tap(
+          () => this.loadingService.toggleLoadingObs(LoadingObsName.CHECKING_USERNAME)
+        ),
+        distinctUntilChanged(),
+        switchMap((controlValue) => this.checkUsernameUnique(controlValue)),
+        withLatestFrom(control.valueChanges),
+        map(
+          ([usernameIsUnique, controlValue]) => (
+            (usernameIsUnique && mustBeUnique) || 
+            (!usernameIsUnique && !mustBeUnique) || 
+            (!usernameIsUnique && mustBeUnique && controlValue == originalUsername) 
+            ? null : {'usernameUniquenessViolated': true})
+        ),
+        tap(
+          () => this.loadingService.toggleLoadingObs(LoadingObsName.CHECKING_USERNAME)
+        ),
+        first()
+      );
     }
 
     uniqueEmailValidatorFn(): AsyncValidatorFn {
@@ -37,17 +48,17 @@ export class ValidationService {
               debounceTime(400),
               distinctUntilChanged(),
               switchMap(value => this.checkEmailUnique(value)),
-              map((unique: boolean) => (unique ? null : {'emailUniquenessViolated': true})),
+              map((usernameIsUnique: boolean) => (usernameIsUnique ? null : {'emailUniquenessViolated': true})),
               finalize(() => this.loadingService.toggleLoadingObs(LoadingObsName.CHECKING_EMAIL)),
               first()
           );
       }
 
-      checkUsernameUnique(username: string): Observable<boolean> {
+      checkUsernameUnique(username: string): Observable<boolean> {        
         return this.http.get<boolean>(`${this.baseUrl}/CheckUsername?username=${username}`);
       }
     
       checkEmailUnique(email: string): Observable<boolean> {
         return this.http.get<boolean>(`${this.baseUrl}/CheckEmail?email=${email}`);
-      }    
+      }
 }

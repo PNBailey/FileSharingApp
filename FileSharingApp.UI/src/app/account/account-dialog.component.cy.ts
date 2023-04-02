@@ -4,6 +4,7 @@ import { getMockAccountService } from "../shared/testing/cypress-config-setup/mo
 import { getValidationServiceMock } from "../shared/testing/cypress-config-setup/validation-service-setup";
 import { AccountDialogComponent } from "./account-dialog.component";
 import { AccountService } from "./account.service";
+import { mount } from 'cypress/angular';
 
 describe('AccountDialogComponent', () => {
 
@@ -28,12 +29,12 @@ describe('AccountDialogComponent', () => {
     const accountService = getMockAccountService(validationService);
 
     it('mounts', () => {
-        cy.mount(AccountDialogComponent,
+        mount(AccountDialogComponent,
         setupCypressConfig<AccountDialogComponent>())
     });
 
     beforeEach(() => {
-        cy.mount(AccountDialogComponent, setupCypressConfig<AccountDialogComponent>({
+        mount(AccountDialogComponent, setupCypressConfig<AccountDialogComponent>({
             providers: [
                 {provide: AccountService, useValue: accountService}
             ]

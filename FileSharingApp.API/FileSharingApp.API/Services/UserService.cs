@@ -5,53 +5,54 @@ using FileSharingApp.API.Models;
 using FileSharingApp.API.Models.DTOs;
 using FileSharingApp.API.Services.Interfaces;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
 using NLog;
 
 namespace FileSharingApp.API.Services
 {
     public class UserService : IUserService
     {
-        private readonly UserManager<AppUser?> _userManager;
-        private static Logger _logger = LogManager.GetCurrentClassLogger();
-        private readonly IMapper _mapper;
-        private readonly JWTTokenGenerator _jwtTokenGnerator;
+        private readonly UserManager<AppUser?> userManager;
+        private static Logger logger = LogManager.GetCurrentClassLogger();
+        private readonly IMapper mapper;
+        private readonly JWTTokenGenerator jwtTokenGnerator;
+        private readonly SignInManager<AppUser> signInManager;
 
-        public UserService(UserManager<AppUser?> userManager, IMapper mapper, JWTTokenGenerator jwtTokenGnerator)
+        public UserService(UserManager<AppUser?> userManager, IMapper mapper, JWTTokenGenerator jwtTokenGnerator, SignInManager<AppUser> signInManager)
         {
-            _userManager = userManager;
-            _mapper = mapper;
-            _jwtTokenGnerator = jwtTokenGnerator;
+            this.userManager = userManager;
+            this.mapper = mapper;
+            this.jwtTokenGnerator = jwtTokenGnerator;
+            this.signInManager = signInManager;
         }
 
         public async Task<bool> CheckUserDoesNotAlreadyExistByName(string username, CancellationToken cancellationToken)
         {
-            _logger.Info($"Checking whether user exists by username. Username: {username}");
-            var user = await _userManager.FindByNameAsync(username.ToLower());
-            _logger.Info($"User does not already exist (username: {username}): {user == null}");
+            logger.Info($"Checking whether user exists by username. Username: {username}");
+            var user = await userManager.FindByNameAsync(username.ToLower());
+            logger.Info($"User does not already exist (username: {username}): {user == null}");
             return user == null;
         }
 
         public virtual async Task<bool> CheckUserDoesNotAlreadyExistByEmail(string email, CancellationToken cancellationToken)
         {
-            _logger.Info($"Checking whether user exists by email. Email: {email}");
-            var user = await _userManager.FindByEmailAsync(email.ToLower());
-            _logger.Info($"User does not already exist (email: {email}): {user == null}");
+            logger.Info($"Checking whether user exists by email. Email: {email}");
+            var user = await userManager.FindByEmailAsync(email.ToLower());
+            logger.Info($"User does not already exist (email: {email}): {user == null}");
             return user == null;
         }
 
         public async Task<IdentityResult> AttemptToCreateUser(AppUser newUser, string password)
         {
 
-            _logger.Info($"Attempting to create user. Username: {newUser.UserName}. Email: {newUser.Email}");
+            logger.Info($"Attempting to create user. Username: {newUser.UserName}. Email: {newUser.Email}");
 
-            return await _userManager.CreateAsync(newUser, password);
+            return await userManager.CreateAsync(newUser, password);
         }
 
         public async Task<UserDto> HandleSuccessfulUserCreation(AppUser newUser)
         {
             var userDto = await CreateUserDto(newUser);
-            _logger.Info($"User creation successful. Username: {newUser.UserName}");
+            logger.Info($"User creation successful. Username: {newUser.UserName}");
 
             return userDto;
         }
@@ -70,8 +71,8 @@ namespace FileSharingApp.API.Services
 
         public async Task<UserDto> CreateUserDto(AppUser user)
         {
-            var token = await _jwtTokenGnerator.CreateJWTToken(user);
-            var userDto = _mapper.Map<UserDto>(user);
+            var token = await jwtTokenGnerator.CreateJWTToken(user);
+            var userDto = mapper.Map<UserDto>(user);
             userDto.Token = token;
 
             return userDto;
@@ -79,12 +80,51 @@ namespace FileSharingApp.API.Services
 
         public async Task<AppUser> FindByNameAsync(string username)
         {
-            return await _userManager.FindByNameAsync(username);
+            var user = await userManager.FindByNameAsync(username);
+            if (user == null)
+            {
+                throw new UserNotFoundException($"no user found with username: {username}");
+            }
+            else
+            {
+                return user;
+            }
         }
 
-        public async Task<bool> CheckPasswordAsync(AppUser user, string password)
+        public async Task<AppUser> FindByIdAsync(int userId)
         {
-            return await _userManager.CheckPasswordAsync(user, password);
+            var user = await userManager.FindByIdAsync(userId.ToString());
+            if(user == null)
+            {
+                throw new UserNotFoundException($"no user found with id: {userId}");
+            } 
+            else
+            {
+                return user;
+            }
         }
+
+        public async Task<IdentityResult> UpdateUser(AppUser updatedUser)
+        {
+            var existingUser = await userManager.FindByIdAsync(updatedUser.Id.ToString());
+            if(existingUser != null)
+            {
+                existingUser.Email = updatedUser.Email;
+                existingUser.ProfilePictureUrl = updatedUser.ProfilePictureUrl;
+                existingUser.Bio = updatedUser.Bio;
+                existingUser.UserName = updatedUser.UserName;
+            }
+            else
+            {
+                throw new UserNotFoundException("Unable to update user as user not found");
+            }
+
+            return await userManager.UpdateAsync(existingUser);
+        }
+
+        public async Task<SignInResult> SignIn(AppUser user, string password)
+        {
+            return await signInManager.CheckPasswordSignInAsync(user, password, false);
+        } 
     }
 }

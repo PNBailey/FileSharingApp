@@ -1,7 +1,6 @@
 ﻿using FileSharingApp.API.Models;
 using FileSharingApp.API.Models.DTOs;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
 
 namespace FileSharingApp.API.Services.Interfaces
 {
@@ -21,6 +20,11 @@ namespace FileSharingApp.API.Services.Interfaces
 
         Task<AppUser> FindByNameAsync(string username);
 
-        Task<bool> CheckPasswordAsync(AppUser user, string password);
+        Task<IdentityResult> UpdateUser(AppUser updatedUser);
+
+        Task<AppUser> FindByIdAsync(int userId);
+
+        Task<SignInResult> SignIn(AppUser user, string password);
+
     }
 }
