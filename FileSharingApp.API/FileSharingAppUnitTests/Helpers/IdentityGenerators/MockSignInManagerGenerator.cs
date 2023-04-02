@@ -11,6 +11,8 @@ namespace FileSharingAppUnitTests.Helpers
         {
             var mockSignInManager = new Mock<SignInManager<AppUser>>(mockUserManager.Object, CreateMockIHttpContextAccessor().Object, CreateMockIUserClaimsPrincipalFactory().Object, null, null, null, null);
 
+            SetupCheckPasswordSignInAsync(mockSignInManager);
+
             return mockSignInManager;
         }
 
@@ -22,6 +24,11 @@ namespace FileSharingAppUnitTests.Helpers
         private static Mock<IUserClaimsPrincipalFactory<AppUser>> CreateMockIUserClaimsPrincipalFactory()
         {
             return new Mock<IUserClaimsPrincipalFactory<AppUser>>();
+        }
+
+        private static void SetupCheckPasswordSignInAsync(Mock<SignInManager<AppUser>> signInManager)
+        {
+            signInManager.Setup(x => x.CheckPasswordSignInAsync(It.IsAny<AppUser>(), It.IsAny<string>(), It.IsAny<bool>())).ReturnsAsync(new SignInResult());
         }
     }
 }

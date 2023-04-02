@@ -114,6 +114,11 @@ namespace FileSharingApp.API.Services
                 existingUser.Bio = updatedUser.Bio;
                 existingUser.UserName = updatedUser.UserName;
             }
+            else
+            {
+                throw new UserNotFoundException("Unable to update user as user not found");
+            }
+
             return await userManager.UpdateAsync(existingUser);
         }
 

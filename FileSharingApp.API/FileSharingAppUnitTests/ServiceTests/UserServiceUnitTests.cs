@@ -3,6 +3,7 @@ using FileSharingApp.API.Models;
 using FileSharingApp.API.Models.DTOs;
 using FileSharingAppUnitTests.Helpers;
 using FileSharingAppUnitTests.Helpers.ModelMocks;
+using FileSharingAppUnitTests.TestData;
 using Microsoft.AspNetCore.Identity;
 using Moq;
 using Xunit;
@@ -221,6 +222,53 @@ namespace FileSharingAppUnitTests.ServiceTests
             Assert.Equal("jimmy", result.UserName);
             Assert.Equal("Jimmy@gmail.com", result.Email);
             Assert.Equal(6, result.Id);
+        }
+
+        [Fact]
+        public async void UpdateUser_calls_userManager_updateAsync_method()
+        {
+            //Arrange 
+            var mockUserManager = MockUserManagerGenerator.CreateMockUserManager();
+            MockUserManagerGenerator.SetupFindByIdAsync(mockUserManager, 6);
+            MockUserManagerGenerator.SetupUpdateAsync(mockUserManager);
+            var sut = UserServiceGenerator.CreateUserService(mockUserManager);
+            var mockUser = MockUsersData.TestData.Find(user => user.Id == 6);
+
+            //Act
+            var result = await sut.UpdateUser(mockUser);
+
+            //Assert
+            mockUserManager.Verify(x => x.UpdateAsync(mockUser), Times.Once);
+        }
+
+        [Fact]
+        public async void UpdateUser_returns_an_identity_result()
+        {
+            //Arrange 
+            var mockUserManager = MockUserManagerGenerator.CreateMockUserManager();
+            MockUserManagerGenerator.SetupFindByIdAsync(mockUserManager, 6);
+            MockUserManagerGenerator.SetupUpdateAsync(mockUserManager);
+            var sut = UserServiceGenerator.CreateUserService(mockUserManager);
+
+            //Act
+            var result = await sut.UpdateUser(MockUserGenerator.GenerateMockUser());
+
+            //Assert
+            Assert.IsType<IdentityResult>(result);
+        }
+
+        [Fact]
+        public async void SignIn_returns_a_SignInResult()
+        {
+            //Arrange 
+            var mockUserManager = MockUserManagerGenerator.CreateMockUserManager();
+            var sut = UserServiceGenerator.CreateUserService(mockUserManager);
+
+            //Act
+            var result = await sut.SignIn(MockUserGenerator.GenerateMockUser(), "Pa$$w0rd");
+
+            //Assert
+            Assert.IsType<SignInResult>(result);
         }
     }
 }
