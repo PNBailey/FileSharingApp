@@ -8,6 +8,7 @@ using FileSharingAppUnitTests.TestData;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
+using System.ComponentModel.DataAnnotations;
 using Xunit;
 
 namespace FileSharingAppUnitTests.ControllerTests
@@ -43,6 +44,48 @@ namespace FileSharingAppUnitTests.ControllerTests
             //Assert
             var result = actionResult.Result as OkObjectResult;
             Assert.True((bool)result!.Value!);
+        }
+
+        [Fact]
+        public async void RegisterUser_should_throw_ValidationException_when_userService_CheckUserDoesNotAlreadyExistByName_returns_false()
+        {
+            //Arrange
+            var mockUserService = MockUserServiceGenerator.GenerateMockUserService();
+            mockUserService.Setup(x => x.CheckUserDoesNotAlreadyExistByName(It.IsAny<string>(), It.IsAny<CancellationToken>())).Returns(Task.FromResult(false));
+            var sut = AccountControllerGenerator.CreateAccountController(mockUserService.Object);
+
+            //Act
+            try
+            {
+                var result = await sut.RegisterUser(MockRegisterDtoGenerator.GenerateMockRegisterDto());
+            }
+
+            //Assert
+            catch(Exception ex)
+            {
+                Assert.IsType<ValidationException>(ex);
+            }
+        }
+
+        [Fact]
+        public async void RegisterUser_should_throw_ValidationException_when_userService_CheckUserDoesNotAlreadyExistByEmail_returns_false()
+        {
+            //Arrange
+            var mockUserService = MockUserServiceGenerator.GenerateMockUserService();
+            mockUserService.Setup(x => x.CheckUserDoesNotAlreadyExistByEmail(It.IsAny<string>(), It.IsAny<CancellationToken>())).Returns(Task.FromResult(false));
+            var sut = AccountControllerGenerator.CreateAccountController(mockUserService.Object);
+
+            //Act
+            try
+            {
+                var result = await sut.RegisterUser(MockRegisterDtoGenerator.GenerateMockRegisterDto());
+            }
+
+            //Assert
+            catch(Exception ex)
+            {
+                Assert.IsType<ValidationException>(ex);
+            }
         }
 
         [Fact]
