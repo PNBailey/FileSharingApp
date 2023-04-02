@@ -100,7 +100,7 @@ namespace FileSharingApp.API.Controllers
             } 
             else
             {
-                throw new PasswordIncorrectException($"Password is incorrect for username: {loginDto.Username}");
+                throw new SignInException("Unable to log in. Please check Username and Password and try again");
             }
         }
     }

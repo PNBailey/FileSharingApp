@@ -68,6 +68,13 @@ namespace FileSharingAppUnitTests.Helpers
             var user = mockUsers.Find(user => user.Email == email);
             mockUserManager.Setup(x => x.FindByEmailAsync(It.IsAny<string>())).ReturnsAsync(user);
         }
+        
+        public static void SetupFindByIdAsync(Mock<UserManager<AppUser?>> mockUserManager, int id)
+        {
+            var mockUsers = MockUsersData.TestData;
+            var user = mockUsers.Find(user => user.Id == id);
+            mockUserManager.Setup(x => x.FindByIdAsync(It.IsAny<string>())).ReturnsAsync(user);
+        }
 
         public static void SetupCheckPasswordAsyncIncorrect(Mock<UserManager<AppUser?>> mockUserManager)
         {

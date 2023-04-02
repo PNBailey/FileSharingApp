@@ -104,11 +104,6 @@ namespace FileSharingApp.API.Services
             }
         }
 
-        public async Task<bool> CheckPasswordAsync(AppUser user, string password)
-        {
-            return await userManager.CheckPasswordAsync(user, password);
-        }
-
         public async Task<IdentityResult> UpdateUser(AppUser updatedUser)
         {
             var existingUser = await userManager.FindByIdAsync(updatedUser.Id.ToString());

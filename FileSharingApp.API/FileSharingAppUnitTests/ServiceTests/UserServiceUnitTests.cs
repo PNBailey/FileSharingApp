@@ -1,5 +1,8 @@
 ﻿using FileSharingApp.API.CustomExceptions;
+using FileSharingApp.API.Models;
+using FileSharingApp.API.Models.DTOs;
 using FileSharingAppUnitTests.Helpers;
+using FileSharingAppUnitTests.Helpers.ModelMocks;
 using Microsoft.AspNetCore.Identity;
 using Moq;
 using Xunit;
@@ -63,7 +66,55 @@ namespace FileSharingAppUnitTests.ServiceTests
         }
 
         [Fact]
-        public async void HandleUnsuccessfulUserCreation_should_return_aggregate_exception()
+        public async void AttemptToCreateUser_should_return_an_identity_result()
+        {
+            //Arrange 
+            var mockUserManager = MockUserManagerGenerator.CreateMockUserManager();
+            MockUserManagerGenerator.SetupCreateAsyncSuccess(mockUserManager);
+            var sut = UserServiceGenerator.CreateUserService(mockUserManager);
+            var user = MockUserGenerator.GenerateMockUser();
+
+            //Act
+            var result = await sut.AttemptToCreateUser(user, "Pa$$w0rd");
+
+            //Assert
+            Assert.IsType<IdentityResult>(result);
+        }
+        
+        [Fact]
+        public async void AttemptToCreateUser_should_return_an_identity_result_which_is_successful_when_user_manager_createAsync_is_successful()
+        {
+            //Arrange 
+            var mockUserManager = MockUserManagerGenerator.CreateMockUserManager();
+            MockUserManagerGenerator.SetupCreateAsyncSuccess(mockUserManager);
+            var sut = UserServiceGenerator.CreateUserService(mockUserManager);
+            var user = MockUserGenerator.GenerateMockUser();
+
+            //Act
+            var result = await sut.AttemptToCreateUser(user, "Pa$$w0rd");
+
+            //Assert
+            Assert.True(result.Succeeded);
+        }
+        
+        [Fact]
+        public async void AttemptToCreateUser_should_return_an_identity_result_which_contains_errors_when_user_manager_createAsync_returns_errors()
+        {
+            //Arrange 
+            var mockUserManager = MockUserManagerGenerator.CreateMockUserManager();
+            MockUserManagerGenerator.SetupCreateAsyncFailure(mockUserManager);
+            var sut = UserServiceGenerator.CreateUserService(mockUserManager);
+            var user = MockUserGenerator.GenerateMockUser();
+
+            //Act
+            var result = await sut.AttemptToCreateUser(user, "Pa$$w0rd");
+
+            //Assert
+            Assert.True(result.Errors.Any());
+        }
+
+        [Fact]
+        public void HandleUnsuccessfulUserCreation_should_return_aggregate_exception()
         {
             //Arrange 
             var mockUserManager = MockUserManagerGenerator.CreateMockUserManager();
@@ -77,6 +128,99 @@ namespace FileSharingAppUnitTests.ServiceTests
 
             //Assert
             Assert.IsType<AggregateException>(result);
+        }
+        
+        [Fact]
+        public async void HandleSuccessfulUserCreation_should_return_a_user_dto()
+        {
+            //Arrange 
+            var mockUserManager = MockUserManagerGenerator.CreateMockUserManager();
+            var sut = UserServiceGenerator.CreateUserService(mockUserManager);
+            var user = MockUserGenerator.GenerateMockUser();
+
+            //Act
+            var result = await sut.HandleSuccessfulUserCreation(user);
+
+            //Assert
+            Assert.IsType<UserDto>(result);
+        }
+
+        [Fact]
+        public async void FindByNameAsync_should_throw_UserNotFoundException_when_userManager_FindByNameAsync_returns_null()
+        {
+            //Arrange 
+            var mockUserManager = MockUserManagerGenerator.CreateMockUserManager();
+            MockUserManagerGenerator.SetupFindByNameAsync(mockUserManager, "steve");
+            var sut = UserServiceGenerator.CreateUserService(mockUserManager);
+
+            //Act
+            try
+            {
+                var result = await sut.FindByNameAsync("steve");
+            }
+
+            //Assert
+            catch(Exception ex)
+            {
+                Assert.IsType<UserNotFoundException>(ex);
+            }
+        }
+
+        [Fact]
+        public async void FindByNameAsync_should_return_user_when_userManager_FindByNameAsync_returns_user()
+        {
+            //Arrange 
+            var mockUserManager = MockUserManagerGenerator.CreateMockUserManager();
+            MockUserManagerGenerator.SetupFindByNameAsync(mockUserManager, "jimmy");
+            var sut = UserServiceGenerator.CreateUserService(mockUserManager);
+
+            //Act
+            var result = await sut.FindByNameAsync("jimmy");
+
+            //Assert
+            Assert.IsType<AppUser>(result);
+            Assert.Equal("jimmy", result.UserName);
+            Assert.Equal("Jimmy@gmail.com", result.Email);
+            Assert.Equal(6, result.Id);
+        }
+
+        [Fact]
+        public async void FindByIdAsync_should_throw_UserNotFoundException_when_userManager_FindByIdAsync_returns_null()
+        {
+            //Arrange 
+            var mockUserManager = MockUserManagerGenerator.CreateMockUserManager();
+            MockUserManagerGenerator.SetupFindByIdAsync(mockUserManager, 10);
+            var sut = UserServiceGenerator.CreateUserService(mockUserManager);
+
+            //Act
+            try
+            {
+                var result = await sut.FindByIdAsync(10);
+            }
+
+            //Assert
+            catch(Exception ex)
+            {
+                Assert.IsType<UserNotFoundException>(ex);
+            }
+        }
+
+        [Fact]
+        public async void FindByIdAsync_should_return_user_when_userManager_FindByIdAsync_returns_user()
+        {
+            //Arrange 
+            var mockUserManager = MockUserManagerGenerator.CreateMockUserManager();
+            MockUserManagerGenerator.SetupFindByIdAsync(mockUserManager, 6);
+            var sut = UserServiceGenerator.CreateUserService(mockUserManager);
+
+            //Act
+            var result = await sut.FindByIdAsync(6);
+
+            //Assert
+            Assert.IsType<AppUser>(result);
+            Assert.Equal("jimmy", result.UserName);
+            Assert.Equal("Jimmy@gmail.com", result.Email);
+            Assert.Equal(6, result.Id);
         }
     }
 }

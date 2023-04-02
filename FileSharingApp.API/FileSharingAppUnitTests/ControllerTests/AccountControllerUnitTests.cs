@@ -3,6 +3,7 @@ using FileSharingApp.API.Models;
 using FileSharingApp.API.Models.DTOs;
 using FileSharingAppUnitTests.Helpers;
 using FileSharingAppUnitTests.Helpers.ModelMocks;
+using FileSharingAppUnitTests.TestClasses;
 using FileSharingAppUnitTests.TestData;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -135,29 +136,6 @@ namespace FileSharingAppUnitTests.ControllerTests
         }
 
         [Fact]
-        public async void LoginUser_should_return_a_PasswordIncorrectException_when_userService_CheckPasswordAsync_method_returns_false()
-        {
-            //Arrange 
-            var mockUserService = MockUserServiceGenerator.GenerateMockUserService();
-            mockUserService.Setup(x => x.FindByNameAsync(It.IsAny<string>())).Returns(Task.FromResult(MockUserGenerator.GenerateMockUser()));
-            mockUserService.Setup(x => x.CheckPasswordAsync(It.IsAny<AppUser>(), It.IsAny<string>())).Returns(Task.FromResult(false));
-            var sut = AccountControllerGenerator.CreateAccountController(mockUserService.Object);
-            var loginDto = MockLoginDtoGenerator.GenerateMockLoginDto();
-
-            //Act
-            try
-            {
-                await sut.LoginUser(loginDto);
-            }
-
-            //Assert
-            catch (Exception ex)
-            {
-                Assert.IsType<PasswordIncorrectException>(ex);
-            }
-        }
-
-        [Fact]
         public async void LoginUser_should_return_a_ok_response_when_User_Found_and_password_correct()
         {
             //Arrange 
@@ -189,6 +167,29 @@ namespace FileSharingAppUnitTests.ControllerTests
             //Assert
             var result = actionResult.Result as OkObjectResult;
             Assert.IsType<UserDto>(result!.Value);
+        }
+        
+        [Fact]
+        public async void LoginUser_should_return_a_Sign_In_exception_when_Sign_In_Result_Succeeded_is_false()
+        {
+            //Arrange 
+            var mockUserService = MockUserServiceGenerator.GenerateMockUserService();
+            mockUserService.Setup(x => x.SignIn(It.IsAny<AppUser>(), It.IsAny<string>())).Returns(Task.FromResult((Microsoft.AspNetCore.Identity.SignInResult)new MockSignInResult(false)));
+            mockUserService.Setup(x => x.FindByNameAsync(It.IsAny<string>())).Returns(Task.FromResult(MockUserGenerator.GenerateMockUser()));
+            var sut = AccountControllerGenerator.CreateAccountController(mockUserService.Object);
+            var loginDto = MockLoginDtoGenerator.GenerateMockLoginDto();
+
+            //Act
+            try
+            {
+                var actionResult = await sut.LoginUser(loginDto);
+            } 
+
+            //Assert
+            catch(Exception ex)
+            {
+                Assert.IsType<SignInException>(ex);
+            }
         }
     }
 }

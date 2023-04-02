@@ -2,6 +2,7 @@
 using FileSharingApp.API.Models;
 using FileSharingApp.API.Services.Interfaces;
 using FileSharingAppUnitTests.Helpers.ModelMocks;
+using FileSharingAppUnitTests.TestClasses;
 using FileSharingAppUnitTests.TestData;
 using Microsoft.AspNetCore.Identity;
 using Moq;
@@ -44,8 +45,8 @@ namespace FileSharingAppUnitTests.Helpers
             mockUserService.Setup(x => x.CheckUserDoesNotAlreadyExistByName(It.IsAny<string>(), It.IsAny<CancellationToken>())).Returns(Task.FromResult(true));
             mockUserService.Setup(x => x.HandleSuccessfulUserCreation(It.IsAny<AppUser>())).Returns(Task.FromResult(mockUserDto));
             mockUserService.Setup(x => x.HandleUnsuccessfulUserCreation(It.IsAny<IEnumerable<IdentityError>>())).Returns(aggregateException);
-            mockUserService.Setup(x => x.CheckPasswordAsync(It.IsAny<AppUser>(), It.IsAny<string>())).Returns(Task.FromResult(true));
             mockUserService.Setup(x => x.CreateUserDto(It.IsAny<AppUser>())).Returns(Task.FromResult(mockUserDto));
+            mockUserService.Setup(x => x.SignIn(It.IsAny<AppUser>(), It.IsAny<string>())).Returns(Task.FromResult((SignInResult)new MockSignInResult(true)));
 
             return mockUserService;
         }
