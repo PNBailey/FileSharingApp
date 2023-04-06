@@ -1,7 +1,6 @@
 import { of, tap } from "rxjs";
 import { IdentityResult } from "../models/identityResult";
 import { SnackbarAction, SnackbarClassType, SnackbarDuration, SnackBarItem } from "../models/snackbar-item";
-import { User } from "../models/user";
 import { MessageHandlingService } from "../services/message-handling.service";
 import { UserService } from "../services/user.service";
 import { setupCypressConfig } from "../shared/testing/cypress-config-setup/cypress-config-setup";
@@ -21,21 +20,21 @@ describe('EditProfileComponent', () => {
 
     const messageHandlingService = {
         onDisplayNewMessage: (snackBarItem: SnackBarItem) => {
-            return null;
+            return snackBarItem;
         }
     }
 
     const userService = {
         uploadProfilePicture: (file: File) => {
-            return of(null);
+            return of(file);
         },
-        updateUserInfo: (updatedUser: User) => {
+        updateUserInfo: () => {
             const identityResult = new IdentityResult();
             identityResult.succeeded = true;
             return of(identityResult).pipe(
                 tap((res: IdentityResult) => {
                   if(res.succeeded) {
-                    accountService.setLoggedOnUser(new User());
+                    accountService.setLoggedOnUser();
                     messageHandlingService.onDisplayNewMessage({
                         message: "Successfully Updated",
                         action: SnackbarAction.Close,
@@ -49,7 +48,7 @@ describe('EditProfileComponent', () => {
     }
 
     const accountService = {
-        setLoggedOnUser: (user: User) => {
+        setLoggedOnUser: () => {
             return null;
         }
     };

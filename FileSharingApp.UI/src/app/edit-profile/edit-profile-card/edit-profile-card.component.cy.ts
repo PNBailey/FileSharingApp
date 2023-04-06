@@ -1,7 +1,5 @@
 import { of } from "rxjs";
-import { SnackbarAction, SnackbarClassType, SnackbarDuration, SnackBarItem } from "src/app/models/snackbar-item";
 import { User } from "src/app/models/user";
-import { MessageHandlingService } from "src/app/services/message-handling.service";
 import { setupCypressConfig } from "src/app/shared/testing/cypress-config-setup/cypress-config-setup";
 import { EditProfileCardComponent } from "./edit-profile-card.component";
 

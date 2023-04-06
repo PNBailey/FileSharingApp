@@ -14,13 +14,17 @@ export enum ValidFileTypes {
 
 export class EditProfileCardComponent {
   
-  @Input('loggedOnUser$') loggedOnUser$: Observable<null | User>;
+  @Input() loggedOnUser$: Observable<null | User>;
 
-  @Output('incorrectFileTypeSelected') incorrectFileTypeSelected: EventEmitter<void> = new EventEmitter();
-  @Output('newImageSelected') newImageSelected: EventEmitter<File> = new EventEmitter<File>();
+  @Output() incorrectFileTypeSelected: EventEmitter<void> = new EventEmitter();
+  @Output() newImageSelected: EventEmitter<File> = new EventEmitter<File>();
 
-  onFileSelected(event: any) {  
-    const file: File = event.target.files[0];
+  onFileSelected(event: Event) {  
+    const eventTarget = event.target as HTMLInputElement;
+    if (!eventTarget.files?.length) {
+      return;
+    }
+    const file: File = eventTarget.files[0];
     if(file.type != ValidFileTypes.JPG && file.type != ValidFileTypes.PNG) {
       this.incorrectFileTypeSelected.emit();
     } else {

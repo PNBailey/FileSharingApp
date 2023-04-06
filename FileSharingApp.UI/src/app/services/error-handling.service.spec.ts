@@ -1,14 +1,13 @@
-import { HttpClient } from "@angular/common/http";
 import { HttpClientTestingModule, HttpTestingController } from "@angular/common/http/testing";
 import { TestBed } from "@angular/core/testing";
 import { MatSnackBarModule } from "@angular/material/snack-bar";
 import { SnackbarAction, SnackbarClassType, SnackbarDuration } from "../models/snackbar-item";
-import { ErrorCode, ErrorHandlingService, PASSWORD_INCORRECT_EXCEPTION, PASSWORD_INCORRECT_EXCEPTION_MESSAGE, USER_NOT_FOUND_EXCEPTION, USER_NOT_FOUND_EXCEPTION_MESSAGE, VALIDATION_EXCEPTION, VALIDATION_EXCEPTION_MESSAGE } from "./error-handling.service";
+import { ErrorCode, ErrorHandlingService, Exception, ExceptionMessage} from "./error-handling.service";
 import { MessageHandlingService } from "./message-handling.service";
 
 describe('ErrorHandlingService', () => {
     let service: ErrorHandlingService;
-    let messageHandlingService = jasmine.createSpyObj('MessageHandlingService', ['onDisplayNewMessage']);
+    const messageHandlingService = jasmine.createSpyObj('MessageHandlingService', ['onDisplayNewMessage']);
     let httpMock: HttpTestingController;
     
     beforeEach(() => {
@@ -23,21 +22,21 @@ describe('ErrorHandlingService', () => {
     });
     
     it('should set the custom error message for 401 Unauthorized', () => {
-        service.error = {status: ErrorCode.Unauthorized, error: { type: PASSWORD_INCORRECT_EXCEPTION }};
+        service.error = {status: ErrorCode.Unauthorized, error: { type: Exception.SIGN_IN_EXCEPTION }};
         service['setCustomErrorMessage']();
-        expect(service.message).toEqual(PASSWORD_INCORRECT_EXCEPTION_MESSAGE);
+        expect(service.message).toEqual(ExceptionMessage.SIGN_IN_EXCEPTION_MESSAGE);
     });
   
     it('should set the custom error message for 403 Forbidden', () => {
-        service.error = {status: ErrorCode.Forbidden, error: { type: VALIDATION_EXCEPTION }};
+        service.error = {status: ErrorCode.Forbidden, error: { type: Exception.VALIDATION_EXCEPTION }};
         service['setCustomErrorMessage']();
-        expect(service.message).toEqual(VALIDATION_EXCEPTION_MESSAGE);
+        expect(service.message).toEqual(ExceptionMessage.VALIDATION_EXCEPTION_MESSAGE);
     });
   
     it('should set the custom error message for 404 NotFound', () => {
-        service.error = { status: ErrorCode.NotFound, error: { type: USER_NOT_FOUND_EXCEPTION } };
+        service.error = { status: ErrorCode.NotFound, error: { type: Exception.USER_NOT_FOUND_EXCEPTION } };
         service['setCustomErrorMessage']();
-        expect(service.message).toEqual(USER_NOT_FOUND_EXCEPTION_MESSAGE);
+        expect(service.message).toEqual(ExceptionMessage.USER_NOT_FOUND_EXCEPTION_MESSAGE);
     });
   
     it('should set the default error message', () => {
