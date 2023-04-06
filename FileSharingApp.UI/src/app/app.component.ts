@@ -7,6 +7,7 @@ import { AccountService } from './account/account.service';
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
+
 export class AppComponent implements OnInit {
   title = 'FileSharingApp';
   localStorageUser: User;
@@ -22,7 +23,7 @@ export class AppComponent implements OnInit {
   }
 
   setCurrentUser() {
-    this.localStorageUser = JSON.parse(localStorage.getItem('user')!);
+    this.localStorageUser = JSON.parse(JSON.stringify(localStorage.getItem('user')));
     if(this.localStorageUser) {
       this.accountService.setLoggedOnUser(this.localStorageUser);
     }

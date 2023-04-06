@@ -22,7 +22,7 @@ describe('UserService', () => {
 
   describe('UploadProfilePicture method', () => {
     it('should call http post method with correct url', () => {
-      var file = new File([""], "filename", { type: 'text/html' });
+      const file = new File([""], "filename", { type: 'text/html' });
       service.uploadProfilePicture(file).subscribe();
       const req = httpMock.expectOne(`https://localhost:7249/api/User/Upload-Profile-Picture`);
       expect(req.request.method).toEqual('POST');

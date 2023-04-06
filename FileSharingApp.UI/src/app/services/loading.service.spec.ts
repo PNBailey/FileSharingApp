@@ -1,5 +1,5 @@
 import { TestBed } from "@angular/core/testing"
-import { observable, Observable, skip } from "rxjs";
+import { Observable, skip } from "rxjs";
 import { LoadingObsName, LoadingService } from "./loading.service";
 
 describe('LoadingService', () => {

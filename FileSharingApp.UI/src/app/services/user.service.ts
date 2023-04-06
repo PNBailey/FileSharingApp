@@ -17,7 +17,7 @@ export class UserService {
     this.loadingService.toggleLoadingObs(LoadingObsName.UPDATING_PROFILE);
     const formData = new FormData();
     formData.append('image', file);      
-    return this.http.post<any>(`${this.baseUrl}Upload-Profile-Picture`, formData).pipe(
+    return this.http.post(`${this.baseUrl}Upload-Profile-Picture`, formData).pipe(
       finalize(() => {
         this.loadingService.toggleLoadingObs(LoadingObsName.UPDATING_PROFILE)
       })

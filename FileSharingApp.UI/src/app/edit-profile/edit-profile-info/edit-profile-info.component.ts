@@ -14,8 +14,8 @@ export class EditProfileInfoComponent implements OnInit {
 
   constructor(private fb: FormBuilder, private validationService: ValidationService, private loadingService: LoadingService) {}
   
-  @Input('loggedOnUser$') loggedOnUser$: Observable<null | User>;
-  @Output('infoUpdated') infoUpdated = new EventEmitter<User>();
+  @Input() loggedOnUser$: Observable<null | User>;
+  @Output() infoUpdated = new EventEmitter<User>();
   
   userInfoForm$: Observable<UntypedFormGroup>;
   updatedUser: User;
