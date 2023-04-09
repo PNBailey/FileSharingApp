@@ -1,8 +1,15 @@
 import { Component } from '@angular/core';
-import { UntypedFormGroup } from '@angular/forms';
+import { UntypedFormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { combineLatest, Observable } from 'rxjs';
-import { AccountService } from 'src/app/account/account.service';
+import { AccountService } from 'src/app/services/account.service';
 import { LoadingObsName, LoadingService } from '../services/loading.service';
+import { MatButtonModule } from '@angular/material/button';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatDialogModule } from '@angular/material/dialog';
+import { NgIf, AsyncPipe } from '@angular/common';
 
 export interface Action {
   type: string, 
@@ -12,9 +19,11 @@ export interface Action {
 }
 
 @Component({
-  selector: 'app-login-register-dialog',
-  templateUrl: './account-dialog.component.html',
-  styleUrls: ['./account-dialog.component.scss']
+    selector: 'app-login-register-dialog',
+    templateUrl: './account-dialog.component.html',
+    styleUrls: ['./account-dialog.component.scss'],
+    standalone: true,
+    imports: [NgIf, FormsModule, ReactiveFormsModule, MatDialogModule, MatFormFieldModule, MatInputModule, MatProgressSpinnerModule, MatTooltipModule, MatButtonModule, AsyncPipe]
 })
 
 export class AccountDialogComponent {

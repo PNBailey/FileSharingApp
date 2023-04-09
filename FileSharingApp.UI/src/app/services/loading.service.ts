@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { filter, Observable, scan, shareReplay, Subject } from 'rxjs';
+import { filter, Observable, scan, Subject } from 'rxjs';
 
 export enum LoadingObsName {
   CHECKING_EMAIL = 'checkingEmail$',
@@ -22,7 +22,6 @@ export class LoadingService {
 
   private setupObservable(loadingObsName: LoadingObsName): Observable<boolean> {
     return this.toggleLoadingObs$.pipe(
-      shareReplay(),
       filter(loadingObservableToFilter => loadingObservableToFilter == loadingObsName),
       scan(previous => !previous, false)
     )

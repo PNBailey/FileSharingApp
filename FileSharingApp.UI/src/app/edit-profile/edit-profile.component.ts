@@ -1,17 +1,28 @@
 import { Component } from '@angular/core';
 import { Observable, tap, withLatestFrom } from 'rxjs';
-import { AccountService } from '../account/account.service';
+import { AccountService } from '../services/account.service';
 import { IdentityResult } from '../models/identityResult';
 import { SnackbarAction, SnackbarClassType, SnackbarDuration } from '../models/snackbar-item';
 import { User } from '../models/user';
 import { LoadingObsName, LoadingService } from '../services/loading.service';
 import { MessageHandlingService } from '../services/message-handling.service';
 import { UserService } from '../services/user.service';
+import { EditProfileInfoComponent } from './edit-profile-info/edit-profile-info.component';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTabsModule } from '@angular/material/tabs';
+import { EditProfileCardComponent } from './edit-profile-card/edit-profile-card.component';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { NgIf, AsyncPipe } from '@angular/common';
+import { MatCardModule } from '@angular/material/card';
 
 @Component({
-  selector: 'app-edit-profile',
-  templateUrl: './edit-profile.component.html',
-  styleUrls: ['./edit-profile.component.css']
+    selector: 'app-edit-profile',
+    templateUrl: './edit-profile.component.html',
+    styleUrls: ['./edit-profile.component.css'],
+    standalone: true,
+    imports: [MatCardModule, NgIf, MatProgressSpinnerModule, MatFormFieldModule, MatDividerModule, EditProfileCardComponent, MatTabsModule, MatIconModule, EditProfileInfoComponent, AsyncPipe]
 })
 
 export class EditProfileComponent {
