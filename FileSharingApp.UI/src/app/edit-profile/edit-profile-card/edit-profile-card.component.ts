@@ -1,15 +1,21 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { Observable } from 'rxjs';
 import { User } from 'src/app/models/user';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatCardModule } from '@angular/material/card';
+import { NgIf, AsyncPipe } from '@angular/common';
 
 export enum ValidFileTypes {
   JPG = "image/jpeg",
   PNG = "image/png"
 }
 @Component({
-  selector: 'app-edit-profile-card',
-  templateUrl: './edit-profile-card.component.html',
-  styleUrls: ['./edit-profile-card.component.css']
+    selector: 'app-edit-profile-card',
+    templateUrl: './edit-profile-card.component.html',
+    styleUrls: ['./edit-profile-card.component.css'],
+    standalone: true,
+    imports: [NgIf, MatCardModule, MatIconModule, MatButtonModule, AsyncPipe]
 })
 
 export class EditProfileCardComponent {

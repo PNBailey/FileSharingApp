@@ -1,4 +1,5 @@
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { HttpClient } from '@angular/common/http';
 import { ErrorHandler, Injectable } from '@angular/core';
 import { SnackbarAction, SnackbarClassType, SnackbarDuration } from '../models/snackbar-item';
 import { MessageHandlingService } from './message-handling.service';
@@ -28,13 +29,13 @@ export enum ErrorCode {
 })
 export class ErrorHandlingService implements ErrorHandler {
 
-  error: HttpErrorResponse;
+  error: any;
   message = "";
   baseUrl = "https://localhost:7249/api/Errors";
 
   constructor(private messageHandlingService: MessageHandlingService, private http: HttpClient) { }
 
-  handleError(error: HttpErrorResponse) {    
+  handleError(error: any) {    
     this.error = error;   
     this.setDefaultErrorMessage();
     this.setCustomErrorMessage();

@@ -3,7 +3,7 @@ import { setupCypressConfig } from "../shared/testing/cypress-config-setup/cypre
 import { getMockAccountService } from "../shared/testing/cypress-config-setup/mock-account-service-setup";
 import { getValidationServiceMock } from "../shared/testing/cypress-config-setup/validation-service-setup";
 import { AccountDialogComponent } from "./account-dialog.component";
-import { AccountService } from "./account.service";
+import { AccountService } from "../services/account.service";
 import { mount } from 'cypress/angular';
 
 describe('AccountDialogComponent', () => {

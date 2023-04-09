@@ -1,5 +1,5 @@
 import { of } from "rxjs";
-import { AccountService } from "../account/account.service";
+import { AccountService } from "../services/account.service";
 import { ToolbarComponent } from "./toolbar.component";
 import { setupCypressConfig } from "../shared/testing/cypress-config-setup/cypress-config-setup";
 import { getMockAccountService } from "../shared/testing/cypress-config-setup/mock-account-service-setup";

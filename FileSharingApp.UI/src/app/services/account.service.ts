@@ -8,8 +8,8 @@ import { map, scan, startWith, switchMap, tap, withLatestFrom } from 'rxjs/opera
 import { LoginUser } from '../models/loginUser';
 import { RegisterUser } from '../models/registerUser';
 import { User } from '../models/user';
-import { LoadingService } from '../services/loading.service';
-import { ValidationService } from '../services/validation.service';
+import { LoadingService } from './loading.service';
+import { ValidationService } from './validation.service';
 
 @Injectable({
   providedIn: 'root'

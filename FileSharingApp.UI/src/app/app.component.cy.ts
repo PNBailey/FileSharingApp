@@ -1,4 +1,4 @@
-import { AccountService } from "./account/account.service";
+import { AccountService } from "./services/account.service";
 import { AppComponent } from "./app.component";
 import { User } from "./models/user";
 import { setupCypressConfig } from "./shared/testing/cypress-config-setup/cypress-config-setup";

@@ -1,14 +1,22 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { FormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
+import { FormBuilder, UntypedFormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { map, Observable, withLatestFrom } from 'rxjs';
 import { User } from 'src/app/models/user';
 import { LoadingObsName, LoadingService } from 'src/app/services/loading.service';
 import { ValidationService } from 'src/app/services/validation.service';
+import { MatButtonModule } from '@angular/material/button';
+import { TextFieldModule } from '@angular/cdk/text-field';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { NgIf, AsyncPipe } from '@angular/common';
 
 @Component({
-  selector: 'app-edit-profile-info',
-  templateUrl: './edit-profile-info.component.html',
-  styleUrls: ['./edit-profile-info.component.css']
+    selector: 'app-edit-profile-info',
+    templateUrl: './edit-profile-info.component.html',
+    styleUrls: ['./edit-profile-info.component.css'],
+    standalone: true,
+    imports: [NgIf, FormsModule, ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatProgressSpinnerModule, TextFieldModule, MatButtonModule, AsyncPipe]
 })
 export class EditProfileInfoComponent implements OnInit {
 

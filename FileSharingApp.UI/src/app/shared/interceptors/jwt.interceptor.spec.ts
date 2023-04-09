@@ -1,4 +1,4 @@
-import { AccountService } from 'src/app/account/account.service';
+import { AccountService } from 'src/app/services/account.service';
 import { User } from 'src/app/models/user';
 import { HttpRequest, HttpHandler, HttpResponse } from '@angular/common/http';
 import { of } from 'rxjs';
