@@ -59,17 +59,12 @@ describe('ToolBarComponent', () => {
             setLoggedOnUserValueToNull();
             cy.get(elementBindings.loginButton).should('be.visible');
         });
-        // it('should call the MatDialog open method', () => {
-        //     Cypress.on('uncaught:exception', () => {
-        //         // returning false here prevents Cypress from
-        //         // failing the test
-        //         return false;
-        //     });
-        //     setLoggedOnUserValueToNull();
-        //     cy.spy(matDialog, 'open').as('matDialog-open-method');
-        //     cy.get(elementBindings.loginButton).click();
-        //     cy.get('@matDialog-open-method').should('have.been.called');
-        // });
+        it.skip('should call the MatDialog open method', () => {
+            setLoggedOnUserValueToNull();
+            cy.spy(matDialog, 'open').as('matDialog-open-method');
+            cy.get(elementBindings.loginButton).click();
+            cy.get('@matDialog-open-method').should('have.been.called');
+        });
     });
     describe('user menu button', () => {
         it('should be visible when user is logged in', () => {
