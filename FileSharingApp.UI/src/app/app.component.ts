@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { User } from './models/user';
 import { AccountService } from './services/account.service';
 import { RouterOutlet } from '@angular/router';
 import { ToolbarComponent } from './toolbar/toolbar.component';
@@ -17,7 +16,7 @@ import { AccountDialogComponent } from './account/account-dialog.component';
 
 export class AppComponent implements OnInit {
   title = 'FileSharingApp';
-  localStorageUser: User;
+  localStorageUser: string | null;
 
   constructor(
     private accountService: AccountService,
@@ -31,9 +30,9 @@ export class AppComponent implements OnInit {
   }
 
   setCurrentUser() {
-    this.localStorageUser = JSON.parse(JSON.stringify(localStorage.getItem('user')));
+    this.localStorageUser = localStorage.getItem('user');    
     if(this.localStorageUser) {
-      this.accountService.setLoggedOnUser(this.localStorageUser);
+      this.accountService.setLoggedOnUser(JSON.parse(this.localStorageUser));
     }
   }
 

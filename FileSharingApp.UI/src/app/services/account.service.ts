@@ -108,8 +108,8 @@ export class AccountService {
     this.setLoggedOnUser(null);
   }
 
-  setLoggedOnUser(user: Partial<User> | null) {    
+  setLoggedOnUser(user: User | null) {    
     localStorage.setItem('user', JSON.stringify(user));
-    this.loggedOnUser.next(user ? {...new User(), ...user} : null);
+    this.loggedOnUser.next(user);    
   }
 }
