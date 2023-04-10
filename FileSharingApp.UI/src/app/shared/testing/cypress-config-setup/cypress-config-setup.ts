@@ -23,6 +23,7 @@ export function setupCypressConfig<Type>(overrideConfigOptions: MountConfig<Type
     const config = { 
         autoSpyOutputs: true,
         imports: [
+            AccountDialogComponent,
             HttpClientTestingModule,
             MatDialogModule,
             MatMenuModule,
@@ -38,7 +39,6 @@ export function setupCypressConfig<Type>(overrideConfigOptions: MountConfig<Type
             MatSnackBarModule,
             AppComponent,
             ToolbarComponent,
-            AccountDialogComponent,
             HomeComponent,
             EditProfileComponent,
             EditProfileCardComponent,
