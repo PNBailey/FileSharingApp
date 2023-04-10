@@ -13,10 +13,6 @@ describe('ToolBarComponent', () => {
     const validationService = getValidationServiceMock();
     const accountService = getMockAccountService(validationService);
 
-    const matDialog = {
-        open: () => null
-    };
-
     const elementBindings = {
         logoutButton: '[data-cy="logout-button"]',
         userMenuButton: '[data-cy="open-user-menu-button"]',
@@ -35,12 +31,11 @@ describe('ToolBarComponent', () => {
     });
 
     describe('logout button', () => {
-        it('should call the account service logout method', () => {
-            cy.spy(accountService, 'logout').as('accountService-logout-method');
+        it('should emit the logoutUser event', () => {
             cy.get(elementBindings.userMenuButton).click();
             cy.get(elementBindings.userMenuButtons).should('be.visible');
             cy.get(elementBindings.userMenuButtons).eq(1).click();
-            cy.get('@accountService-logout-method').should('have.been.called');
+            cy.get('@logoutUserSpy').should('have.been.called');
         });
     });
 
@@ -59,11 +54,10 @@ describe('ToolBarComponent', () => {
             setLoggedOnUserValueToNull();
             cy.get(elementBindings.loginButton).should('be.visible');
         });
-        it.skip('should call the MatDialog open method', () => {
+        it('should emit the openAccountDialog event', () => {
             setLoggedOnUserValueToNull();
-            cy.spy(matDialog, 'open').as('matDialog-open-method');
             cy.get(elementBindings.loginButton).click();
-            cy.get('@matDialog-open-method').should('have.been.called');
+            cy.get('@openAccountDialogSpy').should('have.been.called');
         });
     });
     describe('user menu button', () => {
@@ -73,6 +67,10 @@ describe('ToolBarComponent', () => {
         it('should not be visible when user is not logged in', () => {
             setLoggedOnUserValueToNull();
             cy.get(elementBindings.userMenuButton).should('have.length', 0);
+        });
+        it('should emit the showSideNav event', () => {
+            cy.get(elementBindings.menuButton).click();
+            cy.get('@showSideNavSpy').should('have.been.called');
         });
     });
     describe('user menu', () => {
@@ -89,7 +87,6 @@ describe('ToolBarComponent', () => {
             },
             providers: [
                 {provide: AccountService, useValue: accountService},
-                {provide: MatDialog, useValue: matDialog}
             ],
             ...configOverride
         }));
