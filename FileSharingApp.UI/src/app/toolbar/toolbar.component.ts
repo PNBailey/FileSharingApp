@@ -1,7 +1,4 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-import { AccountService } from '../services/account.service';
-import { AccountDialogComponent } from '../account/account-dialog.component';
 import { Observable } from 'rxjs';
 import { User } from '../models/user';
 import { RouterLink } from '@angular/router';
@@ -23,31 +20,26 @@ import { MatToolbarModule } from '@angular/material/toolbar';
       NgIf,
       MatMenuModule,
       RouterLink,
-      AsyncPipe,
-      MatDialogModule
+      AsyncPipe
     ]
 })
 export class ToolbarComponent {
 
   @Output() showSideNav = new EventEmitter();
+  @Output() logoutUser = new EventEmitter();
+  @Output() openAccountDialog = new EventEmitter();
+  
   @Input() loggedOnUser$: Observable<User | null>;
-
-  constructor(
-    private accountService: AccountService, 
-    public dialog: MatDialog
-  ) { }
 
   openSideNav() {
     this.showSideNav.emit();
   }
 
   openDialog(): void {
-    this.dialog.open(AccountDialogComponent, {
-      maxWidth: '350px'
-    });
+    this.openAccountDialog.emit();
   }
 
   logout() {    
-    this.accountService.logout();
+    this.logoutUser.emit();
   }
 }

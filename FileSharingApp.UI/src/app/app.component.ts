@@ -4,7 +4,8 @@ import { AccountService } from './services/account.service';
 import { RouterOutlet } from '@angular/router';
 import { ToolbarComponent } from './toolbar/toolbar.component';
 import { MatSidenavModule } from '@angular/material/sidenav';
-import { MatDialogModule } from '@angular/material/dialog';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { AccountDialogComponent } from './account/account-dialog.component';
 
 @Component({
     selector: 'app-root',
@@ -19,8 +20,9 @@ export class AppComponent implements OnInit {
   localStorageUser: User;
 
   constructor(
-    private accountService: AccountService
-    ) {}
+    private accountService: AccountService,
+    public dialog: MatDialog
+  ) {}
 
   loggedOnUser$ = this.accountService.loggedOnUser$;
 
@@ -33,5 +35,15 @@ export class AppComponent implements OnInit {
     if(this.localStorageUser) {
       this.accountService.setLoggedOnUser(this.localStorageUser);
     }
+  }
+
+  logoutUser() {
+    this.accountService.logout();
+  }
+
+  openDialog(): void {
+    this.dialog.open(AccountDialogComponent, {
+      width: '350px'
+    });
   }
 }
