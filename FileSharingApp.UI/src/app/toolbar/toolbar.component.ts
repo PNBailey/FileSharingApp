@@ -16,7 +16,16 @@ import { MatToolbarModule } from '@angular/material/toolbar';
     templateUrl: './toolbar.component.html',
     styleUrls: ['./toolbar.component.scss'],
     standalone: true,
-    imports: [MatToolbarModule, MatButtonModule, MatIconModule, NgIf, MatMenuModule, RouterLink, AsyncPipe, MatDialogModule]
+    imports: [
+      MatToolbarModule,
+      MatButtonModule,
+      MatIconModule,
+      NgIf,
+      MatMenuModule,
+      RouterLink,
+      AsyncPipe,
+      MatDialogModule
+    ]
 })
 export class ToolbarComponent {
 
@@ -25,7 +34,8 @@ export class ToolbarComponent {
 
   constructor(
     private accountService: AccountService, 
-    public dialog: MatDialog) { }
+    public dialog: MatDialog
+  ) { }
 
   openSideNav() {
     this.showSideNav.emit();
@@ -33,7 +43,7 @@ export class ToolbarComponent {
 
   openDialog(): void {
     this.dialog.open(AccountDialogComponent, {
-      width: '350px'
+      maxWidth: '350px'
     });
   }
 

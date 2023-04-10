@@ -18,7 +18,6 @@ import { EditProfileInfoComponent } from "src/app/edit-profile/edit-profile-info
 import { EditProfileComponent } from "src/app/edit-profile/edit-profile.component";
 import { HomeComponent } from "src/app/home/home.component";
 import { ToolbarComponent } from "src/app/toolbar/toolbar.component";
-import { AngularMaterialModule } from "../../angular-material.module";
 
 export function setupCypressConfig<Type>(overrideConfigOptions: MountConfig<Type> = {}): MountConfig<Type> {
     const config = { 
@@ -32,14 +31,19 @@ export function setupCypressConfig<Type>(overrideConfigOptions: MountConfig<Type
             BrowserAnimationsModule,
             MatIconModule,
             ReactiveFormsModule,
-            AngularMaterialModule,
             BrowserAnimationsModule,
             RouterTestingModule,
             MatSidenavModule,
             MatCardModule,
-            MatSnackBarModule
+            MatSnackBarModule,
+            AppComponent,
+            ToolbarComponent,
+            AccountDialogComponent,
+            HomeComponent,
+            EditProfileComponent,
+            EditProfileCardComponent,
+            EditProfileInfoComponent
         ],
-        declarations: [AppComponent, ToolbarComponent, AccountDialogComponent, HomeComponent, EditProfileComponent, EditProfileCardComponent, EditProfileInfoComponent],
         ...overrideConfigOptions
     }
     return config;
