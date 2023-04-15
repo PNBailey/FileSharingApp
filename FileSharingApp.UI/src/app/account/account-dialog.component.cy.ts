@@ -24,22 +24,23 @@ describe('AccountDialogComponent', () => {
         customValidatorUsernameTaken: '[data-cy="username-custom-validator-username-taken"]',
         title: '[data-cy="title"]'
     }
-
+    
     const validationService = getValidationServiceMock();
     const accountService = getMockAccountService(validationService);
+    const mountComponent = () => {
+        mount(AccountDialogComponent, setupCypressConfig<AccountDialogComponent>({
+                providers: [
+                    {provide: AccountService, useValue: accountService}
+                ]
+        }));
+    }   
 
     it('mounts', () => {
-        mount(AccountDialogComponent,
-        setupCypressConfig<AccountDialogComponent>())
+        mountComponent();
     });
 
     beforeEach(() => {
-        mount(AccountDialogComponent, setupCypressConfig<AccountDialogComponent>({
-            providers: [
-                {provide: AccountService, useValue: accountService}
-            ]
-        }));
-        accountService.toggleUserIsRegistering();
+        mountComponent();
     });
 
     describe('form', () => {
@@ -75,9 +76,9 @@ describe('AccountDialogComponent', () => {
                 cy.get(elementBindings.submitButton).should('be.disabled');
             });
             it('should be enabled when form is valid', () => {
-                cy.get(elementBindings.loginRegisterLink).click();
                 cy.stub(validationService, 'uniqueEmailValidatorFn').returns(of(null));
                 cy.stub(validationService, 'uniqueUsernameValidatorFn').returns(of(null));
+                cy.get(elementBindings.loginRegisterLink).click();
                 cy.get(elementBindings.usernameInput).type('kaka');
                 cy.get(elementBindings.passwordInput).type('Pa$$w0rd');
                 cy.get(elementBindings.emailInput).type('52pbailey@gmail.com');
@@ -89,7 +90,6 @@ describe('AccountDialogComponent', () => {
             it("should contain correct text when user is logging in", () => {
                 cy.get(elementBindings.loginRegisterLink).should('have.text', 'Register ');
             });
-        
             it("should contain correct text when user is registering", () => {
                 cy.get(elementBindings.loginRegisterLink).click();
                 cy.get(elementBindings.loginRegisterLink).should('have.text', 'Login ');
@@ -113,7 +113,6 @@ describe('AccountDialogComponent', () => {
                 cy.get(elementBindings.cancelButton).focus();
                 cy.contains('Username is taken');
             });
-        
             it('should not have username taken error when user already exists validator returns null and user is registering', () => {
                 cy.get(elementBindings.loginRegisterLink).click();
                 cy.get(elementBindings.usernameInput).type('test name');
@@ -121,21 +120,18 @@ describe('AccountDialogComponent', () => {
                 cy.get(elementBindings.cancelButton).focus();
                 cy.get(elementBindings.customValidatorUsernameTaken).should('have.length', 0);
             });
-
             it('should have user not found error when user not found validator returns true and user is logging in', () => {
                 cy.get(elementBindings.usernameInput).type('test name');
                 cy.stub(validationService, 'uniqueUsernameValidatorFn').returns(of({'usernameUniquenessViolated': true}));
                 cy.get(elementBindings.cancelButton).focus();
                 cy.contains('No user found. Select register below');
             });
-
             it('should not have user not found error when user not found validator returns null and user is logging in', () => {
                 cy.get(elementBindings.usernameInput).type('test name');
                 cy.stub(validationService, 'uniqueUsernameValidatorFn').returns(of({'usernameUniquenessViolated': null}));
                 cy.get(elementBindings.cancelButton).focus();
                 cy.get(elementBindings.customValidatorUserNotFound).should('have.length', 0);
             });
-
             it('should have username required error when no username provided', () => {
                 cy.get(elementBindings.usernameInput).focus();
                 cy.get(elementBindings.cancelButton).focus();
@@ -149,7 +145,6 @@ describe('AccountDialogComponent', () => {
                 cy.get(elementBindings.cancelButton).focus();
                 cy.contains('An account with this email address already exists. Select login below to login');
             });
-        
             it('should not have email already exists error when async email validator returns null', () => {
                 cy.get(elementBindings.loginRegisterLink).click();
                 cy.stub(validationService, 'uniqueEmailValidatorFn').returns(of(null));
@@ -164,7 +159,6 @@ describe('AccountDialogComponent', () => {
                 cy.get(elementBindings.cancelButton).focus();
                 cy.contains('Email is required');
             });
-        
             it('should have invalid email error when email is invalid', () => {
                 cy.get(elementBindings.loginRegisterLink).click();
                 cy.get(elementBindings.emailInput).type('TestEmailATemailDOTcom');
@@ -178,7 +172,6 @@ describe('AccountDialogComponent', () => {
                 cy.get(elementBindings.cancelButton).focus();
                 cy.contains('Password is required');
             });
-        
             it('should have password pattern invalid error when password format is invalid', () => {
                 cy.get(elementBindings.passwordInput).type('pass');
                 cy.get(elementBindings.cancelButton).focus();

@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import { Observable, tap, withLatestFrom } from 'rxjs';
-import { AccountService } from '../services/account.service';
 import { IdentityResult } from '../models/identityResult';
 import { SnackbarAction, SnackbarClassType, SnackbarDuration } from '../models/snackbar-item';
 import { User } from '../models/user';
@@ -16,6 +15,10 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { NgIf, AsyncPipe } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
+import { AccountState } from '../state/account/account.reducer';
+import { Store } from '@ngrx/store';
+import { AccountEditProfActions } from '../state/account/account.actions';
+import { selectAccountLoggedOnUser } from '../state/account/account.selectors';
 
 @Component({
     selector: 'app-edit-profile',
@@ -30,10 +33,10 @@ export class EditProfileComponent {
     private messageHandlingService: MessageHandlingService,
     private userService: UserService,
     private loadingService: LoadingService,
-    private accountService: AccountService
+    private accountStore: Store<{account: AccountState}>
   ) {}
 
-  loggedOnUser$: Observable<null | User > = this.accountService.loggedOnUser$;
+  loggedOnUser$: Observable<User | null> = this.accountStore.select(selectAccountLoggedOnUser);
   
   updatingProfile$ = this.loadingService.getLoadingObs(LoadingObsName.UPDATING_PROFILE);
 
@@ -53,8 +56,8 @@ export class EditProfileComponent {
         if(loggedOnUser && imageUploadResult.error == null) {
           loggedOnUser.profilePictureUrl = imageUploadResult.url;
           this.displayUserUpdatedMessage();
+          this.accountStore.dispatch(AccountEditProfActions.setLoggedOnUser({user: loggedOnUser}))
         }
-        this.accountService.setLoggedOnUser(loggedOnUser);
       })
     ).subscribe();
   }
@@ -63,7 +66,7 @@ export class EditProfileComponent {
     this.userService.updateUserInfo(updatedUser).pipe(
       tap((res: IdentityResult) => {
         if(res.succeeded) {
-          this.accountService.setLoggedOnUser(updatedUser);
+          this.accountStore.dispatch(AccountEditProfActions.setLoggedOnUser({user: updatedUser}))
           this.displayUserUpdatedMessage();
         }
       })  
