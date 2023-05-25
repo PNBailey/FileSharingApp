@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { UntypedFormGroup, FormsModule, ReactiveFormsModule, FormControl, Validators, FormBuilder } from '@angular/forms';
 import { combineLatest, map, Observable, scan, startWith, Subject, tap, withLatestFrom } from 'rxjs';
-import { AccountService } from 'src/app/services/account.service';
 import { LoadingObsName, LoadingService } from '../services/loading.service';
 import { MatButtonModule } from '@angular/material/button';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -45,7 +44,6 @@ export interface Action {
 export class AccountDialogComponent {
   
   constructor(
-    private accountService: AccountService,
     private loadingService: LoadingService,
     private validationService: ValidationService,
     private fb: FormBuilder,

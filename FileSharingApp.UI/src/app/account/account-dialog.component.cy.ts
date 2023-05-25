@@ -1,10 +1,12 @@
 import { of } from "rxjs";
 import { setupCypressConfig } from "../shared/testing/cypress-config-setup/cypress-config-setup";
-import { getMockAccountService } from "../shared/testing/cypress-config-setup/mock-account-service-setup";
 import { getValidationServiceMock } from "../shared/testing/cypress-config-setup/validation-service-setup";
 import { AccountDialogComponent } from "./account-dialog.component";
-import { AccountService } from "../services/account.service";
 import { mount } from 'cypress/angular';
+import { provideMockStore, MockStore } from '@ngrx/store/testing';
+import { TestBed } from "@angular/core/testing";
+import { ValidationService } from "../services/validation.service";
+
 
 describe('AccountDialogComponent', () => {
 
@@ -24,14 +26,16 @@ describe('AccountDialogComponent', () => {
         customValidatorUsernameTaken: '[data-cy="username-custom-validator-username-taken"]',
         title: '[data-cy="title"]'
     }
-    
-    const validationService = getValidationServiceMock();
-    const accountService = getMockAccountService(validationService);
+
+    let store: MockStore;
+    const initialState = { loggedOnUser: null };
+    const mockValidationService = getValidationServiceMock();
     const mountComponent = () => {
         mount(AccountDialogComponent, setupCypressConfig<AccountDialogComponent>({
-                providers: [
-                    {provide: AccountService, useValue: accountService}
-                ]
+            providers: [
+                provideMockStore({ initialState }),
+                { provide: ValidationService, useValue: mockValidationService }
+            ]
         }));
     }   
 
@@ -41,6 +45,7 @@ describe('AccountDialogComponent', () => {
 
     beforeEach(() => {
         mountComponent();
+        store = TestBed.inject(MockStore);
     });
 
     describe('form', () => {
@@ -76,15 +81,27 @@ describe('AccountDialogComponent', () => {
                 cy.get(elementBindings.submitButton).should('be.disabled');
             });
             it('should be enabled when form is valid', () => {
-                cy.stub(validationService, 'uniqueEmailValidatorFn').returns(of(null));
-                cy.stub(validationService, 'uniqueUsernameValidatorFn').returns(of(null));
                 cy.get(elementBindings.loginRegisterLink).click();
+                overrideCustomValidatorsToReturnNullValues();
                 cy.get(elementBindings.usernameInput).type('kaka');
                 cy.get(elementBindings.passwordInput).type('Pa$$w0rd');
                 cy.get(elementBindings.emailInput).type('52pbailey@gmail.com');
                 cy.get(elementBindings.cancelButton).focus();
                 cy.get(elementBindings.submitButton).should('be.enabled');
             });
+            // it('when clicked, should dispatch a loginOrRegister ngrx action', () => {
+            //     store.setState(new User());
+            //     cy.spy(store, 'dispatch');
+            //     cy.get(elementBindings.loginRegisterLink).click();
+            //     // cy.stub(mockValidationService, 'uniqueEmailValidatorFn').returns(of(null));
+            //     // cy.stub(mockValidationService, 'uniqueUsernameValidatorFn').returns(of(null));
+            //     cy.get(elementBindings.usernameInput).type('kaka');
+            //     cy.get(elementBindings.passwordInput).type('Pa$$w0rd');
+            //     cy.get(elementBindings.emailInput).type('52pbailey@gmail.com');
+            //     cy.get(elementBindings.submitButton).should('be.enabled');
+            //     cy.get(elementBindings.submitButton).click();
+            //     // expect(store.dispatch).to.be.called;
+            // });
         });
         describe('link text', () => {
             it("should contain correct text when user is logging in", () => {
@@ -109,26 +126,26 @@ describe('AccountDialogComponent', () => {
             it('should have username taken error when user already exists validator returns true and user is registering', () => {
                 cy.get(elementBindings.loginRegisterLink).click();
                 cy.get(elementBindings.usernameInput).type('test name');
-                cy.stub(validationService, 'uniqueUsernameValidatorFn').returns(of({'usernameUniquenessViolated': true}));
+                // cy.stub(mockValidationService, 'uniqueUsernameValidatorFn').returns(of({'usernameUniquenessViolated': true}));
                 cy.get(elementBindings.cancelButton).focus();
                 cy.contains('Username is taken');
             });
             it('should not have username taken error when user already exists validator returns null and user is registering', () => {
                 cy.get(elementBindings.loginRegisterLink).click();
                 cy.get(elementBindings.usernameInput).type('test name');
-                cy.stub(validationService, 'uniqueUsernameValidatorFn').returns(of(null));
+                overrideCustomValidatorsToReturnNullValues();
                 cy.get(elementBindings.cancelButton).focus();
                 cy.get(elementBindings.customValidatorUsernameTaken).should('have.length', 0);
             });
             it('should have user not found error when user not found validator returns true and user is logging in', () => {
                 cy.get(elementBindings.usernameInput).type('test name');
-                cy.stub(validationService, 'uniqueUsernameValidatorFn').returns(of({'usernameUniquenessViolated': true}));
+                cy.stub(mockValidationService, 'uniqueUsernameValidatorFn').returns(of({'usernameUniquenessViolated': true}));
                 cy.get(elementBindings.cancelButton).focus();
                 cy.contains('No user found. Select register below');
             });
             it('should not have user not found error when user not found validator returns null and user is logging in', () => {
                 cy.get(elementBindings.usernameInput).type('test name');
-                cy.stub(validationService, 'uniqueUsernameValidatorFn').returns(of({'usernameUniquenessViolated': null}));
+                overrideCustomValidatorsToReturnNullValues();
                 cy.get(elementBindings.cancelButton).focus();
                 cy.get(elementBindings.customValidatorUserNotFound).should('have.length', 0);
             });
@@ -147,7 +164,7 @@ describe('AccountDialogComponent', () => {
             });
             it('should not have email already exists error when async email validator returns null', () => {
                 cy.get(elementBindings.loginRegisterLink).click();
-                cy.stub(validationService, 'uniqueEmailValidatorFn').returns(of(null));
+                overrideCustomValidatorsToReturnNullValues();
                 cy.get(elementBindings.emailInput).type('testEmail@email.com');
                 cy.get(elementBindings.cancelButton).focus();
                 cy.get(elementBindings.emailCustomValidator).should('have.length', 0);
@@ -179,4 +196,9 @@ describe('AccountDialogComponent', () => {
             });        
         });
     });
+    const overrideCustomValidatorsToReturnNullValues = () => {
+        cy.stub(mockValidationService, 'uniqueEmailValidatorFn').returns(() => of(null));
+        cy.stub(mockValidationService, 'uniqueUsernameValidatorFn').returns(() => of(null));
+    }
 });
+
