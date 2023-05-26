@@ -1,21 +1,21 @@
+import { AsyncValidatorFn } from "@angular/forms";
 import { Observable, of } from "rxjs";
 
 export interface MockValidationService {
-    uniqueUsernameValidatorFn(): Observable<{'usernameUniquenessViolated': true}>;
-    uniqueEmailValidatorFn(): Observable<{'emailUniquenessViolated': true}>;
+    uniqueUsernameValidatorFn(): AsyncValidatorFn;
+    uniqueEmailValidatorFn(): AsyncValidatorFn;
+    checkUsernameUnique(): Observable<boolean>;
+    checkEmailUnique(): Observable<boolean>;
 }
 
 export function getValidationServiceMock() {
-    
+
     const mockValidationService: MockValidationService = {
-        uniqueUsernameValidatorFn: () => {
-            return of({'usernameUniquenessViolated': true});
-        },
-        uniqueEmailValidatorFn: () => {
-            return of({'emailUniquenessViolated': true});
-        }
+        uniqueUsernameValidatorFn: () => () => of({ 'usernameUniquenessViolated': true }),
+        uniqueEmailValidatorFn: () => () => of({ 'emailUniquenessViolated': true }),
+        checkUsernameUnique: () => of(true),
+        checkEmailUnique: () => of(true)
     }
-
     return mockValidationService;
-
+    
 }
