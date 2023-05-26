@@ -6,6 +6,7 @@ import { mount } from 'cypress/angular';
 import { provideMockStore, MockStore } from '@ngrx/store/testing';
 import { TestBed } from "@angular/core/testing";
 import { ValidationService } from "../services/validation.service";
+import { AccountDialogActions } from "../state/account/account.actions";
 
 
 describe('AccountDialogComponent', () => {
@@ -82,26 +83,30 @@ describe('AccountDialogComponent', () => {
             });
             it('should be enabled when form is valid', () => {
                 cy.get(elementBindings.loginRegisterLink).click();
-                overrideCustomValidatorsToReturnNullValues();
+                returnNullCustomValidatorValues();
                 cy.get(elementBindings.usernameInput).type('kaka');
                 cy.get(elementBindings.passwordInput).type('Pa$$w0rd');
                 cy.get(elementBindings.emailInput).type('52pbailey@gmail.com');
                 cy.get(elementBindings.cancelButton).focus();
                 cy.get(elementBindings.submitButton).should('be.enabled');
             });
-            // it('when clicked, should dispatch a loginOrRegister ngrx action', () => {
-            //     store.setState(new User());
-            //     cy.spy(store, 'dispatch');
-            //     cy.get(elementBindings.loginRegisterLink).click();
-            //     // cy.stub(mockValidationService, 'uniqueEmailValidatorFn').returns(of(null));
-            //     // cy.stub(mockValidationService, 'uniqueUsernameValidatorFn').returns(of(null));
-            //     cy.get(elementBindings.usernameInput).type('kaka');
-            //     cy.get(elementBindings.passwordInput).type('Pa$$w0rd');
-            //     cy.get(elementBindings.emailInput).type('52pbailey@gmail.com');
-            //     cy.get(elementBindings.submitButton).should('be.enabled');
-            //     cy.get(elementBindings.submitButton).click();
-            //     // expect(store.dispatch).to.be.called;
-            // });
+            it('when clicked, should dispatch a loginOrRegister ngrx action', () => {
+                cy.spy(store, 'dispatch').as('store-disptach-method');
+                cy.get(elementBindings.loginRegisterLink).click();
+                returnNullCustomValidatorValues();
+                cy.get(elementBindings.usernameInput).type('kaka');
+                cy.get(elementBindings.passwordInput).type('Pa$$w0rd');
+                cy.get(elementBindings.emailInput).type('52pbailey@gmail.com');
+                cy.get(elementBindings.submitButton).click();
+                cy.get('@store-disptach-method').should('be.always.calledWith',      AccountDialogActions.loginOrRegister({
+                    user: {
+                        username: 'kaka',
+                        password: 'Pa$$w0rd',
+                        email: '52pbailey@gmail.com'
+                    },
+                    url: '/Register'
+                }));
+            });
         });
         describe('link text', () => {
             it("should contain correct text when user is logging in", () => {
@@ -126,26 +131,24 @@ describe('AccountDialogComponent', () => {
             it('should have username taken error when user already exists validator returns true and user is registering', () => {
                 cy.get(elementBindings.loginRegisterLink).click();
                 cy.get(elementBindings.usernameInput).type('test name');
-                // cy.stub(mockValidationService, 'uniqueUsernameValidatorFn').returns(of({'usernameUniquenessViolated': true}));
                 cy.get(elementBindings.cancelButton).focus();
                 cy.contains('Username is taken');
             });
             it('should not have username taken error when user already exists validator returns null and user is registering', () => {
                 cy.get(elementBindings.loginRegisterLink).click();
                 cy.get(elementBindings.usernameInput).type('test name');
-                overrideCustomValidatorsToReturnNullValues();
+                returnNullCustomValidatorValues();
                 cy.get(elementBindings.cancelButton).focus();
                 cy.get(elementBindings.customValidatorUsernameTaken).should('have.length', 0);
             });
             it('should have user not found error when user not found validator returns true and user is logging in', () => {
                 cy.get(elementBindings.usernameInput).type('test name');
-                cy.stub(mockValidationService, 'uniqueUsernameValidatorFn').returns(of({'usernameUniquenessViolated': true}));
                 cy.get(elementBindings.cancelButton).focus();
                 cy.contains('No user found. Select register below');
             });
             it('should not have user not found error when user not found validator returns null and user is logging in', () => {
                 cy.get(elementBindings.usernameInput).type('test name');
-                overrideCustomValidatorsToReturnNullValues();
+                returnNullCustomValidatorValues();
                 cy.get(elementBindings.cancelButton).focus();
                 cy.get(elementBindings.customValidatorUserNotFound).should('have.length', 0);
             });
@@ -164,7 +167,7 @@ describe('AccountDialogComponent', () => {
             });
             it('should not have email already exists error when async email validator returns null', () => {
                 cy.get(elementBindings.loginRegisterLink).click();
-                overrideCustomValidatorsToReturnNullValues();
+                returnNullCustomValidatorValues();
                 cy.get(elementBindings.emailInput).type('testEmail@email.com');
                 cy.get(elementBindings.cancelButton).focus();
                 cy.get(elementBindings.emailCustomValidator).should('have.length', 0);
@@ -196,7 +199,7 @@ describe('AccountDialogComponent', () => {
             });        
         });
     });
-    const overrideCustomValidatorsToReturnNullValues = () => {
+    const returnNullCustomValidatorValues = () => {
         cy.stub(mockValidationService, 'uniqueEmailValidatorFn').returns(() => of(null));
         cy.stub(mockValidationService, 'uniqueUsernameValidatorFn').returns(() => of(null));
     }
