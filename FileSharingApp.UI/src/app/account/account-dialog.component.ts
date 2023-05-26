@@ -49,16 +49,16 @@ export class AccountDialogComponent {
     private fb: FormBuilder,
     private store: Store
   ) {
-    this.accountAccessFormSubmitted.pipe(
-      withLatestFrom(this.loginRegisterUrl$),
-      tap(([formValue, loginRegisterUrl]) => {
-        this.store.dispatch(AccountDialogActions.loginOrRegister({
-          user: formValue,
-          url: loginRegisterUrl
-        }))
-      })
-    ).subscribe();
-   }
+      this.accountAccessFormSubmitted.pipe(
+        withLatestFrom(this.loginRegisterUrl$),
+        tap(([formValue, loginRegisterUrl]) => {
+          this.store.dispatch(AccountDialogActions.loginOrRegister({
+            user: formValue,
+            url: loginRegisterUrl
+          }))
+        })
+      ).subscribe();
+    }
 
   checkingUsername$ = this.loadingService.getLoadingObs(LoadingObsName.CHECKING_USERNAME);
   checkingEmail$ = this.loadingService.getLoadingObs(LoadingObsName.CHECKING_EMAIL);
@@ -116,7 +116,14 @@ export class AccountDialogComponent {
   }
 
   private createEmailFormControl(form: UntypedFormGroup) {
-    form.addControl('email', new FormControl('', [Validators.required, Validators.email], [this.validationService.uniqueEmailValidatorFn()]));
+    form.addControl(
+      'email',
+      new FormControl(
+        '',
+        [Validators.required, Validators.email],
+        [this.validationService.uniqueEmailValidatorFn()]
+      )
+    );
   }
 
   toggleUserIsRegistering() {
