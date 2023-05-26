@@ -90,7 +90,7 @@ describe('AccountDialogComponent', () => {
                 cy.get(elementBindings.cancelButton).focus();
                 cy.get(elementBindings.submitButton).should('be.enabled');
             });
-            it('when clicked, should dispatch a loginOrRegister ngrx action', () => {
+            it('when clicked, should dispatch a loginOrRegister ngrx action containing a register url when user is registering', () => {
                 cy.spy(store, 'dispatch').as('store-disptach-method');
                 cy.get(elementBindings.loginRegisterLink).click();
                 returnNullCustomValidatorValues();
@@ -105,6 +105,22 @@ describe('AccountDialogComponent', () => {
                         email: '52pbailey@gmail.com'
                     },
                     url: '/Register'
+                }));
+            });
+            it('when clicked, should dispatch a loginOrRegister ngrx action containing a login url when user is logging in', () => {
+                cy.spy(store, 'dispatch').as('store-disptach-method');
+                cy.get(elementBindings.loginRegisterLink).click();
+                cy.get(elementBindings.loginRegisterLink).click();
+                returnNullCustomValidatorValues();
+                cy.get(elementBindings.usernameInput).type('kaka');
+                cy.get(elementBindings.passwordInput).type('Pa$$w0rd');
+                cy.get(elementBindings.submitButton).click();
+                cy.get('@store-disptach-method').should('be.always.calledWith',      AccountDialogActions.loginOrRegister({
+                    user: {
+                        username: 'kaka',
+                        password: 'Pa$$w0rd'
+                    },
+                    url: '/Login'
                 }));
             });
         });
