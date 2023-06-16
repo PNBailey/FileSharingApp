@@ -17,8 +17,8 @@ import { NgIf, AsyncPipe } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { AccountState } from '../state/account/account.reducer';
 import { Store } from '@ngrx/store';
-import { AccountEditProfActions } from '../state/account/account.actions';
 import { selectAccountLoggedOnUser } from '../state/account/account.selectors';
+import { AccountActions } from '../state/account/account.actions';
 
 @Component({
     selector: 'app-edit-profile',
@@ -56,7 +56,7 @@ export class EditProfileComponent {
         if(loggedOnUser && imageUploadResult.error == null) {
           loggedOnUser.profilePictureUrl = imageUploadResult.url;
           this.displayUserUpdatedMessage();
-          this.accountStore.dispatch(AccountEditProfActions.setLoggedOnUser({user: loggedOnUser}))
+          this.accountStore.dispatch(AccountActions.setLoggedOnUser({user: loggedOnUser}))
         }
       })
     ).subscribe();
@@ -66,7 +66,7 @@ export class EditProfileComponent {
     this.userService.updateUserInfo(updatedUser).pipe(
       tap((res: IdentityResult) => {
         if(res.succeeded) {
-          this.accountStore.dispatch(AccountEditProfActions.setLoggedOnUser({user: updatedUser}))
+          this.accountStore.dispatch(AccountActions.setLoggedOnUser({user: updatedUser}))
           this.displayUserUpdatedMessage();
         }
       })  

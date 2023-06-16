@@ -6,7 +6,7 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { AccountDialogComponent } from './account/account-dialog.component';
 import { AccountState } from './state/account/account.reducer';
 import { Store } from '@ngrx/store';
-import { AccountApiActions, AccountAppCompActions } from './state/account/account.actions';
+import { AccountActions, AccountAppCompActions } from './state/account/account.actions';
 import { Observable } from 'rxjs';
 import { User } from './models/user';
 import { AsyncPipe, NgIf } from '@angular/common';
@@ -17,12 +17,19 @@ import { selectAccountLoggedOnUser } from './state/account/account.selectors';
     templateUrl: './app.component.html',
     styleUrls: ['./app.component.scss'],
     standalone: true,
-    imports: [ToolbarComponent, RouterOutlet, MatSidenavModule, MatDialogModule, NgIf, AsyncPipe]
+    imports: [
+      ToolbarComponent,
+      RouterOutlet,
+      MatSidenavModule,
+      MatDialogModule,
+      NgIf,
+      AsyncPipe
+    ]
 })
 
 export class AppComponent implements OnInit {
   title = 'FileSharingApp';
-  localStorageUser: string | null;
+  // localStorageUser: User | null;
 
   constructor(
     public dialog: MatDialog,
@@ -36,10 +43,9 @@ export class AppComponent implements OnInit {
   }
 
   setCurrentUser() {
-    const storedUser = localStorage.getItem('user');
-    this.localStorageUser = storedUser !== null && storedUser !== "undefined" ? JSON.parse(storedUser) : null;
-    if (this.localStorageUser) {      
-      this.accountStore.dispatch(AccountAppCompActions.setLoggedOnUser(JSON.parse(this.localStorageUser)));
+    const storedUser = localStorage.getItem('user');    
+    if (storedUser) {
+       this.accountStore.dispatch(AccountActions.setLoggedOnUser({ user: JSON.parse(storedUser) }));
     }
   }
 

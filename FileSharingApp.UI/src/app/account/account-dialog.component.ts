@@ -14,6 +14,7 @@ import { LoginUser } from '../models/loginUser';
 import { ValidationService } from '../services/validation.service';
 import { Store } from '@ngrx/store';
 import { AccountDialogActions } from '../state/account/account.actions';
+import { AccountState } from '../state/account/account.reducer';
 
 export interface Action {
   type: string, 
@@ -47,7 +48,7 @@ export class AccountDialogComponent {
     private loadingService: LoadingService,
     private validationService: ValidationService,
     private fb: FormBuilder,
-    private store: Store
+    private store: Store<{ account: AccountState }>
   ) {
       this.accountAccessFormSubmitted.pipe(
         withLatestFrom(this.loginRegisterUrl$),

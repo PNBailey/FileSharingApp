@@ -14,6 +14,7 @@ import { provideStore } from '@ngrx/store';
 import { provideEffects } from '@ngrx/effects';
 import { accountReducer } from './app/state/account/account.reducer';
 import { AccountEffects } from './app/state/account/account.effects';
+import { provideMockStore } from '@ngrx/store/testing';
 
 if (environment.production) {
   enableProdMode();

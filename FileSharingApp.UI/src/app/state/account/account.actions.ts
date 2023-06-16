@@ -10,12 +10,18 @@ export const AccountDialogActions = createActionGroup({
     }
 });
 
+export const AccountActions = createActionGroup({
+    source: 'Account Api',
+    events: {
+        'Set Logged On User': props<{user: User | null}>()
+    }
+});
+
 export const AccountApiActions = createActionGroup({
     source: 'Account Api',
     events: {
         'Login Or Register Successful': props<{user: User}>(),
         'Login Or Register Error': props<{error: any}>(),
-        'Set Logged On User': props<{user: User | null}>()
     }
 });
 
@@ -23,13 +29,5 @@ export const AccountAppCompActions = createActionGroup({
     source: 'Account App Comp',
     events: {
         'logout': emptyProps(),
-        'Set Logged On User': props<{user: User | null}>()
-    }
-});
-
-export const AccountEditProfActions = createActionGroup({
-    source: 'Account Edit Prof',
-    events: {
-        'Set Logged On User': props<{user: User | null}>()
     }
 });

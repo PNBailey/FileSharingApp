@@ -2,7 +2,7 @@ import { Injectable } from "@angular/core";
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { catchError, exhaustMap, map, of, tap } from "rxjs";
 import { AccountService } from "src/app/services/account.service";
-import { AccountDialogActions, AccountApiActions, AccountAppCompActions, AccountEditProfActions } from "./account.actions";
+import { AccountDialogActions, AccountApiActions, AccountAppCompActions, AccountActions } from "./account.actions";
 import { MatDialog } from "@angular/material/dialog";
 import { Router } from "@angular/router";
 
@@ -26,23 +26,25 @@ export class AccountEffects {
             ofType(AccountApiActions.loginOrRegisterSuccessful),
             tap(() => {
                 this.dialog.closeAll();
-                this.router.navigate(['/home']);                
+                this.router.navigate(['/home']);                 
             }),
-            map((action) => AccountApiActions.setLoggedOnUser({user: action.user}))
+            map((action) => AccountActions.setLoggedOnUser({user: action.user}))
         )
     );
 
     setLoggedOnUser$ = createEffect(() =>
         this.actions$.pipe(
-            ofType(AccountApiActions.setLoggedOnUser, AccountAppCompActions.setLoggedOnUser, AccountEditProfActions.setLoggedOnUser),
-            tap((action) => localStorage.setItem('user', JSON.stringify(action.user)))
+            ofType(AccountActions.setLoggedOnUser),
+            tap((action) => {
+                localStorage.setItem('user', JSON.stringify(action.user));                
+            })
         ), { dispatch: false }
     );
 
     logout$ = createEffect(() =>
         this.actions$.pipe(
             ofType(AccountAppCompActions.logout),
-            map(() => AccountAppCompActions.setLoggedOnUser({user: null}))
+            map(() => AccountActions.setLoggedOnUser({user: null}))
         )
     );
 
