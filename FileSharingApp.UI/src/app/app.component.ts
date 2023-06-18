@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { Router, RouterOutlet } from '@angular/router';
 import { ToolbarComponent } from './toolbar/toolbar.component';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
@@ -29,11 +29,11 @@ import { selectAccountLoggedOnUser } from './state/account/account.selectors';
 
 export class AppComponent implements OnInit {
   title = 'FileSharingApp';
-  // localStorageUser: User | null;
 
   constructor(
     public dialog: MatDialog,
-    private accountStore: Store<{account: AccountState}>
+    private accountStore: Store<{ account: AccountState }>,
+    private router: Router
   ) {}
 
   loggedOnUser$: Observable<User | null> = this.accountStore.select(selectAccountLoggedOnUser);
@@ -57,5 +57,9 @@ export class AppComponent implements OnInit {
     this.dialog.open(AccountDialogComponent, {
       width: '350px'
     });
+  }
+
+  routeToEditProfile() {
+    this.router.navigateByUrl('../edit-profile');
   }
 }

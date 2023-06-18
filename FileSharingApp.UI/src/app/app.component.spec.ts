@@ -9,6 +9,7 @@ import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { RouterTestingModule } from "@angular/router/testing";
 import { HttpClientTestingModule } from "@angular/common/http/testing";
 import { AccountDialogComponent } from "./account/account-dialog.component";
+import { Router } from "@angular/router";
 
 
 describe('AppComponent', () => {
@@ -24,6 +25,10 @@ describe('AppComponent', () => {
         open: () => null
     };
 
+    const routerMock = {
+        navigateByUrl: (url: string) => null 
+    }
+
     beforeEach(async () => {
         TestBed.configureTestingModule({
             imports: [
@@ -38,7 +43,8 @@ describe('AppComponent', () => {
             ],
             providers: [
                 provideMockStore({ initialState }),
-                { provide: MatDialog, useValue: matDialogMock }
+                { provide: MatDialog, useValue: matDialogMock },
+                { provide: Router, useValue: routerMock }
             ]
         });
     });
@@ -65,5 +71,11 @@ describe('AppComponent', () => {
         localStorage.setItem('user', JSON.stringify(testUser));
         component.setCurrentUser();
         expect(store.dispatch).toHaveBeenCalled();
+    });
+
+    it('routeToEditProfile should call router navigateByUrl method with correct url', () => {
+        spyOn(routerMock, 'navigateByUrl');
+        component.routeToEditProfile();
+        expect(routerMock.navigateByUrl).toHaveBeenCalledWith( '../edit-profile');
     });
 });

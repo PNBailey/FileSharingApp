@@ -28,6 +28,7 @@ export class ToolbarComponent {
   @Output() showSideNav = new EventEmitter();
   @Output() logoutUser = new EventEmitter();
   @Output() openAccountDialog = new EventEmitter();
+  @Output() routeToEditProfile = new EventEmitter();
   
   @Input() loggedOnUser$: Observable<User | null>;
 
@@ -41,5 +42,9 @@ export class ToolbarComponent {
 
   logout() {    
     this.logoutUser.emit();
+  }
+
+  openEditProfile() {
+    this.routeToEditProfile.emit();
   }
 }

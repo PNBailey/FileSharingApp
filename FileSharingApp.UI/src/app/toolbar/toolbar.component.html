@@ -1,6 +1,6 @@
 <mat-toolbar color="primary">
     <button
-      data-cy="menu-button"
+      class="menu-button"
       (click)="openSideNav()"
       mat-icon-button
       aria-label="Application menu button">
@@ -19,27 +19,28 @@
         Login
       </button>
       <button
-        data-cy="open-user-menu-button"
         *ngIf="loggedOnUser$ | async"
         mat-icon-button
+        class="user-menu-button"
         aria-label="User menu button"
         [matMenuTriggerFor]="menu">
         <mat-icon>person</mat-icon>
       </button>
     </div>
 </mat-toolbar>
-<mat-menu #menu="matMenu" data-cy="user-menu">
+<mat-menu #menu="matMenu" class="user-menu">
   <button
     mat-menu-item
-    data-cy="user-menu-button"
-    [routerLink]="['../edit-profile']"
+    class="edit-profile-button"
+    aria-label="Edit profile button"
+    (click)="openEditProfile()"
     >Edit Profile
   </button>
   <button
-    aria-label="Logout button"
-    data-cy='user-menu-button'
-    *ngIf="loggedOnUser$ | async"
     mat-menu-item
-    (click)="logout()">Logout
+    aria-label="Logout button"
+    class="logout-button"
+    (click)="logout()"
+    >Logout
   </button>
 </mat-menu>
