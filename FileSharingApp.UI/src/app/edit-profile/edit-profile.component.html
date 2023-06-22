@@ -1,7 +1,6 @@
 <mat-card class="container mt-4">
   <div class="spinner-container" *ngIf="updatingProfile$ | async">
     <mat-spinner
-      data-cy="updating-profile-spinner"
       class="updating-profile-spinner"
       matSuffix
       [diameter]="25">
@@ -15,7 +14,6 @@
       <div class="d-flex justify-content-center" data-cy="container">
         <app-edit-profile-card
           class="me-5"
-          data-cy="edit-profile-card-component"
           (incorrectFileTypeSelected)="displayIncorrectFileTypeMessage()"
           (newImageSelected)="uploadProfilePicture($event)"
           [loggedOnUser$]="loggedOnUser$">
@@ -28,8 +26,7 @@
               </ng-template>
               <app-edit-profile-info
                 [loggedOnUser$]="loggedOnUser$"
-                (infoUpdated)="infoUpdated($event)"
-                data-cy="edit-profile-info-component">
+                (infoUpdated)="infoUpdated($event)">
               </app-edit-profile-info>
             </mat-tab>
           <mat-tab>

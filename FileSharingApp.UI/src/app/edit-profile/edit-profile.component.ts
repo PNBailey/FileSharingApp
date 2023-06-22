@@ -29,16 +29,19 @@ import { AccountActions } from '../state/account/account.actions';
 })
 
 export class EditProfileComponent {
+  
+  loggedOnUser$: Observable<User | null>;
+  updatingProfile$: Observable<boolean> | undefined
+      
   constructor(
     private messageHandlingService: MessageHandlingService,
     private userService: UserService,
     private loadingService: LoadingService,
     private accountStore: Store<{account: AccountState}>
-  ) {}
-
-  loggedOnUser$: Observable<User | null> = this.accountStore.select(selectAccountLoggedOnUser);
-  
-  updatingProfile$ = this.loadingService.getLoadingObs(LoadingObsName.UPDATING_PROFILE);
+  ) {
+    this.loggedOnUser$ = this.accountStore.select(selectAccountLoggedOnUser);
+    this.updatingProfile$ = this.loadingService.getLoadingObs(LoadingObsName.UPDATING_PROFILE);
+  }
 
   displayIncorrectFileTypeMessage() {
     this.messageHandlingService.onDisplayNewMessage({
