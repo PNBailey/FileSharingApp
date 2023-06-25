@@ -2,13 +2,11 @@
     <div class="profile-picture-container" (click)="fileUpload.click()">
         <input
           type="file"
-          class="d-none"
-          data-cy="file-input"
+          class="d-none file-input"
           accept=".png, .jpg"
           (change)="onFileSelected($event)"
           #fileUpload>
         <img
-            data-cy="profile-picture"
             class="p-2 rounded profile-picture"
             mat-card-image
             src="{{ user.profilePictureUrl || 'https://res.cloudinary.com/filesharingapp/image/upload/v1676504732/Placeholder_user_image_t5klyw.jpg'}}">
@@ -22,7 +20,7 @@
         </div>
     </div>
     <mat-card-content class="d-flex justify-content-center m-3">
-        <p data-cy="bio" class="bio">{{user.bio}}</p>
+        <p class="bio">{{user.bio}}</p>
     </mat-card-content>
     <mat-card-actions class="m-2 d-flex justify-content-center">
         <button mat-button>PLACEHOLDER</button>
