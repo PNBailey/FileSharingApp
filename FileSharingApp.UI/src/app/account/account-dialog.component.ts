@@ -89,7 +89,7 @@ export class AccountDialogComponent {
     })
   );
 
-  private accountAction$: Observable<{type: string, linkLabel: string, linkText: string, buttonAction: string}> = this.userIsRegistering$.pipe(
+  private accountAction$: Observable<Action> = this.userIsRegistering$.pipe(
     map(userIsRegistering => {
       return {
         type: userIsRegistering ? 'Register' : 'Login',
