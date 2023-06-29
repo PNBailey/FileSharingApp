@@ -51,6 +51,7 @@ export class AppComponent implements OnInit {
 
   logoutUser() {
     this.accountStore.dispatch(AccountAppCompActions.logout());
+    this.router.navigateByUrl('/home');
   }
 
   openDialog(): void {
@@ -60,6 +61,6 @@ export class AppComponent implements OnInit {
   }
 
   routeToEditProfile() {
-    this.router.navigateByUrl('../edit-profile');
+    this.router.navigateByUrl('/edit-profile');
   }
 }
