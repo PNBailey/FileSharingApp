@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
 import { Observable } from 'rxjs';
 import { User } from '../models/user';
 import { RouterLink } from '@angular/router';
@@ -9,19 +9,20 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatToolbarModule } from '@angular/material/toolbar';
 
 @Component({
-    selector: 'app-toolbar',
-    templateUrl: './toolbar.component.html',
-    styleUrls: ['./toolbar.component.scss'],
-    standalone: true,
-    imports: [
-      MatToolbarModule,
-      MatButtonModule,
-      MatIconModule,
-      NgIf,
-      MatMenuModule,
-      RouterLink,
-      AsyncPipe
-    ]
+  selector: 'app-toolbar',
+  templateUrl: './toolbar.component.html',
+  styleUrls: ['./toolbar.component.scss'],
+  standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [
+    MatToolbarModule,
+    MatButtonModule,
+    MatIconModule,
+    NgIf,
+    MatMenuModule,
+    RouterLink,
+    AsyncPipe
+  ],
 })
 export class ToolbarComponent {
 

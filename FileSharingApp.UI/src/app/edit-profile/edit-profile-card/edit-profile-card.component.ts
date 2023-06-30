@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
 import { Observable } from 'rxjs';
 import { User } from 'src/app/models/user';
 import { MatButtonModule } from '@angular/material/button';
@@ -15,6 +15,7 @@ export enum ValidFileTypes {
     templateUrl: './edit-profile-card.component.html',
     styleUrls: ['./edit-profile-card.component.css'],
     standalone: true,
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [NgIf, MatCardModule, MatIconModule, MatButtonModule, AsyncPipe]
 })
 

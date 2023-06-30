@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { UntypedFormGroup, FormsModule, ReactiveFormsModule, FormControl, Validators, FormBuilder } from '@angular/forms';
 import { combineLatest, map, Observable, scan, startWith, Subject, tap, withLatestFrom } from 'rxjs';
 import { LoadingObsName, LoadingService } from '../services/loading.service';
@@ -28,6 +28,7 @@ export interface Action {
     templateUrl: './account-dialog.component.html',
     styleUrls: ['./account-dialog.component.scss'],
     standalone: true,
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
       NgIf,
       FormsModule,

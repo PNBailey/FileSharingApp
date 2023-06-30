@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { Router, RouterOutlet } from '@angular/router';
 import { ToolbarComponent } from './toolbar/toolbar.component';
 import { MatSidenavModule } from '@angular/material/sidenav';
@@ -13,18 +13,19 @@ import { AsyncPipe, NgIf } from '@angular/common';
 import { selectAccountLoggedOnUser } from './state/account/account.selectors';
 
 @Component({
-    selector: 'app-root',
-    templateUrl: './app.component.html',
-    styleUrls: ['./app.component.scss'],
-    standalone: true,
-    imports: [
-      ToolbarComponent,
-      RouterOutlet,
-      MatSidenavModule,
-      MatDialogModule,
-      NgIf,
-      AsyncPipe
-    ]
+  selector: 'app-root',
+  templateUrl: './app.component.html',
+  styleUrls: ['./app.component.scss'],
+  standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [
+    ToolbarComponent,
+    RouterOutlet,
+    MatSidenavModule,
+    MatDialogModule,
+    NgIf,
+    AsyncPipe
+  ]
 })
 
 export class AppComponent implements OnInit {

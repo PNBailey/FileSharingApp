@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, UntypedFormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { map, Observable, withLatestFrom } from 'rxjs';
 import { User } from 'src/app/models/user';
@@ -16,6 +16,7 @@ import { NgIf, AsyncPipe } from '@angular/common';
     templateUrl: './edit-profile-info.component.html',
     styleUrls: ['./edit-profile-info.component.css'],
     standalone: true,
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [NgIf, FormsModule, ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatProgressSpinnerModule, TextFieldModule, MatButtonModule, AsyncPipe]
 })
 export class EditProfileInfoComponent implements OnInit {
