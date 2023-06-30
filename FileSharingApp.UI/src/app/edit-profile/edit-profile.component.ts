@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { Observable, tap, withLatestFrom } from 'rxjs';
 import { IdentityResult } from '../models/identityResult';
 import { SnackbarAction, SnackbarClassType, SnackbarDuration } from '../models/snackbar-item';
@@ -25,6 +25,7 @@ import { AccountActions } from '../state/account/account.actions';
     templateUrl: './edit-profile.component.html',
     styleUrls: ['./edit-profile.component.css'],
     standalone: true,
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [MatCardModule, NgIf, MatProgressSpinnerModule, MatFormFieldModule, MatDividerModule, EditProfileCardComponent, MatTabsModule, MatIconModule, EditProfileInfoComponent, AsyncPipe]
 })
 
@@ -57,14 +58,21 @@ export class EditProfileComponent {
       withLatestFrom(this.loggedOnUser$),
       tap(([imageUploadResult, loggedOnUser]) => {
         if(loggedOnUser && imageUploadResult.error == null) {
-          loggedOnUser.profilePictureUrl = imageUploadResult.url;
+          const updatedUser = this.updatedUsersProfilePictureUrl(loggedOnUser, imageUploadResult);
           this.displayUserUpdatedMessage();
-          this.accountStore.dispatch(AccountActions.setLoggedOnUser({user: loggedOnUser}))
+          this.accountStore.dispatch(AccountActions.setLoggedOnUser({user: updatedUser}))
         }
       })
     ).subscribe();
   }
   
+  private updatedUsersProfilePictureUrl(loggedOnUser: User, imageUploadResult: any) {
+    let updatedUser = new User();
+    updatedUser = { ...loggedOnUser };
+    updatedUser.profilePictureUrl = imageUploadResult.url;
+    return updatedUser;
+  }
+
   infoUpdated(updatedUser: User) {
     this.userService.updateUserInfo(updatedUser).pipe(
       tap((res: IdentityResult) => {
