@@ -1,6 +1,5 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { Observable, tap, withLatestFrom } from 'rxjs';
-import { AccountService } from '../services/account.service';
 import { IdentityResult } from '../models/identityResult';
 import { SnackbarAction, SnackbarClassType, SnackbarDuration } from '../models/snackbar-item';
 import { User } from '../models/user';
@@ -16,26 +15,34 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { NgIf, AsyncPipe } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
+import { AccountState } from '../state/account/account.reducer';
+import { Store } from '@ngrx/store';
+import { selectAccountLoggedOnUser } from '../state/account/account.selectors';
+import { AccountActions } from '../state/account/account.actions';
 
 @Component({
     selector: 'app-edit-profile',
     templateUrl: './edit-profile.component.html',
     styleUrls: ['./edit-profile.component.css'],
     standalone: true,
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [MatCardModule, NgIf, MatProgressSpinnerModule, MatFormFieldModule, MatDividerModule, EditProfileCardComponent, MatTabsModule, MatIconModule, EditProfileInfoComponent, AsyncPipe]
 })
 
 export class EditProfileComponent {
+  
+  loggedOnUser$: Observable<User | null>;
+  updatingProfile$: Observable<boolean> | undefined
+      
   constructor(
     private messageHandlingService: MessageHandlingService,
     private userService: UserService,
     private loadingService: LoadingService,
-    private accountService: AccountService
-  ) {}
-
-  loggedOnUser$: Observable<null | User > = this.accountService.loggedOnUser$;
-  
-  updatingProfile$ = this.loadingService.getLoadingObs(LoadingObsName.UPDATING_PROFILE);
+    private accountStore: Store<{account: AccountState}>
+  ) {
+    this.loggedOnUser$ = this.accountStore.select(selectAccountLoggedOnUser);
+    this.updatingProfile$ = this.loadingService.getLoadingObs(LoadingObsName.UPDATING_PROFILE);
+  }
 
   displayIncorrectFileTypeMessage() {
     this.messageHandlingService.onDisplayNewMessage({
@@ -51,19 +58,26 @@ export class EditProfileComponent {
       withLatestFrom(this.loggedOnUser$),
       tap(([imageUploadResult, loggedOnUser]) => {
         if(loggedOnUser && imageUploadResult.error == null) {
-          loggedOnUser.profilePictureUrl = imageUploadResult.url;
+          const updatedUser = this.updatedUsersProfilePictureUrl(loggedOnUser, imageUploadResult);
           this.displayUserUpdatedMessage();
+          this.accountStore.dispatch(AccountActions.setLoggedOnUser({user: updatedUser}))
         }
-        this.accountService.setLoggedOnUser(loggedOnUser);
       })
     ).subscribe();
   }
   
+  private updatedUsersProfilePictureUrl(loggedOnUser: User, imageUploadResult: any) {
+    let updatedUser = new User();
+    updatedUser = { ...loggedOnUser };
+    updatedUser.profilePictureUrl = imageUploadResult.url;
+    return updatedUser;
+  }
+
   infoUpdated(updatedUser: User) {
     this.userService.updateUserInfo(updatedUser).pipe(
       tap((res: IdentityResult) => {
         if(res.succeeded) {
-          this.accountService.setLoggedOnUser(updatedUser);
+          this.accountStore.dispatch(AccountActions.setLoggedOnUser({user: updatedUser}))
           this.displayUserUpdatedMessage();
         }
       })  

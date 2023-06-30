@@ -6,11 +6,11 @@
                 <input
                     matInput
                     type="text"
-                    data-cy="username-input"
+                    class="username-input"
                     formControlName="username"
                     cdkFocusInitial>
                 <mat-error
-                    data-cy="form-error username-custom-validator-username-taken"
+                    class="username-error"
                     *ngIf="form.controls['username'].hasError('usernameUniquenessViolated')">
                     Username is <strong>taken</strong>
                 </mat-error>
@@ -23,7 +23,7 @@
                 <input
                     matInput
                     type="email"
-                    data-cy="email-input"
+                    class="email-input"
                     formControlName="email"
                     cdkFocusInitial>                    
             </mat-form-field>
@@ -36,7 +36,7 @@
                     cdkTextareaAutosize
                     matInput
                     type="text"
-                    data-cy="bio-input"
+                    class="bio-input"
                     formControlName="bio"
                     placeholder="Write something about yourself..."
                     cdkFocusInitial
@@ -48,6 +48,7 @@
     </form>
     <div class="d-flex justify-content-end mt-4">
         <button
+          class="save-changes-button"
           (click)="updateInfo()"
           type="submit"
           color="primary"

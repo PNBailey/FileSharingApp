@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { AbstractControl, AsyncValidatorFn, ValidationErrors } from '@angular/forms';
-import { debounceTime, distinctUntilChanged, finalize, first, map, Observable, switchMap, tap, withLatestFrom } from 'rxjs';
+import { debounceTime, distinctUntilChanged, first, map, Observable, switchMap, tap, withLatestFrom } from 'rxjs';
 import { LoadingObsName, LoadingService } from 'src/app/services/loading.service';
 
 @Injectable({
@@ -21,9 +21,7 @@ export class ValidationService {
     control.valueChanges
       .pipe(
         debounceTime(400),
-        tap(
-          () => this.loadingService.toggleLoadingObs(LoadingObsName.CHECKING_USERNAME)
-        ),
+        tap(() => this.loadingService.toggleLoadingObs(LoadingObsName.CHECKING_USERNAME)),
         distinctUntilChanged(),
         switchMap((controlValue) => this.checkUsernameUnique(controlValue)),
         withLatestFrom(control.valueChanges),
@@ -34,9 +32,7 @@ export class ValidationService {
             (!usernameIsUnique && mustBeUnique && controlValue == originalUsername) 
             ? null : {'usernameUniquenessViolated': true})
         ),
-        tap(
-          () => this.loadingService.toggleLoadingObs(LoadingObsName.CHECKING_USERNAME)
-        ),
+        tap(() => this.loadingService.toggleLoadingObs(LoadingObsName.CHECKING_USERNAME)),
         first()
       );
     }
@@ -44,13 +40,13 @@ export class ValidationService {
     uniqueEmailValidatorFn(): AsyncValidatorFn {
       return (control: AbstractControl): Observable<ValidationErrors | {string : boolean} | null> => control.valueChanges
           .pipe(
-              tap(() => this.loadingService.toggleLoadingObs(LoadingObsName.CHECKING_EMAIL)),
-              debounceTime(400),
-              distinctUntilChanged(),
-              switchMap(value => this.checkEmailUnique(value)),
-              map((usernameIsUnique: boolean) => (usernameIsUnique ? null : {'emailUniquenessViolated': true})),
-              finalize(() => this.loadingService.toggleLoadingObs(LoadingObsName.CHECKING_EMAIL)),
-              first()
+            debounceTime(400),
+            tap(() => this.loadingService.toggleLoadingObs(LoadingObsName.CHECKING_EMAIL)),
+            distinctUntilChanged(),
+            switchMap(value => this.checkEmailUnique(value)),
+            map((usernameIsUnique: boolean) => (usernameIsUnique ? null : {'emailUniquenessViolated': true})),
+            tap(() => this.loadingService.toggleLoadingObs(LoadingObsName.CHECKING_EMAIL)),
+            first()
           );
       }
 

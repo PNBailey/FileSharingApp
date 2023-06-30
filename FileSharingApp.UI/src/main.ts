@@ -10,17 +10,24 @@ import { JwtInterceptor } from './app/shared/interceptors/jwt.interceptor';
 import { HTTP_INTERCEPTORS, withInterceptorsFromDi, provideHttpClient } from '@angular/common/http';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { provideStore } from '@ngrx/store';
+import { provideEffects } from '@ngrx/effects';
+import { accountReducer } from './app/state/account/account.reducer';
+import { AccountEffects } from './app/state/account/account.effects';
+import { provideMockStore } from '@ngrx/store/testing';
 
 if (environment.production) {
   enableProdMode();
 }
 
 bootstrapApplication(AppComponent, {
-    providers: [
-        importProvidersFrom(BrowserModule, AppRoutingModule, FormsModule, ReactiveFormsModule, MatDialogModule, MatSnackBarModule),
-        { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
-        provideAnimations(),
-        provideHttpClient(withInterceptorsFromDi())
-    ]
+  providers: [
+    importProvidersFrom(BrowserModule, AppRoutingModule, FormsModule, ReactiveFormsModule, MatDialogModule, MatSnackBarModule),
+    { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
+    provideAnimations(),
+    provideHttpClient(withInterceptorsFromDi()),
+    provideStore({ account: accountReducer }),
+    provideEffects(AccountEffects)
+  ]
 })
   .catch(err => console.error(err));

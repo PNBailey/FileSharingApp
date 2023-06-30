@@ -7,17 +7,19 @@ import {
 } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { take, tap } from 'rxjs/operators';
-import { AccountService } from 'src/app/services/account.service';
+import { Store } from '@ngrx/store';
+import { AccountState } from 'src/app/state/account/account.reducer';
+import { selectAccountLoggedOnUser } from 'src/app/state/account/account.selectors';
 
 @Injectable()
 export class JwtInterceptor implements HttpInterceptor {
 
-  constructor(private accountService: AccountService) {}
+  constructor(private accountStore: Store<{account: AccountState}>) {}
   newRequest: HttpRequest<unknown>;
 
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
     this.newRequest = request;
-    this.accountService.loggedOnUser$.pipe(
+    this.accountStore.select(selectAccountLoggedOnUser).pipe(
       take(1),
       tap(currentUser => {        
         if(currentUser) { 
