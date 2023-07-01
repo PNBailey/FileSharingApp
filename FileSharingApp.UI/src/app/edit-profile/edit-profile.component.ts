@@ -19,6 +19,7 @@ import { AccountState } from '../state/account/account.reducer';
 import { Store } from '@ngrx/store';
 import { selectAccountLoggedOnUser } from '../state/account/account.selectors';
 import { AccountActions } from '../state/account/account.actions';
+import { ImageUploadResult } from '../models/image-upload-result';
 
 @Component({
     selector: 'app-edit-profile',
@@ -58,7 +59,7 @@ export class EditProfileComponent {
       withLatestFrom(this.loggedOnUser$),
       tap(([imageUploadResult, loggedOnUser]) => {
         if(loggedOnUser && imageUploadResult.error == null) {
-          const updatedUser = this.updatedUsersProfilePictureUrl(loggedOnUser, imageUploadResult);
+          const updatedUser = this.updateUsersProfilePictureUrl(loggedOnUser, imageUploadResult);
           this.displayUserUpdatedMessage();
           this.accountStore.dispatch(AccountActions.setLoggedOnUser({user: updatedUser}))
         }
@@ -66,7 +67,7 @@ export class EditProfileComponent {
     ).subscribe();
   }
   
-  private updatedUsersProfilePictureUrl(loggedOnUser: User, imageUploadResult: any) {
+  private updateUsersProfilePictureUrl(loggedOnUser: User, imageUploadResult: ImageUploadResult): User {
     let updatedUser = new User();
     updatedUser = { ...loggedOnUser };
     updatedUser.profilePictureUrl = imageUploadResult.url;

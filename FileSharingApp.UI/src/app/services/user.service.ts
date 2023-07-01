@@ -5,6 +5,7 @@ import { finalize } from 'rxjs';
 import { IdentityResult } from '../models/identityResult';
 import { User } from '../models/user';
 import { LoadingObsName, LoadingService } from './loading.service';
+import { ImageUploadResult } from '../models/image-upload-result';
 
 @Injectable({
   providedIn: 'root'
@@ -18,7 +19,7 @@ export class UserService {
     this.loadingService.toggleLoadingObs(LoadingObsName.UPDATING_PROFILE);
     const formData = new FormData();
     formData.append('image', file);      
-    return this.http.post<any>(`${this.baseUrl}Upload-Profile-Picture`, formData).pipe(
+    return this.http.post<ImageUploadResult>(`${this.baseUrl}Upload-Profile-Picture`, formData).pipe(
       finalize(() => {
         this.loadingService.toggleLoadingObs(LoadingObsName.UPDATING_PROFILE)
       })
