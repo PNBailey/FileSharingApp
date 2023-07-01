@@ -76,6 +76,6 @@ describe('AppComponent', () => {
     it('routeToEditProfile should call router navigateByUrl method with correct url', () => {
         spyOn(routerMock, 'navigateByUrl');
         component.routeToEditProfile();
-        expect(routerMock.navigateByUrl).toHaveBeenCalledWith( '../edit-profile');
+        expect(routerMock.navigateByUrl).toHaveBeenCalledWith( '/edit-profile');
     });
 });

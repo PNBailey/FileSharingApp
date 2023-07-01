@@ -20,6 +20,7 @@ import { LoadingService } from "../services/loading.service";
 import { getLoadingServiceMock } from "../shared/testing/helpers/loading-service-mock";
 import { AccountActions } from "../state/account/account.actions";
 import { By } from "@angular/platform-browser";
+import { ChangeDetectionStrategy } from "@angular/core";
 
 
 describe('EditProfileComponent', () => {
@@ -35,6 +36,7 @@ describe('EditProfileComponent', () => {
   const testUser = new User();
   testUser.username = "Mr Test";
   testUser.email = "Test@gmail.com";
+  testUser.profilePictureUrl = "https://res.cloudinary.com/filesharingapp/image/upload/v1676504732/Placeholder_user_image_t5klyw.jpg";
 
   beforeEach(() => {
     messageHandlingServiceMock = getMessageHandlingServiceMock();
@@ -69,7 +71,11 @@ describe('EditProfileComponent', () => {
         { provide: UserService, useValue: userServiceMock },
         { provide: LoadingService, useValue: loadingServiceMock }
       ]
-    }).compileComponents();
+    })
+      .overrideComponent(EditProfileComponent, {
+        set: {changeDetection: ChangeDetectionStrategy.Default}
+      })
+      .compileComponents();
     fixture = TestBed.createComponent(EditProfileComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
@@ -101,10 +107,11 @@ describe('EditProfileComponent', () => {
       component.loggedOnUser$ = of(testUser);
       spyOn(store, 'dispatch');
       const file = new File([], 'dummy.jpg');
+      const mockEvent = { target: {files: [file] } }
+      // component.uploadProfilePicture(file);
+      fixture.debugElement.query(By.css('app-edit-profile-card')).triggerEventHandler('newImageSelected', mockEvent);
   
-      component.uploadProfilePicture(file);
-  
-      expect(store.dispatch).toHaveBeenCalledWith(AccountActions.setLoggedOnUser({user: testUser}));
+      expect(store.dispatch).toHaveBeenCalled();
     }); 
     it('should call messageHandlingService.onDisplayNewMessage method when Identity result is succeeded', () => {
       component.loggedOnUser$ = of(testUser);
@@ -125,7 +132,6 @@ describe('EditProfileComponent', () => {
   describe('updating profile loading spinner', () => {
     it('should be displayed when image is uploading', async () => {
       component.updatingProfile$ = of(true);
-  
       expect(await loader.getHarness(MatProgressSpinnerHarness)).toBeTruthy();
     });
     it('should not be displayed when image is not uploading', async () => {

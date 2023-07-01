@@ -13,7 +13,7 @@
                         <mat-error class="username-custom-validator-no-user-found" *ngIf="form.controls['username'].hasError('usernameUniquenessViolated') && accountAccess.action.type === 'Login'">
                             No user found. Select <strong>register</strong> below
                         </mat-error>
-                        <mat-error class="form-error" *ngIf="form.controls['username'].hasError('required')">
+                        <mat-error class="username-required-error" *ngIf="form.controls['username'].hasError('required')">
                             Username is <strong>required</strong>
                         </mat-error>
                         <mat-spinner matSuffix [diameter]="18" *ngIf="checkingUsername$ | async"></mat-spinner>
@@ -30,10 +30,10 @@
                             formControlName="password"
                             matTooltip="Password must be a minimum of eight characters and contain at least one uppercase letter, one lowercase letter, one number and one special character"
                             matTooltipPosition="before">
-                        <mat-error class="form-error" *ngIf="form.controls['password'].hasError('pattern')">
+                        <mat-error class="password-invalid-error" *ngIf="form.controls['password'].hasError('pattern')">
                             Password is <strong>invalid</strong>
                         </mat-error>
-                        <mat-error class="form-error" *ngIf="form.controls['password'].hasError('required')">
+                        <mat-error class="password-required-error" *ngIf="form.controls['password'].hasError('required')">
                             Password is <strong>required</strong>
                         </mat-error>
                     </mat-form-field>
@@ -42,13 +42,13 @@
                     <mat-form-field class="account-form-control" class="email-form-control" appearance="fill">
                         <mat-label>Email</mat-label>
                         <input matInput type="email" formControlName="email" class="email-input">
-                        <mat-error class="form-error" *ngIf="form.controls['email'].hasError('email')">
+                        <mat-error class="email-invalid-error" *ngIf="form.controls['email'].hasError('email')">
                             Please enter a <strong>valid</strong> email address
                         </mat-error>
-                        <mat-error class="form-error" *ngIf="form.controls['email'].hasError('required')">
+                        <mat-error class="email-required-error" *ngIf="form.controls['email'].hasError('required')">
                             Email is <strong>required</strong>
                         </mat-error>
-                        <mat-error class="email-custom-validator" *ngIf="form.controls['email'].hasError('emailUniquenessViolated')">
+                        <mat-error class="email-custom-validator-error" *ngIf="form.controls['email'].hasError('emailUniquenessViolated')">
                             An account with this email address already exists. Select <strong>login</strong> below to login
                         </mat-error>
                         <mat-spinner class="mr-4" matSuffix [diameter]="18" *ngIf="checkingEmail$ | async"></mat-spinner>

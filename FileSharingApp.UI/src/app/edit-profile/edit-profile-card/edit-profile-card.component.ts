@@ -34,7 +34,7 @@ export class EditProfileCardComponent {
     const file: File = eventTarget.files[0];
     if(file.type != ValidFileTypes.JPG && file.type != ValidFileTypes.PNG) {
       this.incorrectFileTypeSelected.emit();
-    } else {
+    } else {      
       this.newImageSelected.emit(file);
     }
   }
