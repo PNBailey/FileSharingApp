@@ -18,4 +18,12 @@ import { MatIconModule } from '@angular/material/icon';
 })
 export class MyFilesComponent {
 
+  onFileSelected(event: Event) {
+    const eventTarget = event.target as HTMLInputElement;
+    if (!eventTarget.files?.length) {
+      return;
+    }    
+    console.log(eventTarget.files);
+  }
+
 }
