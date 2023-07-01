@@ -70,15 +70,7 @@ describe('ToolBarComponent', () => {
       expect(component.routeToEditProfile.emit).toHaveBeenCalled();
     });
   });
-
-  describe('menu button', () => {
-    it('should emit the showSideNav event emitter when clicked', () => {
-      spyOn(component.showSideNav, 'emit');
-      component.openSideNav();
-      expect(component.showSideNav.emit).toHaveBeenCalled();
-    });
-  });
-
+  
   describe('login button', () => {
     it('should emit the openAccountDialog event emitter', async () => {
       spyOn(component.openAccountDialog, 'emit');

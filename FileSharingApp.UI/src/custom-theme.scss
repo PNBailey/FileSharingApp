@@ -70,7 +70,7 @@ $custom-accent: mat.define-palette($custom-blue, 700);
 $custom-warn: mat.define-palette(mat.$red-palette);
 
 $custom-typography: mat.define-typography-config(
-    $font-family: Roboto,
+    $font-family: 'Poppins'
   );
 
 $custom-theme: mat.define-light-theme((
@@ -103,4 +103,4 @@ $custom-theme: mat.define-light-theme((
 /* ANGULAR MATERIAL AUTO DEFINED STYLE */
 
 html, body { height: 100%; }
-body { margin: 0; font-family: Roboto }
+body { margin: 0; }

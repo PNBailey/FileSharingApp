@@ -1,9 +1,10 @@
 <app-toolbar
   data-cy="toolbar"
   [loggedOnUser$]="loggedOnUser$"
-  (showSideNav)="toggleDrawer()"
   (logoutUser)="logoutUser()"
   (openAccountDialog)="openDialog()"
   (routeToEditProfile)="routeToEditProfile()">
 </app-toolbar>
-<app-sidenav></app-sidenav>
+<app-sidenav
+  (goToMyFilesEvent)="goToMyFiles()"
+></app-sidenav>

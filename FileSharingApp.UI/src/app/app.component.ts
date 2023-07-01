@@ -29,7 +29,6 @@ import { SidenavComponent } from './sidenav/sidenav.component';
 
 export class AppComponent implements OnInit {
   title = 'FileSharingApp';
-  @ViewChild(SidenavComponent) sidenavComponent: SidenavComponent;
 
   constructor(
     public dialog: MatDialog,
@@ -65,7 +64,7 @@ export class AppComponent implements OnInit {
     this.router.navigateByUrl('/edit-profile');
   }
 
-  toggleDrawer() {
-    this.sidenavComponent.toggleDrawer();
+  goToMyFiles() {
+    this.router.navigateByUrl('/my-files');
   }
 }
