@@ -1,8 +1,12 @@
 <mat-sidenav-container class="sidenav-container">
-    <mat-sidenav class="sidenav" #drawer mode="side">
-      <p class="mx-5 mt-3 mb-4">My Files</p>
+    <mat-sidenav class="sidenav" opened mode="side">
+      <button class="mx-5 my-3" mat-button (click)="goToMyFiles()">My Files</button>
     </mat-sidenav>
-    <mat-sidenav-content>
-      <router-outlet></router-outlet>
+    <mat-sidenav-content class="p-4">
+      <mat-card>
+        <mat-card-content>
+          <router-outlet></router-outlet>
+        </mat-card-content>
+      </mat-card>
     </mat-sidenav-content>
 </mat-sidenav-container>

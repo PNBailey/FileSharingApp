@@ -1,7 +1,9 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, EventEmitter, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { MatSidenav, MatSidenavModule } from '@angular/material/sidenav';
+import { MatSidenavModule } from '@angular/material/sidenav';
 import { RouterOutlet } from '@angular/router';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
 
 @Component({
   selector: 'app-sidenav',
@@ -9,16 +11,17 @@ import { RouterOutlet } from '@angular/router';
   imports: [
     CommonModule,
     MatSidenavModule,
-    RouterOutlet
+    RouterOutlet,
+    MatButtonModule,
+    MatCardModule
   ],
   templateUrl: './sidenav.component.html',
   styleUrls: ['./sidenav.component.css']
 })
 export class SidenavComponent {
-  
-  @ViewChild('drawer') drawer: MatSidenav;
+  @Output() goToMyFilesEvent = new EventEmitter();
 
-  toggleDrawer() {
-    this.drawer.toggle();
+  goToMyFiles() {
+    this.goToMyFilesEvent.emit();
   }
 }

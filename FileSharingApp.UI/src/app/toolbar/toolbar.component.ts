@@ -26,16 +26,11 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 })
 export class ToolbarComponent {
 
-  @Output() showSideNav = new EventEmitter();
   @Output() logoutUser = new EventEmitter();
   @Output() openAccountDialog = new EventEmitter();
   @Output() routeToEditProfile = new EventEmitter();
   
   @Input() loggedOnUser$: Observable<User | null>;
-
-  openSideNav() {
-    this.showSideNav.emit();
-  }
 
   openDialog(): void {
     this.openAccountDialog.emit();
