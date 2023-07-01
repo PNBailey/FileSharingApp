@@ -3,6 +3,7 @@ import { User } from "src/app/models/user";
 import { EditProfileCardComponent } from "./edit-profile-card.component";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { By } from "@angular/platform-browser";
+import { ChangeDetectionStrategy } from "@angular/core";
 
 describe("EditProfileCardComponent", () => {
   let component: EditProfileCardComponent;
@@ -17,7 +18,10 @@ describe("EditProfileCardComponent", () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [EditProfileCardComponent]
-    });
+    })
+    .overrideComponent(EditProfileCardComponent, {
+      set: { changeDetection: ChangeDetectionStrategy.Default }
+  });
     fixture = TestBed.createComponent(EditProfileCardComponent);
     component = fixture.componentInstance;
     component.loggedOnUser$ = of(mockUser);
@@ -49,7 +53,7 @@ describe("EditProfileCardComponent", () => {
     expect(profilePictureElement.getAttribute("src")).toContain(profilePictureUrl);
   });
 
-  it("should call incorrectFileTypeSelected event emitter when onFileSelected method is invoked with an incorrect file type", () => {
+  it("should emit incorrectFileTypeSelected event when onFileSelected method is invoked with an incorrect file type", () => {
     const file = new File([""], "file.webp", { type: "image/webp" });
     const mockEvent = { target: {files: [file] } }
     spyOn(component.incorrectFileTypeSelected, "emit");
@@ -57,7 +61,7 @@ describe("EditProfileCardComponent", () => {
     expect(component.incorrectFileTypeSelected.emit).toHaveBeenCalled();
   });
 
-  it("should call newImageSelected event emitter when onFileSelected method is invoked with a valid image file", () => {
+  it("should emit newImageSelected event when onFileSelected method is invoked with a valid image file", () => {
     const file = new File([""], "image.jpg", { type: "image/jpeg" });
     const mockEvent = { target: {files: [file] } }
     spyOn(component.newImageSelected, "emit");

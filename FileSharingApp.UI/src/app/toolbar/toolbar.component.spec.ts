@@ -10,6 +10,7 @@ import {MatMenuHarness} from '@angular/material/menu/testing';
 import { MatMenuModule } from "@angular/material/menu";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { MatButtonModule } from "@angular/material/button";
+import { ChangeDetectionStrategy } from "@angular/core";
 
 
 
@@ -31,6 +32,9 @@ describe('ToolBarComponent', () => {
         BrowserAnimationsModule
       ]
     })
+      .overrideComponent(ToolbarComponent, {
+        set: {changeDetection: ChangeDetectionStrategy.Default}
+      });
     fixture = TestBed.createComponent(ToolbarComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

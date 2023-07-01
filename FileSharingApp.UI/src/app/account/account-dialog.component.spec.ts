@@ -14,6 +14,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatInputHarness } from '@angular/material/input/testing';
+import { ChangeDetectionStrategy } from '@angular/core';
 
 
 describe('AccountDialogComponent', () => {
@@ -36,7 +37,10 @@ describe('AccountDialogComponent', () => {
         provideMockStore({ initialState }),
         { provide: ValidationService, useValue: mockValidationService },
       ],
-    }).compileComponents();
+    })
+      .overrideComponent(AccountDialogComponent, {
+        set: { changeDetection: ChangeDetectionStrategy.Default }
+      });
 
     store = TestBed.inject(MockStore);
     fixture = TestBed.createComponent(AccountDialogComponent);
@@ -201,21 +205,22 @@ describe('AccountDialogComponent', () => {
         fixture.debugElement.query(By.css('.login-register-link')).nativeElement.click();
         (await loader.getHarness(MatInputHarness.with({ selector: '.email-input' }))).setValue('Invalid Email');
         (await loader.getHarness(MatButtonHarness.with({ selector: '.cancel-btn' }))).focus();
-        expect(await loader.getHarness(MatErrorHarness.with({ selector: '.invalid-email-error' }))).toBeTruthy();
+        expect(await loader.getHarness(MatErrorHarness.with({ selector: '.email-invalid-error' }))).toBeTruthy();
       });
     });
 
     describe('password form cotrol', () => {
       it('should have password required error when no password provided', async () => {
-        (await loader.getHarness(MatInputHarness.with({ selector: '.password-input' }))).focus();
-        (await loader.getHarness(MatButtonHarness.with({ selector: '.cancel-btn' }))).focus();
+        (await loader.getHarness(MatInputHarness.with({ selector: '.password-input' }))).setValue("");
+        (await loader.getHarness(MatInputHarness.with({ selector: '.username-input' }))).focus();
+        fixture.detectChanges();
         expect(await loader.getHarness(MatErrorHarness.with({ selector: '.password-required-error' }))).toBeTruthy();
       });
 
       it('should have password pattern invalid error when password format is invalid', async () => {
         (await loader.getHarness(MatInputHarness.with({ selector: '.password-input' }))).setValue('pass');
         (await loader.getHarness(MatButtonHarness.with({ selector: '.cancel-btn' }))).focus();
-        expect(await loader.getHarness(MatErrorHarness.with({ selector: '.invalid-password-error' }))).toBeTruthy();
+        expect(await loader.getHarness(MatErrorHarness.with({ selector: '.password-invalid-error' }))).toBeTruthy();
       });
     });
   });
