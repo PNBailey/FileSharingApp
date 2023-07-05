@@ -14,7 +14,8 @@ import { provideStore } from '@ngrx/store';
 import { provideEffects } from '@ngrx/effects';
 import { accountReducer } from './app/state/account/account.reducer';
 import { AccountEffects } from './app/state/account/account.effects';
-import { provideMockStore } from '@ngrx/store/testing';
+import { FileEffects } from './app/state/file/file.effects';
+import { fileReducer } from './app/state/file/file.reducer';
 
 if (environment.production) {
   enableProdMode();
@@ -26,8 +27,8 @@ bootstrapApplication(AppComponent, {
     { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
     provideAnimations(),
     provideHttpClient(withInterceptorsFromDi()),
-    provideStore({ account: accountReducer }),
-    provideEffects(AccountEffects)
+    provideStore({ account: accountReducer, file: fileReducer }),
+    provideEffects(AccountEffects, FileEffects)
   ]
 })
   .catch(err => console.error(err));
