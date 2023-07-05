@@ -1,7 +1,6 @@
 # See http://help.github.com/ignore-files/ for more about ignoring files.
 
 # Compiled output
-FileSharingApp.UI/dist
 FileSharingApp.UI/tmp
 FileSharingApp.UI/out-tsc
 FileSharingApp.UI/bazel-out
