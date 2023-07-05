@@ -17,7 +17,6 @@ import { NgIf, AsyncPipe } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { AccountState } from '../state/account/account.reducer';
 import { Store } from '@ngrx/store';
-import { selectAccountLoggedOnUser } from '../state/account/account.selectors';
 import { AccountActions } from '../state/account/account.actions';
 import { ImageUploadResult } from '../models/image-upload-result';
 
@@ -39,9 +38,9 @@ export class EditProfileComponent {
     private messageHandlingService: MessageHandlingService,
     private userService: UserService,
     private loadingService: LoadingService,
-    private accountStore: Store<{account: AccountState}>
+    private accountStore: Store<{ account: AccountState }>
   ) {
-    this.loggedOnUser$ = this.accountStore.select(selectAccountLoggedOnUser);
+    this.loggedOnUser$ = this.accountStore.select(state => state.account.loggedOnUser);
     this.updatingProfile$ = this.loadingService.getLoadingObs(LoadingObsName.UPDATING_PROFILE);
   }
 

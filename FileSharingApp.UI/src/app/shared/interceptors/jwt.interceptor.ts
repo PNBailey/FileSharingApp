@@ -19,7 +19,7 @@ export class JwtInterceptor implements HttpInterceptor {
 
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
     this.newRequest = request;
-    this.accountStore.select(selectAccountLoggedOnUser).pipe(
+    this.accountStore.select(state => state.account.loggedOnUser).pipe(
       take(1),
       tap(currentUser => {        
         if(currentUser) { 
