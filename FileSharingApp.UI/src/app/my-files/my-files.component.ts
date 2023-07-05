@@ -3,6 +3,9 @@ import { CommonModule } from '@angular/common';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { FileState } from '../state/file/file.reducer';
+import { Store } from '@ngrx/store';
+import { MyFilesActions } from '../state/file/file.actions';
 
 @Component({
   selector: 'app-my-files',
@@ -18,12 +21,14 @@ import { MatIconModule } from '@angular/material/icon';
 })
 export class MyFilesComponent {
 
+  constructor(private store: Store<{ files: FileState }>) {}
+
   onFileSelected(event: Event) {
     const eventTarget = event.target as HTMLInputElement;
     if (!eventTarget.files?.length) {
       return;
     }    
-    console.log(eventTarget.files);
+    this.store.dispatch(MyFilesActions.uploadFile({ file: eventTarget.files[0] }))
   }
 
 }
