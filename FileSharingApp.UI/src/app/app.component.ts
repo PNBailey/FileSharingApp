@@ -32,11 +32,11 @@ export class AppComponent implements OnInit {
 
   constructor(
     public dialog: MatDialog,
-    private accountStore: Store<{ account: AccountState }>,
+    private store: Store<{ account: AccountState }>,
     private router: Router
   ) {}
 
-  loggedOnUser$: Observable<User | null> = this.accountStore.select(selectAccountLoggedOnUser);
+  loggedOnUser$: Observable<User | null> = this.store.select(state => state.account.loggedOnUser);
 
   ngOnInit(): void {
     this.setCurrentUser();
@@ -45,12 +45,12 @@ export class AppComponent implements OnInit {
   setCurrentUser() {
     const storedUser = localStorage.getItem('user');    
     if (storedUser) {
-       this.accountStore.dispatch(AccountActions.setLoggedOnUser({ user: JSON.parse(storedUser) }));
+       this.store.dispatch(AccountActions.setLoggedOnUser({ user: JSON.parse(storedUser) }));
     }
   }
 
   logoutUser() {
-    this.accountStore.dispatch(AccountAppCompActions.logout());
+    this.store.dispatch(AccountAppCompActions.logout());
     this.router.navigateByUrl('/home');
   }
 
