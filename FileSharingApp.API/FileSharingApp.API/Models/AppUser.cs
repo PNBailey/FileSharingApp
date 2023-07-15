@@ -6,7 +6,7 @@ namespace FileSharingApp.API.Models
 {
     public class AppUser : IdentityUser<int>
     {
-        public ICollection<AppUserRole>? UserRoles { get; set; }
+        public ICollection<AppUserRole> UserRoles { get; set; } = null!;
 
         public string? Bio { get; set; }
 

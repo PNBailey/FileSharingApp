@@ -108,7 +108,7 @@ try
     // Adding services
     builder.Services.AddScoped<IUserService, UserService>();
     builder.Services.AddScoped<IErrorService, ErrorService>();
-    builder.Services.AddScoped<IPhotoService, PhotoService>();
+    builder.Services.AddScoped<IFileService, FileService>();
     builder.Services.AddScoped<IValidationService, ValidationService>();
 
 

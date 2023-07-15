@@ -9,18 +9,18 @@ namespace FileSharingAppUnitTests.Helpers
         internal static UserController GenerateUserController()
         {
             var mockUserService = MockUserServiceGenerator.GenerateMockUserService();
-            var mockPhotoService = MockPhotoServiceGenerator.GenerateMockPhotoService();
-            var userController = new UserController(mockUserService.Object, mockPhotoService.Object)
+            var mockFileService = MockFileServiceGenerator.GenerateMockFileService();
+            var userController = new UserController(mockUserService.Object, mockFileService.Object)
             {
                 ControllerContext = ControllerContextGenerator.GenerateControllerContext()
             };
             return userController;
         }
 
-        internal static UserController GenerateUserController(Mock<IPhotoService> mockPhotoService)
+        internal static UserController GenerateUserController(Mock<IFileService> mockFileService)
         {
             var mockUserService = MockUserServiceGenerator.GenerateMockUserService();
-            var userController = new UserController(mockUserService.Object, mockPhotoService.Object)
+            var userController = new UserController(mockUserService.Object, mockFileService.Object)
             {
                 ControllerContext = ControllerContextGenerator.GenerateControllerContext()
             };
@@ -29,8 +29,8 @@ namespace FileSharingAppUnitTests.Helpers
 
         internal static UserController GenerateUserController(Mock<IUserService> mockUserService)
         {
-            var mockPhotoService = MockPhotoServiceGenerator.GenerateMockPhotoService();
-            var userController = new UserController(mockUserService.Object, mockPhotoService.Object)
+            var mockFileService = MockFileServiceGenerator.GenerateMockFileService();
+            var userController = new UserController(mockUserService.Object, mockFileService.Object)
             {
                 ControllerContext = ControllerContextGenerator.GenerateControllerContext()
             };

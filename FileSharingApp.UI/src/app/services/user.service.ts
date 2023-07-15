@@ -6,6 +6,7 @@ import { IdentityResult } from '../models/identityResult';
 import { User } from '../models/user';
 import { LoadingObsName, LoadingService } from './loading.service';
 import { ImageUploadResult } from '../models/image-upload-result';
+import { AppImage } from '../models/app-image';
 
 @Injectable({
   providedIn: 'root'
@@ -18,7 +19,9 @@ export class UserService {
   uploadProfilePicture(file: File) {
     this.loadingService.toggleLoadingObs(LoadingObsName.UPDATING_PROFILE);
     const formData = new FormData();
-    formData.append('image', file);      
+    formData.append('imageFileData', file);
+    // const image = new AppImage();
+    // image.fileData = formData;     
     return this.http.post<ImageUploadResult>(`${this.baseUrl}Upload-Profile-Picture`, formData).pipe(
       finalize(() => {
         this.loadingService.toggleLoadingObs(LoadingObsName.UPDATING_PROFILE)

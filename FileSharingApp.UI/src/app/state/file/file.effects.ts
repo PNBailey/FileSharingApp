@@ -1,7 +1,7 @@
 import { Injectable } from "@angular/core";
 import { Actions, createEffect, ofType } from "@ngrx/effects";
 import { MyFilesActions, MyFilesApiActions } from "./file.actions";
-import { exhaustMap, map, switchMap, tap } from "rxjs";
+import { map, switchMap, tap } from "rxjs";
 import { FileService } from "src/app/services/file.service";
 
 

@@ -35,7 +35,7 @@ export class ErrorHandlingService implements ErrorHandler {
 
   constructor(private messageHandlingService: MessageHandlingService, private http: HttpClient) { }
 
-  handleError(error: any) {    
+  handleError(error: any) {        
     this.error = error;   
     this.setDefaultErrorMessage();
     this.setCustomErrorMessage();

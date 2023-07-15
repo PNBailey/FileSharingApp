@@ -1,10 +1,21 @@
 ﻿
+using CloudinaryDotNet.Actions;
+using FileSharingApp.API.ExtensionMethods;
+using FileSharingApp.API.Models.Files;
+using FileSharingApp.API.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FileSharingApp.API.Controllers
 {
     public class FileController : BaseController
     {
+        private readonly IFileService fileService;
+
+        public FileController(IFileService fileService)
+        {
+            this.fileService = fileService;
+        }
+
         //[HttpGet]
         //public IEnumerable<File> Get()
         //{
@@ -18,9 +29,12 @@ namespace FileSharingApp.API.Controllers
         //}
 
         [HttpPost]
-        public IFormFile Post([FromForm]IFormFile file)
+        public async Task<RawUploadResult> Post([FromForm]IFormFile fileData)
         {
-            return file;
+            BaseFile newFile = (BaseFile)this.fileService.CreateFileType(fileData.ContentType);
+            newFile.FileData = fileData;
+            var uploadResult = await this.fileService.UploadFile(newFile, User.GetUserId());
+            return uploadResult;
         }
 
         //[HttpPut("{id}")]

@@ -1,4 +1,6 @@
 ﻿using FileSharingApp.API.Models;
+using FileSharingApp.API.Models.Enums;
+using FileSharingApp.API.Models.Files;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -19,6 +21,11 @@ namespace FileSharingApp.API.Data
         : base(options)
         {
         }
+
+        public DbSet<BaseFile> Files { get; set; }
+        public DbSet<XmlFile> XmlFiles { get; set; }
+        public DbSet<PdfFile> PdfFiles { get; set; }
+        public DbSet<ImageFile> ImageFiles { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
