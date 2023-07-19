@@ -3,6 +3,7 @@ import { Actions, createEffect, ofType } from "@ngrx/effects";
 import { MyFilesActions, MyFilesApiActions } from "./file.actions";
 import { map, switchMap, tap } from "rxjs";
 import { FileService } from "src/app/services/file.service";
+import { MessageHandlingService } from "src/app/services/message-handling.service";
 
 
 @Injectable()
@@ -19,12 +20,18 @@ export class FileEffects {
     uploadFileSuccessful$ = createEffect(() => 
         this.actions$.pipe(
             ofType(MyFilesApiActions.uploadFileSuccessful),
-            tap((file) => console.log(file))
+            tap((file) => {
+                this.messageHandlingService.onDisplayNewMessage({
+                    message: "File successfully uploaded"
+                });
+                console.log(file);
+            }),
         ), { dispatch: false }
     );
 
     constructor(
         private actions$: Actions,
-        private fileService: FileService
+        private fileService: FileService,
+        private messageHandlingService: MessageHandlingService
     ) { }
 }

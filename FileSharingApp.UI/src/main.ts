@@ -27,7 +27,7 @@ bootstrapApplication(AppComponent, {
     { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
     provideAnimations(),
     provideHttpClient(withInterceptorsFromDi()),
-    provideStore({ account: accountReducer, file: fileReducer }),
+    provideStore({ account: accountReducer, files: fileReducer }),
     provideEffects(AccountEffects, FileEffects)
   ]
 })

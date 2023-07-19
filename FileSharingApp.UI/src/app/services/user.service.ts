@@ -6,7 +6,6 @@ import { IdentityResult } from '../models/identityResult';
 import { User } from '../models/user';
 import { LoadingObsName, LoadingService } from './loading.service';
 import { ImageUploadResult } from '../models/image-upload-result';
-import { AppImage } from '../models/app-image';
 
 @Injectable({
   providedIn: 'root'

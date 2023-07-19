@@ -35,7 +35,7 @@ export class AccountEffects {
     setLoggedOnUser$ = createEffect(() =>
         this.actions$.pipe(
             ofType(AccountActions.setLoggedOnUser),
-            tap((action) => {
+            tap((action) => {                
                 localStorage.setItem('user', JSON.stringify(action.user));                
             })
         ), { dispatch: false }

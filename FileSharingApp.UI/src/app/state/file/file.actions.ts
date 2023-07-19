@@ -1,4 +1,5 @@
 import { createActionGroup, props } from "@ngrx/store";
+import { AppFile } from "src/app/models/app-file";
 
 export const MyFilesActions = createActionGroup({
     source: 'My Files',
@@ -10,6 +11,6 @@ export const MyFilesActions = createActionGroup({
 export const MyFilesApiActions = createActionGroup({
     source: 'Files API',
     events: {
-        'Upload File Successful': props<{ file: File }>()
+        'Upload File Successful': props<{ file: AppFile }>()
     }
 });

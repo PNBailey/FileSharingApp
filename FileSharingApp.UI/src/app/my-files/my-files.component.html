@@ -7,3 +7,4 @@
   </button>
 </div>
 <mat-divider></mat-divider>
+<p *ngFor="let file of files$ | async">{{file.name}}</p>

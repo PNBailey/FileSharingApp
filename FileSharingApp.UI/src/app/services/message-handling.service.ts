@@ -23,8 +23,8 @@ export class MessageHandlingService {
 
   private displayMessage(snackBarItem: SnackBarItem) {    
     this.snackbar.open(snackBarItem.message, snackBarItem.action, {
-      panelClass: [snackBarItem.classType],
-      duration: snackBarItem.duration,
+      panelClass: [snackBarItem.classType || 'snack-bar-success'],
+      duration: snackBarItem.duration || 3500,
       horizontalPosition: 'end'
     });
   }

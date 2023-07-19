@@ -1,9 +1,9 @@
-import { createSelector } from "@ngrx/store";
+import { createFeatureSelector, createSelector } from "@ngrx/store";
 import { AccountState } from "./account.reducer";
 
-export const selectAccountState = (state: AccountState) => state;
+export const accountFeatureSelector = createFeatureSelector<AccountState>('account');
 
-export const selectAccountLoggedOnUser = createSelector(
-    selectAccountState,
+export const getLoggedOnUser = createSelector(
+    accountFeatureSelector,
     (state: AccountState) => state.loggedOnUser
 );

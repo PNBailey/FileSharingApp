@@ -9,7 +9,7 @@ import { Observable } from 'rxjs';
 import { take, tap } from 'rxjs/operators';
 import { Store } from '@ngrx/store';
 import { AccountState } from 'src/app/state/account/account.reducer';
-import { selectAccountLoggedOnUser } from 'src/app/state/account/account.selectors';
+import { getLoggedOnUser } from 'src/app/state/account/account.selectors';
 
 @Injectable()
 export class JwtInterceptor implements HttpInterceptor {
@@ -19,10 +19,10 @@ export class JwtInterceptor implements HttpInterceptor {
 
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
     this.newRequest = request;
-    this.accountStore.select(state => state.account.loggedOnUser).pipe(
+    this.accountStore.select(getLoggedOnUser).pipe(
       take(1),
-      tap(currentUser => {        
-        if(currentUser) { 
+      tap(currentUser => {         
+        if (currentUser) {          
           this.newRequest = request.clone({
             setHeaders: {
               Authorization: `Bearer ${currentUser.token}`
