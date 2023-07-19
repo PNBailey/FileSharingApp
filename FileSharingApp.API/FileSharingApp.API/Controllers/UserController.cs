@@ -47,21 +47,19 @@ namespace FileSharingApp.API.Controllers
         }
 
         [HttpPost("Upload-Profile-Picture")]
-        public async Task<RawUploadResult> UploadProfilePicture([FromForm]IFormFile imageFileData)
+        public async Task<ImageFile> UploadProfilePicture([FromForm]IFormFile imageFileData)
         {
             var imageFile = new ImageFile()
             {
                 FileData = imageFileData
             };
 
-            var result = await this.fileService.UploadFile(imageFile, User.GetUserId());
-            if(result.Error == null)
-            {
-                var user = await this.userService.FindByIdAsync(User.GetUserId());
-                user.ProfilePictureUrl = result.Url.ToString();
-                await this.userService.UpdateUser(user);
-            }
-            return result;
+            ImageFile uploadedFile = (ImageFile)await this.fileService.UploadFile(imageFile, User.GetUserId());
+            var user = await this.userService.FindByIdAsync(User.GetUserId());
+            user.ProfilePictureUrl = uploadedFile.Url.ToString();
+            await this.userService.UpdateUser(user);
+            
+            return uploadedFile;
         }
     }
 }

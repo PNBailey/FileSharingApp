@@ -5,8 +5,6 @@ namespace FileSharingApp.API.Models.Files
 {
     public class XmlFile : BaseFile
     {
-        public string? ThumbnailUrl { get; set; }
-
         public override RawUploadParams GetUploadParams(int userId)
         {
             var stream = this.FileData.OpenReadStream();

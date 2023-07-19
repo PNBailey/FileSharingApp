@@ -1,5 +1,6 @@
 ﻿using CloudinaryDotNet;
 using CloudinaryDotNet.Actions;
+using FileSharingApp.API.CustomExceptions;
 using FileSharingApp.API.Data;
 using FileSharingApp.API.Helpers;
 using FileSharingApp.API.Models.Files;
@@ -42,35 +43,24 @@ namespace FileSharingApp.API.Services
             this.context = context;
         }
 
-        public async Task<RawUploadResult> UploadFile(BaseFile file, int userId)
+        public async Task<BaseFile> UploadFile(BaseFile file, int userId)
         {
             var uploadParams = file.GetUploadParams(userId);
             var response = await Cloudinary.UploadAsync(uploadParams);
-            if (response.Error == null)
+            if (response.Error != null)
             {
-                file.Url = response.Url.AbsoluteUri;
-                var convertedFile = FileIsAnXmlFile(file) ? ConvertToXmlFileAndAddThumbnailUrl(file, response) : file;
-                this.context.Files.Add(convertedFile);
-                this.context.SaveChanges();
+                throw new FileUploadException(response.Error.Message);
             }
-            return response;
+
+            file.Url = response.Url.AbsoluteUri;
+            this.context.Files.Add(file);
+            this.context.SaveChanges();
+
+            return file;
         }
 
-        private static XmlFile ConvertToXmlFileAndAddThumbnailUrl(BaseFile file, RawUploadResult response)
+        public object CreateFileType(string fileTypeName)
         {
-            var xmlFile = (XmlFile)file;
-            xmlFile.ThumbnailUrl = $"{response.Url.AbsoluteUri}.pdf";
-            return xmlFile;
-        }
-
-        private static bool FileIsAnXmlFile(BaseFile file)
-        {
-            return file.GetType() == typeof(XmlFile);
-        }
-
-        public object CreateFileType(string contentType)
-        {
-            var fileTypeName = GetFileTypeName(contentType);
             Type fileType = Type.GetType($"FileSharingApp.API.Models.Files.{fileTypeName}File")!;
             var newFile = Activator.CreateInstance(fileType);
             if(newFile == null) throw new ArgumentException("File type is invalid");
@@ -78,18 +68,23 @@ namespace FileSharingApp.API.Services
 
         }
 
-        private static string GetFileTypeName(string contentType)
+        public string GetFileTypeName(string fileExtension)
         {
-            switch(contentType)
+            switch(fileExtension)
             {
-                case "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
-                case "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet":
-                case "application/vnd.openxmlformats-officedocument.presentationml.presentation":
+                case ".doc":
+                case ".docx":
+                case ".docm":
+                case ".xlsx":
+                case ".xlsm":
+                case ".pptx":
+                case ".pptm":
+                case ".ppt":
                     return "Xml";
-                case "application/pdf":
+                case ".pdf":
                     return "Pdf";
-                case "image/png":
-                case "image/jpeg":
+                case ".png":
+                case ".jpeg":
                     return "Image";
                 default:
                     throw new ArgumentException("File type is invalid");
