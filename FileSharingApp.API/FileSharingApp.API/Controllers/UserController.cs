@@ -1,4 +1,5 @@
-﻿using CloudinaryDotNet.Actions;
+﻿using AutoMapper;
+using CloudinaryDotNet.Actions;
 using FileSharingApp.API.ExtensionMethods;
 using FileSharingApp.API.Models;
 using FileSharingApp.API.Models.DTOs;
@@ -15,11 +16,16 @@ namespace FileSharingApp.API.Controllers
     {
         private readonly IUserService userService;
         private readonly IFileService fileService;
+        private readonly IMapper mapper;
 
-        public UserController(IUserService userService, IFileService fileService)
+        public UserController(
+            IUserService userService, 
+            IFileService fileService,
+            IMapper mapper)
         {
             this.userService = userService;
             this.fileService = fileService;
+            this.mapper = mapper;
         }
 
         [HttpGet]
@@ -47,19 +53,19 @@ namespace FileSharingApp.API.Controllers
         }
 
         [HttpPost("Upload-Profile-Picture")]
-        public async Task<ImageFile> UploadProfilePicture([FromForm]IFormFile imageFileData)
+        public async Task<FileDto> UploadProfilePicture([FromForm]IFormFile imageFileData)
         {
             var imageFile = new ImageFile()
             {
                 FileData = imageFileData
             };
 
-            ImageFile uploadedFile = (ImageFile)await this.fileService.UploadFile(imageFile, User.GetUserId());
-            var user = await this.userService.FindByIdAsync(User.GetUserId());
+            var uploadedFile = await fileService.UploadFile(imageFile, User.GetUserId());
+            var user = await userService.FindByIdAsync(User.GetUserId());
             user.ProfilePictureUrl = uploadedFile.Url.ToString();
-            await this.userService.UpdateUser(user);
-            
-            return uploadedFile;
+            await userService.UpdateUser(user);
+            var fileDto = mapper.Map<FileDto>(uploadedFile);
+            return fileDto;
         }
     }
 }

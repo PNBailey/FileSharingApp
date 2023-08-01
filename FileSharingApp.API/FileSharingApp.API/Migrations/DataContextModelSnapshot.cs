@@ -153,11 +153,20 @@ namespace FileSharingApp.API.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("FileOwnerId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Url")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("FileOwnerId");
 
                     b.ToTable("Files");
 
@@ -290,6 +299,17 @@ namespace FileSharingApp.API.Migrations
                     b.Navigation("Role");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("FileSharingApp.API.Models.Files.BaseFile", b =>
+                {
+                    b.HasOne("FileSharingApp.API.Models.AppUser", "FileOwner")
+                        .WithMany()
+                        .HasForeignKey("FileOwnerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("FileOwner");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>

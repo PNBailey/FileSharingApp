@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FileSharingApp.API.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20230717065207_removing_thumbnail_column")]
-    partial class removing_thumbnail_column
+    [Migration("20230729181515_Initial")]
+    partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -155,11 +155,16 @@ namespace FileSharingApp.API.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("FileOwnerId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Url")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("FileOwnerId");
 
                     b.ToTable("Files");
 
@@ -292,6 +297,17 @@ namespace FileSharingApp.API.Migrations
                     b.Navigation("Role");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("FileSharingApp.API.Models.Files.BaseFile", b =>
+                {
+                    b.HasOne("FileSharingApp.API.Models.AppUser", "FileOwner")
+                        .WithMany()
+                        .HasForeignKey("FileOwnerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("FileOwner");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>

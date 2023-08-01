@@ -1,5 +1,4 @@
-﻿using CloudinaryDotNet.Actions;
-using FileSharingApp.API.Models.Interfaces;
+﻿using FileSharingApp.API.Models.Files;
 using FileSharingApp.API.Services.Interfaces;
 using Moq;
 
@@ -10,10 +9,10 @@ namespace FileSharingAppUnitTests.Helpers
         internal static Mock<IFileService> GenerateMockFileService()
         {
             var mockFileService = new Mock<IFileService>();
-            var mockFileUploadResult = new RawUploadResult();
-            mockFileUploadResult.Error = null;
-            mockFileUploadResult.Url = new Uri("https://Test/Url");
-            mockFileService.Setup(x => x.UploadFile(It.IsAny<IFile>(), It.IsAny<int>())).Returns(mockFileUploadResult);
+            var mockBaseFile = new Mock<BaseFile>();
+            mockBaseFile.Object.Url = "https://Test/Url";
+            var mockBaseFileTask = Task.FromResult(mockBaseFile.Object);
+            mockFileService.Setup(x => x.UploadFile(It.IsAny<BaseFile>(), It.IsAny<int>())).Returns(mockBaseFileTask);
             return mockFileService;
         }
     }

@@ -1,7 +1,6 @@
 ﻿using CloudinaryDotNet;
-using CloudinaryDotNet.Actions;
 using FileSharingApp.API.CustomExceptions;
-using FileSharingApp.API.Data;
+using FileSharingApp.API.DAL.Interfaces;
 using FileSharingApp.API.Helpers;
 using FileSharingApp.API.Models.Files;
 using FileSharingApp.API.Services.Interfaces;
@@ -12,7 +11,8 @@ namespace FileSharingApp.API.Services
     public class FileService : IFileService
     {
         protected readonly IOptions<CloudinaryConfigOptions> config;
-        private readonly DataContext context;
+        private readonly IFileRepository fileRepository;
+        private readonly IUserService userService;
 
         protected Cloudinary Cloudinary
         {
@@ -36,11 +36,12 @@ namespace FileSharingApp.API.Services
 
         public FileService(
             IOptions<CloudinaryConfigOptions> config, 
-            DataContext context
-        )
+            IFileRepository fileRepository,
+            IUserService userService)
         {
+            this.userService = userService;
             this.config = config;
-            this.context = context;
+            this.fileRepository = fileRepository;
         }
 
         public async Task<BaseFile> UploadFile(BaseFile file, int userId)
@@ -51,10 +52,13 @@ namespace FileSharingApp.API.Services
             {
                 throw new FileUploadException(response.Error.Message);
             }
-
-            file.Url = response.Url.AbsoluteUri;
-            this.context.Files.Add(file);
-            this.context.SaveChanges();
+            file.FileOwner = await this.userService.FindByIdAsync(userId);
+            if (response.Url != null)
+            {
+                file.Url = response.Url.AbsoluteUri;
+            }
+            file.Name = Path.GetFileNameWithoutExtension(file.FileData.FileName);
+            fileRepository.UploadFile(file);
 
             return file;
         }
@@ -89,6 +93,11 @@ namespace FileSharingApp.API.Services
                 default:
                     throw new ArgumentException("File type is invalid");
             }
+        }
+
+        public IEnumerable<BaseFile> GetAllFiles(int userId)
+        {
+            return fileRepository.GetAllFiles(userId);
         }
     }
 }

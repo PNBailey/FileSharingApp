@@ -9,5 +9,7 @@ namespace FileSharingApp.API.Services.Interfaces
         object CreateFileType(string contentType);
 
         string GetFileTypeName(string fileExtension);
+
+        IEnumerable<BaseFile> GetAllFiles(int userId);
     }
 }

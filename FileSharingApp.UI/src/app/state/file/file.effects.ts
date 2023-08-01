@@ -4,6 +4,7 @@ import { MyFilesActions, MyFilesApiActions } from "./file.actions";
 import { map, switchMap, tap } from "rxjs";
 import { FileService } from "src/app/services/file.service";
 import { MessageHandlingService } from "src/app/services/message-handling.service";
+import { AppFile } from "src/app/models/app-file";
 
 
 @Injectable()
@@ -20,14 +21,21 @@ export class FileEffects {
     uploadFileSuccessful$ = createEffect(() => 
         this.actions$.pipe(
             ofType(MyFilesApiActions.uploadFileSuccessful),
-            tap((file) => {
+            tap(() => {
                 this.messageHandlingService.onDisplayNewMessage({
                     message: "File successfully uploaded"
                 });
-                console.log(file);
             }),
         ), { dispatch: false }
     );
+
+    getAllFiles$ = createEffect(() => 
+        this.actions$.pipe(
+            ofType(MyFilesActions.getAllFiles),
+            switchMap(() => this.fileService.getAllFiles()),
+            map((files: AppFile[]) => MyFilesApiActions.getFilesSuccessful({files: files}))
+        )
+    )
 
     constructor(
         private actions$: Actions,

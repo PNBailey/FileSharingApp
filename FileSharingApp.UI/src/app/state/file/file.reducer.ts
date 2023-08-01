@@ -12,5 +12,6 @@ export const initialState: FilesState = {
 
 export const fileReducer = createReducer(
     initialState,
-    on(MyFilesApiActions.uploadFileSuccessful, (state, payload) => ({ ...state, files: [...state.files, payload.file]}))
+    on(MyFilesApiActions.uploadFileSuccessful, (state, payload) => ({ ...state, files: [...state.files, payload.file] })),
+    on(MyFilesApiActions.getFilesSuccessful, (state, payload) => ({...state, files: payload.files}))
 )

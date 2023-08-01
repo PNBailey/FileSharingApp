@@ -1,13 +1,16 @@
 ﻿using CloudinaryDotNet;
+using FileSharingApp.API.DAL.Interfaces;
+using FileSharingApp.API.Data;
 using FileSharingApp.API.Helpers;
 using FileSharingApp.API.Services;
+using FileSharingApp.API.Services.Interfaces;
 using FileSharingAppUnitTests.Helpers;
 using Microsoft.Extensions.Options;
 using System.Net;
 
 namespace FileSharingAppUnitTests.TestClasses
 {
-    public class PhotoServiceTestClass : PhotoService
+    public class FileServiceTestClass : FileService
     {
         public new MockedCloudinary Cloudinary
         {
@@ -22,7 +25,7 @@ namespace FileSharingAppUnitTests.TestClasses
             return new MockedCloudinary();
         }
 
-        public PhotoServiceTestClass(IOptions<CloudinaryConfigOptions> config) : base(config)
+        public FileServiceTestClass(IOptions<CloudinaryConfigOptions> config, IFileRepository fileRepository, IUserService userService) : base(config, fileRepository, userService)
         {
         }
     }

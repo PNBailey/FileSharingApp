@@ -25,7 +25,9 @@ export class MyFilesComponent {
 
   files$: Observable<AppFile[]> = this.store.select(getAllFiles);
 
-  constructor(private store: Store) {}
+  constructor(private store: Store) {
+    this.store.dispatch(MyFilesActions.getAllFiles());
+  }
 
   onFileSelected(event: Event) {
     const eventTarget = event.target as HTMLInputElement;

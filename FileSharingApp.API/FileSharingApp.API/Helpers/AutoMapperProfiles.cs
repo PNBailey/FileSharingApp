@@ -23,7 +23,6 @@ namespace API.Helpers
                 .ForMember(dest => dest.Password, opt => opt.Ignore());
 
             CreateMap<BaseFile, FileDto>()
-                .ForMember(dest => dest.Name, opt => opt.MapFrom(bf => bf.FileData.FileName))
                 .ForMember(dest => dest.FileTypeName, opt => opt.MapFrom(bf => bf.GetType().Name));
 
         }

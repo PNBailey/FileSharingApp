@@ -7,6 +7,10 @@ namespace FileSharingApp.API.Models.Files
     {
         public int Id { get; set; }
 
+        public AppUser FileOwner { get; set; } = null!;
+
+        public string Name { get; set; } = null!;
+
         [NotMapped]
         public IFormFile FileData { get; set; } = null!;
 

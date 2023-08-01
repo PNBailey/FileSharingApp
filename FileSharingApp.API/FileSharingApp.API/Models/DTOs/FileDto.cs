@@ -4,9 +4,9 @@
     {
         public int Id { get; set; }
 
-        public string Name { get; set; } = string.Empty;
+        public string Name { get; set; } = null!;
 
-        public string FileTypeName { get; set; } = string.Empty;
+        public string FileTypeName { get; set; } = null!;
 
         public string Url { get; set; } = null!;
     }

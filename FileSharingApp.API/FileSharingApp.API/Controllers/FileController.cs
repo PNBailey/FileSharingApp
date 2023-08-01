@@ -1,6 +1,5 @@
 ﻿
 using AutoMapper;
-using CloudinaryDotNet.Actions;
 using FileSharingApp.API.ExtensionMethods;
 using FileSharingApp.API.Models.DTOs;
 using FileSharingApp.API.Models.Files;
@@ -20,11 +19,13 @@ namespace FileSharingApp.API.Controllers
             this.mapper = mapper;
         }
 
-        //[HttpGet]
-        //public IEnumerable<File> Get()
-        //{
-        //    throw new NotImplementedException();
-        //}
+        [HttpGet]
+        public IEnumerable<FileDto> Get()
+        {
+            var files = this.fileService.GetAllFiles(User.GetUserId());
+            var fileDtos = this.mapper.Map<IEnumerable<FileDto>>(files);
+            return fileDtos;
+        }
 
         //[HttpGet("{id}")]
         //public string Get(int id)
@@ -41,7 +42,6 @@ namespace FileSharingApp.API.Controllers
             newFile.FileData = fileData;
             var uploadedfile = await this.fileService.UploadFile(newFile, User.GetUserId());
             var fileDto = mapper.Map<FileDto>(uploadedfile);
-            fileDto.Name = Path.GetFileNameWithoutExtension(fileData.FileName);
             return fileDto;
         }
 

@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using FileSharingApp.API.Models;
 using FileSharingApp.API.Models.DTOs;
+using FileSharingApp.API.Models.Files;
 
 namespace FileSharingAppUnitTests.Helpers
 {
@@ -22,6 +23,9 @@ namespace FileSharingAppUnitTests.Helpers
 
                 cfg.CreateMap<AppUser, LoginDto>()
                     .ForMember(dest => dest.Password, opt => opt.Ignore());
+
+                cfg.CreateMap<BaseFile, FileDto>()
+                    .ForMember(dest => dest.FileTypeName, opt => opt.MapFrom(bf => bf.GetType().Name));
             });
 
         }
