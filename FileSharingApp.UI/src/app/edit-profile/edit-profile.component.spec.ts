@@ -15,7 +15,6 @@ import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { getMessageHandlingServiceMock } from "../shared/testing/helpers/message-handling-service-mock";
 import { getAccountServiceMock } from "../shared/testing/helpers/account-service-mock";
 import { getUserServiceMock } from "../shared/testing/helpers/user-service-mock";
-import { selectAccountLoggedOnUser } from "../state/account/account.selectors";
 import { LoadingService } from "../services/loading.service";
 import { getLoadingServiceMock } from "../shared/testing/helpers/loading-service-mock";
 import { AccountActions } from "../state/account/account.actions";
@@ -32,9 +31,9 @@ describe('EditProfileComponent', () => {
   let accountServiceMock: AccountService;
   let userServiceMock: UserService;
   let loadingServiceMock: LoadingService;
-  let initialState: { account: { loggedOnUser: User | null } };
   const testUser = new User();
   testUser.username = "Mr Test";
+  const initialState = { account: { loggedOnUser: testUser } };
   testUser.email = "Test@gmail.com";
   testUser.profilePictureUrl = "https://res.cloudinary.com/filesharingapp/image/upload/v1676504732/Placeholder_user_image_t5klyw.jpg";
 
@@ -54,17 +53,7 @@ describe('EditProfileComponent', () => {
       ],
       providers: [
         provideMockStore({
-          initialState,
-          selectors: [
-            {
-              selector: selectAccountLoggedOnUser,
-              value: [
-                {
-                  loggedOnUser: testUser
-                }
-              ]
-            }
-          ]
+          initialState
         }),
         { provide: MessageHandlingService, useValue: messageHandlingServiceMock },
         { provide: AccountService, useValue: accountServiceMock },
@@ -108,7 +97,6 @@ describe('EditProfileComponent', () => {
       spyOn(store, 'dispatch');
       const file = new File([], 'dummy.jpg');
       const mockEvent = { target: {files: [file] } }
-      // component.uploadProfilePicture(file);
       fixture.debugElement.query(By.css('app-edit-profile-card')).triggerEventHandler('newImageSelected', mockEvent);
   
       expect(store.dispatch).toHaveBeenCalled();
