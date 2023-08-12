@@ -3,4 +3,5 @@ export class AppFile {
     name: string;
     fileTypeName: string;
     url: string;
+    lastUpdated: Date
 }
