@@ -55,7 +55,7 @@ namespace FileSharingApp.API.Services
             file.FileOwner = await this.userService.FindByIdAsync(userId);
             if (response.Url != null)
             {
-                file.Url = response.Url.AbsoluteUri;
+                file.Url = response.SecureUrl.AbsoluteUri;
             }
             file.Name = Path.GetFileNameWithoutExtension(file.FileData.FileName);
             fileRepository.UploadFile(file);
