@@ -1,15 +1,15 @@
 <mat-card class="file-card">
     <mat-card-header class="pt-2 file-card-header">
-        <div mat-card-avatar class="m-0">
+        <div mat-card-avatar class="m-0 file-icon">
             <mat-icon color="primary" fontIcon="article"></mat-icon>
         </div>
-        <mat-card-title class="file-card-title p-0">{{ file.name | fileName }}</mat-card-title>
+        <mat-card-title class="file-card-title p-0"><strong>{{ file.name | fileName }}</strong></mat-card-title>
         <mat-card-subtitle class="file-card-subtitle p-0">{{ file.fileTypeName | fileTypeName }}</mat-card-subtitle>
     </mat-card-header>
     <div class="file-image-container">
-        <img mat-card-image class="file-image px-2" [src]="(file.fileTypeName === 'XmlFile' ? file.url + '.jpg' : file.url) | rawToUpload | safe " alt="file image">
+        <img mat-card-image class="file-image px-2" [src]="(file.fileTypeName === 'XmlFile' ? file.url + '.jpg' : file.url) | rawToImage | pdfToJpg | safe " alt="file image">
     </div>
     <mat-card-content class="p-3">
-        <p>placeholder</p>
+        <p>Placeholder</p>
     </mat-card-content>
 </mat-card>
