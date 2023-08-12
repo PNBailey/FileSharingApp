@@ -88,7 +88,7 @@ namespace FileSharingApp.API.Services
                 case ".pdf":
                     return "Pdf";
                 case ".png":
-                case ".jpeg":
+                case ".jpg":
                     return "Image";
                 default:
                     throw new ArgumentException("File type is invalid");
