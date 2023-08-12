@@ -2,7 +2,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { finalize } from 'rxjs';
-import { IdentityResult } from '../models/identityResult';
+import { IdentityResult } from '../models/identity-result';
 import { User } from '../models/user';
 import { LoadingObsName, LoadingService } from './loading.service';
 import { ImageUploadResult } from '../models/image-upload-result';

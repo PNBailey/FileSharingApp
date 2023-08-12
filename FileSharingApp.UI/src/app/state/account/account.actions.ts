@@ -1,6 +1,6 @@
 import { createActionGroup, emptyProps, props } from '@ngrx/store';
-import { LoginUser } from 'src/app/models/loginUser';
-import { RegisterUser } from 'src/app/models/registerUser';
+import { LoginUser } from 'src/app/models/login-user';
+import { RegisterUser } from 'src/app/models/register-user';
 import { User } from 'src/app/models/user';
 
 export const AccountDialogActions = createActionGroup({

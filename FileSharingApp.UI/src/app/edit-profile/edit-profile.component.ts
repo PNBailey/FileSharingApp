@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { Observable, tap, withLatestFrom } from 'rxjs';
-import { IdentityResult } from '../models/identityResult';
+import { IdentityResult } from '../models/identity-result';
 import { SnackbarAction, SnackbarClassType, SnackbarDuration } from '../models/snackbar-item';
 import { User } from '../models/user';
 import { LoadingObsName, LoadingService } from '../services/loading.service';
