@@ -8,6 +8,7 @@ import { MyFilesActions } from '../state/file/file.actions';
 import { getAllFiles } from '../state/file/file.selector';
 import { Observable } from 'rxjs';
 import { AppFile } from '../models/app-file';
+import { FileComponent } from './file/file.component';
 
 @Component({
   selector: 'app-my-files',
@@ -16,7 +17,8 @@ import { AppFile } from '../models/app-file';
     CommonModule,
     MatDividerModule,
     MatButtonModule,
-    MatIconModule
+    MatIconModule,
+    FileComponent
   ],
   templateUrl: './my-files.component.html',
   styleUrls: ['./my-files.component.scss']
