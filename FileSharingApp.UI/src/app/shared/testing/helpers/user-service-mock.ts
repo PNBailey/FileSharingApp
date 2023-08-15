@@ -1,5 +1,5 @@
 import { of } from "rxjs";
-import { IdentityResult } from "src/app/models/identityResult";
+import { IdentityResult } from "src/app/models/identity-result";
 import { ImageUploadResult } from "src/app/models/image-upload-result";
 import { UserService } from "src/app/services/user.service";
 

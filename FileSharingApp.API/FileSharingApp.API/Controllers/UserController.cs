@@ -1,7 +1,9 @@
-﻿using CloudinaryDotNet.Actions;
+﻿using AutoMapper;
+using CloudinaryDotNet.Actions;
 using FileSharingApp.API.ExtensionMethods;
 using FileSharingApp.API.Models;
 using FileSharingApp.API.Models.DTOs;
+using FileSharingApp.API.Models.Files;
 using FileSharingApp.API.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -13,12 +15,17 @@ namespace FileSharingApp.API.Controllers
     public class UserController : BaseController
     {
         private readonly IUserService userService;
-        private readonly IPhotoService photoService;
+        private readonly IFileService fileService;
+        private readonly IMapper mapper;
 
-        public UserController(IUserService userService, IPhotoService photoService)
+        public UserController(
+            IUserService userService, 
+            IFileService fileService,
+            IMapper mapper)
         {
             this.userService = userService;
-            this.photoService = photoService;
+            this.fileService = fileService;
+            this.mapper = mapper;
         }
 
         [HttpGet]
@@ -46,16 +53,19 @@ namespace FileSharingApp.API.Controllers
         }
 
         [HttpPost("Upload-Profile-Picture")]
-        public async Task<ImageUploadResult> UploadProfilePicture(IFormFile image)
+        public async Task<FileDto> UploadProfilePicture([FromForm]IFormFile imageFileData)
         {
-            var result = this.photoService.UploadImage(image, User.GetUserId());
-            if(result.Error == null)
+            var imageFile = new ImageFile()
             {
-                var user = await this.userService.FindByIdAsync(User.GetUserId());
-                user.ProfilePictureUrl = result.Url.ToString();
-                await this.userService.UpdateUser(user);
-            }
-            return result;
+                FileData = imageFileData
+            };
+
+            var uploadedFile = await fileService.UploadFile(imageFile, User.GetUserId());
+            var user = await userService.FindByIdAsync(User.GetUserId());
+            user.ProfilePictureUrl = uploadedFile.Url.ToString();
+            await userService.UpdateUser(user);
+            var fileDto = mapper.Map<FileDto>(uploadedFile);
+            return fileDto;
         }
     }
 }

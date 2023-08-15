@@ -1,15 +1,31 @@
 ﻿
+using AutoMapper;
+using FileSharingApp.API.ExtensionMethods;
+using FileSharingApp.API.Models.DTOs;
+using FileSharingApp.API.Models.Files;
+using FileSharingApp.API.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FileSharingApp.API.Controllers
 {
     public class FileController : BaseController
     {
-        //[HttpGet]
-        //public IEnumerable<File> Get()
-        //{
-        //    throw new NotImplementedException();
-        //}
+        private readonly IFileService fileService;
+        private readonly IMapper mapper;
+
+        public FileController(IFileService fileService, IMapper mapper)
+        {
+            this.fileService = fileService;
+            this.mapper = mapper;
+        }
+
+        [HttpGet]
+        public IEnumerable<FileDto> Get()
+        {
+            var files = this.fileService.GetAllFiles(User.GetUserId());
+            var fileDtos = this.mapper.Map<IEnumerable<FileDto>>(files);
+            return fileDtos;
+        }
 
         //[HttpGet("{id}")]
         //public string Get(int id)
@@ -18,9 +34,15 @@ namespace FileSharingApp.API.Controllers
         //}
 
         [HttpPost]
-        public IFormFile Post([FromForm]IFormFile file)
+        public async Task<FileDto> Post([FromForm]IFormFile fileData)
         {
-            return file;
+            var fileExtension = Path.GetExtension(fileData.FileName);
+            var fileTypeName = this.fileService.GetFileTypeName(fileExtension);
+            BaseFile newFile = (BaseFile)this.fileService.CreateFileType(fileTypeName);
+            newFile.FileData = fileData;
+            var uploadedfile = await this.fileService.UploadFile(newFile, User.GetUserId());
+            var fileDto = mapper.Map<FileDto>(uploadedfile);
+            return fileDto;
         }
 
         //[HttpPut("{id}")]

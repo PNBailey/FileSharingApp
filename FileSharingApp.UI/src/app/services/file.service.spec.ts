@@ -1,12 +1,17 @@
 import { TestBed } from '@angular/core/testing';
 
 import { FileService } from './file.service';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 
 describe('FileService', () => {
   let service: FileService;
 
   beforeEach(() => {
-    TestBed.configureTestingModule({});
+    TestBed.configureTestingModule({
+      imports: [
+        HttpClientTestingModule,
+      ]
+    });
     service = TestBed.inject(FileService);
   });
 

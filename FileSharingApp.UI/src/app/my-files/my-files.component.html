@@ -7,3 +7,10 @@
   </button>
 </div>
 <mat-divider></mat-divider>
+<div class="container px-4 pb-2 d-flex justify-content-center">
+  <div class="row">
+    <div *ngFor="let file of files$ | async" class="col mt-4 mb-5 app-file-list-item">
+      <app-file [file]="file"></app-file>
+    </div>
+  </div>
+</div>

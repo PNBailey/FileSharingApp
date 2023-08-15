@@ -16,7 +16,7 @@ import { MatCardModule } from '@angular/material/card';
     MatCardModule
   ],
   templateUrl: './sidenav.component.html',
-  styleUrls: ['./sidenav.component.css']
+  styleUrls: ['./sidenav.component.scss']
 })
 export class SidenavComponent {
   @Output() goToMyFilesEvent = new EventEmitter();

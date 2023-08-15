@@ -1,4 +1,6 @@
 using API.Helpers;
+using FileSharingApp.API.DAL;
+using FileSharingApp.API.DAL.Interfaces;
 using FileSharingApp.API.Data;
 using FileSharingApp.API.Helpers;
 using FileSharingApp.API.Models;
@@ -108,8 +110,11 @@ try
     // Adding services
     builder.Services.AddScoped<IUserService, UserService>();
     builder.Services.AddScoped<IErrorService, ErrorService>();
-    builder.Services.AddScoped<IPhotoService, PhotoService>();
+    builder.Services.AddScoped<IFileService, FileService>();
     builder.Services.AddScoped<IValidationService, ValidationService>();
+
+    //Adding Repositories
+    builder.Services.AddScoped<IFileRepository, FileRepository>();
 
 
     // NLog: Setup NLog for Dependency injection

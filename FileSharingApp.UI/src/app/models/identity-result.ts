@@ -1,4 +1,4 @@
-import { IdentityError } from "./identityError";
+import { IdentityError } from "./identity-error";
 
 export class IdentityResult {
     succeeded: boolean;

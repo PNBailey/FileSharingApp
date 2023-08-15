@@ -58,3 +58,4 @@ FileSharingApp.UI/tsconfig.json
 FileSharingApp.UI/tsconfig.spec.json
 FileSharingApp.UI/src/favicon.ico
 Resources/
+FileSharingApp.API/obj/

@@ -2,7 +2,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { finalize } from 'rxjs';
-import { IdentityResult } from '../models/identityResult';
+import { IdentityResult } from '../models/identity-result';
 import { User } from '../models/user';
 import { LoadingObsName, LoadingService } from './loading.service';
 import { ImageUploadResult } from '../models/image-upload-result';
@@ -18,7 +18,9 @@ export class UserService {
   uploadProfilePicture(file: File) {
     this.loadingService.toggleLoadingObs(LoadingObsName.UPDATING_PROFILE);
     const formData = new FormData();
-    formData.append('image', file);      
+    formData.append('imageFileData', file);
+    // const image = new AppImage();
+    // image.fileData = formData;     
     return this.http.post<ImageUploadResult>(`${this.baseUrl}Upload-Profile-Picture`, formData).pipe(
       finalize(() => {
         this.loadingService.toggleLoadingObs(LoadingObsName.UPDATING_PROFILE)

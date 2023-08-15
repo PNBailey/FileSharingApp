@@ -1,8 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { LoginUser } from '../models/loginUser';
-import { RegisterUser } from '../models/registerUser';
+import { LoginUser } from '../models/login-user';
+import { RegisterUser } from '../models/register-user';
 import { User } from '../models/user';
 import { LoadingService } from './loading.service';
 

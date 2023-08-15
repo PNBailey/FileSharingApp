@@ -3,9 +3,12 @@ import { CommonModule } from '@angular/common';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { FileState } from '../state/file/file.reducer';
 import { Store } from '@ngrx/store';
 import { MyFilesActions } from '../state/file/file.actions';
+import { getAllFiles } from '../state/file/file.selector';
+import { Observable } from 'rxjs';
+import { AppFile } from '../models/app-file';
+import { FileComponent } from './file/file.component';
 
 @Component({
   selector: 'app-my-files',
@@ -14,14 +17,19 @@ import { MyFilesActions } from '../state/file/file.actions';
     CommonModule,
     MatDividerModule,
     MatButtonModule,
-    MatIconModule
+    MatIconModule,
+    FileComponent
   ],
   templateUrl: './my-files.component.html',
   styleUrls: ['./my-files.component.scss']
 })
 export class MyFilesComponent {
 
-  constructor(private store: Store<{ files: FileState }>) {}
+  files$: Observable<AppFile[]> = this.store.select(getAllFiles);
+
+  constructor(private store: Store) {
+    this.store.dispatch(MyFilesActions.getAllFiles());
+  }
 
   onFileSelected(event: Event) {
     const eventTarget = event.target as HTMLInputElement;
