@@ -20,10 +20,10 @@ import { FileComponent } from './file/file.component';
     MatIconModule,
     FileComponent
   ],
-  templateUrl: './my-files.component.html',
-  styleUrls: ['./my-files.component.scss']
+  templateUrl: './files.component.html',
+  styleUrls: ['./files.component.scss']
 })
-export class MyFilesComponent {
+export class FilesComponent {
 
   files$: Observable<AppFile[]> = this.store.select(getAllFiles);
 
