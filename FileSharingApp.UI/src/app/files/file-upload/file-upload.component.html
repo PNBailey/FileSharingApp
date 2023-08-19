@@ -17,19 +17,27 @@
             </ng-container>
             <ng-container matColumnDef="description">
                 <th mat-header-cell *matHeaderCellDef> Description </th>
-                <td mat-cell *matCellDef="let file"> Placeholder </td>
+                <td mat-cell *matCellDef="let file"> 
+                    <mat-form-field class="pt-3 w-100">
+                        <input aria-label="File description" matInput placeholder="Enter description..." [(ngModel)]="file.description" >
+                    </mat-form-field>
+                </td>
             </ng-container>
             <ng-container matColumnDef="file type">
                 <th mat-header-cell *matHeaderCellDef> File Type </th>
-                <td mat-cell *matCellDef="let file"> Placeholder </td>
+                <td mat-cell *matCellDef="let file"> {{file.fileTypeName}} </td>
             </ng-container>
             <ng-container matColumnDef="last updated">
                 <th mat-header-cell *matHeaderCellDef> Last Updated </th>
-                <td mat-cell *matCellDef="let file"> Placeholder </td>
+                <td mat-cell *matCellDef="let file"> {{file.lastUpdated | date}} </td>
             </ng-container>
             <ng-container matColumnDef="delete">
                 <th mat-header-cell *matHeaderCellDef> Delete </th>
-                <td mat-cell *matCellDef="let file"> Placeholder </td>
+                <td mat-cell *matCellDef="let file">
+                    <button aria-label="Remove file" mat-icon-button color="warn" (click)="removeFile(file)">
+                        <mat-icon color="warn" fontIcon="delete"></mat-icon>
+                    </button> 
+                </td>
             </ng-container>
             <tr mat-header-row *matHeaderRowDef="columnNames"></tr>
             <tr mat-row *matRowDef="let row; columns: columnNames;"></tr>
