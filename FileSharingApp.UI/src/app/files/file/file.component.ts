@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, Input } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
@@ -27,12 +27,6 @@ import { PdfToJpgPipe } from 'src/app/shared/pipes/pdf-to-jpg-pipe';
   templateUrl: './file.component.html',
   styleUrls: ['./file.component.scss']
 })
-export class FileComponent implements AfterViewInit {
+export class FileComponent {
   @Input() file: AppFile;
-  
-  ngAfterViewInit(): void {
-    
-    console.log(this.file);
-  }
-
 }
