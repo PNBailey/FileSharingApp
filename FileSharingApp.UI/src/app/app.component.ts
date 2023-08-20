@@ -65,6 +65,6 @@ export class AppComponent implements OnInit {
   }
 
   goToMyFiles() {
-    this.router.navigateByUrl('/my-files');
+    this.router.navigateByUrl('/files');
   }
 }

@@ -9,34 +9,37 @@ import { getAllFiles } from '../state/file/file.selector';
 import { Observable } from 'rxjs';
 import { AppFile } from '../models/app-file';
 import { FileComponent } from './file/file.component';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { FileUploadComponent } from './file-upload/file-upload.component';
 
 @Component({
-  selector: 'app-my-files',
+  selector: 'app-files',
   standalone: true,
   imports: [
     CommonModule,
     MatDividerModule,
     MatButtonModule,
     MatIconModule,
-    FileComponent
+    FileComponent,
+    MatDialogModule
   ],
-  templateUrl: './my-files.component.html',
-  styleUrls: ['./my-files.component.scss']
+  templateUrl: './files.component.html',
+  styleUrls: ['./files.component.scss']
 })
-export class MyFilesComponent {
+export class FilesComponent {
 
   files$: Observable<AppFile[]> = this.store.select(getAllFiles);
 
-  constructor(private store: Store) {
+  constructor(
+    private store: Store,
+    public dialog: MatDialog
+  ) {
     this.store.dispatch(MyFilesActions.getAllFiles());
   }
 
-  onFileSelected(event: Event) {
-    const eventTarget = event.target as HTMLInputElement;
-    if (!eventTarget.files?.length) {
-      return;
-    }    
-    this.store.dispatch(MyFilesActions.uploadFile({ file: eventTarget.files[0] }))
+  openDialog() {
+    const dialogRef = this.dialog.open(FileUploadComponent, {
+      minWidth: '80vw',
+    });
   }
-
 }

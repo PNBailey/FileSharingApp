@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { MyFilesComponent } from './my-files.component';
+import { FilesComponent } from './files.component';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { provideMockStore } from '@ngrx/store/testing';
 
-describe('MyFilesComponent', () => {
-  let component: MyFilesComponent;
-  let fixture: ComponentFixture<MyFilesComponent>;
+describe('FilesComponent', () => {
+  let component: FilesComponent;
+  let fixture: ComponentFixture<FilesComponent>;
   let loader: HarnessLoader;
   const initialState = { files: [] };
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [
-        MyFilesComponent
+        FilesComponent
       ],
       providers: [
         provideMockStore({
@@ -24,7 +24,7 @@ describe('MyFilesComponent', () => {
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(MyFilesComponent);
+    fixture = TestBed.createComponent(FilesComponent);
     component = fixture.componentInstance;
     loader = TestbedHarnessEnvironment.loader(fixture);
     fixture.detectChanges();
