@@ -60,9 +60,6 @@ export class FileUploadComponent {
   }
   
   uploadFiles() {
-    // const obsArr = [];
-    this.filesToUpload.forEach(file => {
-      this.store.dispatch(MyFilesActions.uploadFile({ file: file }))
-    });
+    this.store.dispatch(MyFilesActions.uploadFiles({ files: this.filesToUpload }))
   }
 }

@@ -1,7 +1,7 @@
 import { Injectable } from "@angular/core";
 import { Actions, createEffect, ofType } from "@ngrx/effects";
 import { MyFilesActions, MyFilesApiActions } from "./file.actions";
-import { map, switchMap, tap } from "rxjs";
+import { Observable, catchError, forkJoin, map, merge, mergeMap, of, switchMap, tap } from "rxjs";
 import { FileService } from "src/app/services/file.service";
 import { MessageHandlingService } from "src/app/services/message-handling.service";
 import { AppFile } from "src/app/models/app-file";
@@ -12,18 +12,41 @@ export class FileEffects {
 
     uploadFiles$ = createEffect(() => 
         this.actions$.pipe(
-            ofType(MyFilesActions.uploadFile),
-            switchMap(action => this.fileService.uploadFile(action.file)),
-            map((file) => MyFilesApiActions.uploadFileSuccessful({ file: file }))
+            ofType(MyFilesActions.uploadFiles),
+            switchMap((action) => {
+                const files = action.files;
+                const filesObservableArray = files.map(file => {
+                    return this.fileService.uploadFile(file);
+                });
+                return forkJoin(filesObservableArray).pipe(
+                    map((files) => {
+                        return MyFilesApiActions.uploadFilesSuccessful({files: files})
+                    }),
+                    catchError(() => {
+                        return of(MyFilesApiActions.uploadFilesUnsuccessful())
+                    })
+                )
+            })
         )
     );
 
-    uploadFileSuccessful$ = createEffect(() => 
+    uploadFilesSuccessful$ = createEffect(() => 
         this.actions$.pipe(
-            ofType(MyFilesApiActions.uploadFileSuccessful),
+            ofType(MyFilesApiActions.uploadFilesSuccessful),
             tap(() => {
                 this.messageHandlingService.onDisplayNewMessage({
-                    message: "File successfully uploaded"
+                    message: "Files successfully uploaded"
+                });
+            }),
+        ), { dispatch: false }
+    );
+
+    uploadFilesUnsuccessful$ = createEffect(() => 
+        this.actions$.pipe(
+            ofType(MyFilesApiActions.uploadFilesUnsuccessful),
+            tap(() => {
+                this.messageHandlingService.onDisplayNewMessage({
+                    message: "An error occured during the upload process. Please try again later"
                 });
             }),
         ), { dispatch: false }
