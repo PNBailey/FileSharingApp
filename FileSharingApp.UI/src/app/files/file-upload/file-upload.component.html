@@ -15,21 +15,17 @@
                 <th mat-header-cell *matHeaderCellDef> Name </th>
                 <td mat-cell *matCellDef="let file"> {{file.name}} </td>
             </ng-container>
-            <ng-container matColumnDef="description">
-                <th mat-header-cell *matHeaderCellDef> Description </th>
-                <td mat-cell *matCellDef="let file"> 
-                    <mat-form-field class="pt-3 w-100">
-                        <input aria-label="File description" matInput placeholder="Enter description..." [(ngModel)]="file.description" >
-                    </mat-form-field>
-                </td>
-            </ng-container>
             <ng-container matColumnDef="file type">
                 <th mat-header-cell *matHeaderCellDef> File Type </th>
-                <td mat-cell *matCellDef="let file"> {{file.fileTypeName}} </td>
+                <td mat-cell *matCellDef="let file"> {{file.type}} </td>
+            </ng-container>
+            <ng-container matColumnDef="file size">
+                <th mat-header-cell *matHeaderCellDef> File Size </th>
+                <td mat-cell *matCellDef="let file"> {{(file.size / 1000000 | number: '1.1-2') + 'mb'}} </td>
             </ng-container>
             <ng-container matColumnDef="last updated">
                 <th mat-header-cell *matHeaderCellDef> Last Updated </th>
-                <td mat-cell *matCellDef="let file"> {{file.lastUpdated | date}} </td>
+                <td mat-cell *matCellDef="let file"> {{file.lastModified | date}} </td>
             </ng-container>
             <ng-container matColumnDef="delete">
                 <th mat-header-cell *matHeaderCellDef> Delete </th>
@@ -50,7 +46,8 @@
           [mat-dialog-close]="true"
           cdkFocusInitial
           color="primary"
-          class="mx-3">Upload
+          class="mx-3"
+          (click)="uploadFiles()">Upload
         </button>
     </mat-dialog-actions>
 </div>

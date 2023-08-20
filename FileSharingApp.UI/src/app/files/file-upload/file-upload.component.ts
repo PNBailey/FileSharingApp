@@ -5,12 +5,10 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import {MatTable, MatTableModule} from '@angular/material/table';
 import { Store } from '@ngrx/store';
-import { MyFilesActions } from 'src/app/state/file/file.actions';
-import { AppFile } from 'src/app/models/app-file';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
-import { FormsModule } from '@angular/forms';
+import { MyFilesActions } from 'src/app/state/file/file.actions';
 
 @Component({
   selector: 'app-file-upload',
@@ -23,16 +21,15 @@ import { FormsModule } from '@angular/forms';
     MatTableModule,
     MatInputModule,
     MatFormFieldModule,
-    MatIconModule,
-    FormsModule
+    MatIconModule
   ],
   templateUrl: './file-upload.component.html',
   styleUrls: ['./file-upload.component.scss']
 })
 export class FileUploadComponent {
-  public filesToUpload: AppFile[] = [];
-  public columnNames = ['name', 'description', 'file type', 'last updated', 'delete'];
-  @ViewChild(MatTable) table: MatTable<AppFile>;
+  public filesToUpload: File[] = [];
+  public columnNames = ['name', 'file type', 'file size', 'last updated', 'delete'];
+  @ViewChild(MatTable) table: MatTable<File>;
 
   constructor(private store: Store) {}
 
@@ -41,20 +38,11 @@ export class FileUploadComponent {
       if (droppedFile.fileEntry.isFile) {
         const fileEntry = droppedFile.fileEntry as FileSystemFileEntry;
         fileEntry.file((file: File) => {
-          this.filesToUpload.push(this.mapToAppFile(file));
+          this.filesToUpload.push(file);
           this.table.renderRows();
         });
       }
     }
-  }
-
-  private mapToAppFile(file: File): AppFile {
-    const newAppFile = new AppFile();
-    newAppFile.name = file.name;
-    newAppFile.lastUpdated = new Date(file.lastModified);
-    newAppFile.fileTypeName = file.type;
-    newAppFile.description = "";    
-    return newAppFile;
   }
 
   public onFileSelected(event: Event) {
@@ -62,18 +50,19 @@ export class FileUploadComponent {
     if (!eventTarget.files?.length) {
       return;
     }    
-    // this.store.dispatch(MyFilesActions.uploadFile({ file: eventTarget.files[0] }))
-    this.filesToUpload.push(this.mapToAppFile(eventTarget.files[0]));    
-    this.table.renderRows();    
+    this.filesToUpload.push(eventTarget.files[0]);  
+    this.table.renderRows(); 
   }
-
-  public removeFile(fileToRemove: AppFile) {
+  
+  public removeFile(fileToRemove: File) {
     this.filesToUpload = this.filesToUpload.filter(file => file !== fileToRemove);
     this.table.renderRows();
   }
-
-  test() {
-    console.log(this.filesToUpload);
-    
+  
+  uploadFiles() {
+    // const obsArr = [];
+    this.filesToUpload.forEach(file => {
+      this.store.dispatch(MyFilesActions.uploadFile({ file: file }))
+    });
   }
 }
