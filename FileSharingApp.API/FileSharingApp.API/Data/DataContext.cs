@@ -26,6 +26,7 @@ namespace FileSharingApp.API.Data
         public DbSet<XmlFile> XmlFiles { get; set; }
         public DbSet<PdfFile> PdfFiles { get; set; }
         public DbSet<ImageFile> ImageFiles { get; set; }
+        public DbSet<Folder> Folders { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

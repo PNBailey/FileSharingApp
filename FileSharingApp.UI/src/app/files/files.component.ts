@@ -38,7 +38,7 @@ export class FilesComponent {
   }
 
   openDialog() {
-    const dialogRef = this.dialog.open(FileUploadComponent, {
+    this.dialog.open(FileUploadComponent, {
       minWidth: '80vw',
     });
   }
