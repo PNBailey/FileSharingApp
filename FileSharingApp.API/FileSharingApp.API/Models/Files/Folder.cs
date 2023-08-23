@@ -6,10 +6,10 @@
 
         public string Name { get; set; } = string.Empty;
 
-        public IEnumerable<BaseFile>? File { get; set; }
+        public IEnumerable<BaseFile>? Files { get; set; }
 
-        public IEnumerable<Folder>? ParentFolder { get; set; }    
+        public Folder? ParentFolder { get; set; }    
 
-        public IEnumerable<Folder>? SubFolder { get; set; }
+        public IEnumerable<Folder>? SubFolders { get; set; }
     }
 }

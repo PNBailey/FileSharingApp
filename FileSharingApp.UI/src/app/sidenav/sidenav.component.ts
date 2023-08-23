@@ -4,6 +4,7 @@ import { MatSidenavModule } from '@angular/material/sidenav';
 import { RouterOutlet } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-sidenav',
@@ -13,15 +14,16 @@ import { MatCardModule } from '@angular/material/card';
     MatSidenavModule,
     RouterOutlet,
     MatButtonModule,
-    MatCardModule
+    MatCardModule,
+    MatIconModule
   ],
   templateUrl: './sidenav.component.html',
   styleUrls: ['./sidenav.component.scss']
 })
 export class SidenavComponent {
-  @Output() goToMyFilesEvent = new EventEmitter();
+  @Output() createNewFolderEvent = new EventEmitter();
 
-  goToMyFiles() {
-    this.goToMyFilesEvent.emit();
+  createNewFolder() {
+    this.createNewFolderEvent.emit();
   }
 }

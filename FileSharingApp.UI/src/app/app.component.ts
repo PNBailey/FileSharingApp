@@ -64,7 +64,8 @@ export class AppComponent implements OnInit {
     this.router.navigateByUrl('/edit-profile');
   }
 
-  goToMyFiles() {
-    this.router.navigateByUrl('/files');
+  createNewFolder() {
+    console.log("trig new folder");
+    
   }
 }
