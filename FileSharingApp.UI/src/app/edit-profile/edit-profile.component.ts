@@ -31,65 +31,65 @@ import { ImageUploadResult } from '../models/image-upload-result';
 
 export class EditProfileComponent {
   
-  loggedOnUser$: Observable<User | null>;
-  updatingProfile$: Observable<boolean> | undefined
+    loggedOnUser$: Observable<User | null>;
+    updatingProfile$: Observable<boolean> | undefined
       
-  constructor(
+    constructor(
     private messageHandlingService: MessageHandlingService,
     private userService: UserService,
     private loadingService: LoadingService,
     private accountStore: Store<{ account: AccountState }>
-  ) {
-    this.loggedOnUser$ = this.accountStore.select(state => state.account.loggedOnUser);
-    this.updatingProfile$ = this.loadingService.getLoadingObs(LoadingObsName.UPDATING_PROFILE);
-  }
+    ) {
+        this.loggedOnUser$ = this.accountStore.select(state => state.account.loggedOnUser);
+        this.updatingProfile$ = this.loadingService.getLoadingObs(LoadingObsName.UPDATING_PROFILE);
+    }
 
-  displayIncorrectFileTypeMessage() {
-    this.messageHandlingService.onDisplayNewMessage({
-      message: "File selected must be JPEG or PNG file",
-      action: SnackbarAction.Close,
-      classType: SnackbarClassType.Error,
-      duration: SnackbarDuration.Medium
-    });
-  }
+    displayIncorrectFileTypeMessage() {
+        this.messageHandlingService.onDisplayNewMessage({
+            message: "File selected must be JPEG or PNG file",
+            action: SnackbarAction.Close,
+            classType: SnackbarClassType.Error,
+            duration: SnackbarDuration.Medium
+        });
+    }
 
-  uploadProfilePicture(file: File) {  
-    this.userService.uploadProfilePicture(file).pipe(
-      withLatestFrom(this.loggedOnUser$),
-      tap(([imageUploadResult, loggedOnUser]) => {
-        if(loggedOnUser && imageUploadResult.error == null) {
-          const updatedUser = this.updateUsersProfilePictureUrl(loggedOnUser, imageUploadResult);
-          this.displayUserUpdatedMessage();
-          this.accountStore.dispatch(AccountActions.setLoggedOnUser({user: updatedUser}))
-        }
-      })
-    ).subscribe();
-  }
+    uploadProfilePicture(file: File) {  
+        this.userService.uploadProfilePicture(file).pipe(
+            withLatestFrom(this.loggedOnUser$),
+            tap(([imageUploadResult, loggedOnUser]) => {
+                if(loggedOnUser && imageUploadResult.error == null) {
+                    const updatedUser = this.updateUsersProfilePictureUrl(loggedOnUser, imageUploadResult);
+                    this.displayUserUpdatedMessage();
+                    this.accountStore.dispatch(AccountActions.setLoggedOnUser({user: updatedUser}))
+                }
+            })
+        ).subscribe();
+    }
   
-  private updateUsersProfilePictureUrl(loggedOnUser: User, imageUploadResult: ImageUploadResult): User {
-    let updatedUser = new User();
-    updatedUser = { ...loggedOnUser };
-    updatedUser.profilePictureUrl = imageUploadResult.url;
-    return updatedUser;
-  }
+    private updateUsersProfilePictureUrl(loggedOnUser: User, imageUploadResult: ImageUploadResult): User {
+        let updatedUser = new User();
+        updatedUser = { ...loggedOnUser };
+        updatedUser.profilePictureUrl = imageUploadResult.url;
+        return updatedUser;
+    }
 
-  infoUpdated(updatedUser: User) {
-    this.userService.updateUserInfo(updatedUser).pipe(
-      tap((res: IdentityResult) => {
-        if(res.succeeded) {
-          this.accountStore.dispatch(AccountActions.setLoggedOnUser({user: updatedUser}))
-          this.displayUserUpdatedMessage();
-        }
-      })  
-    ).subscribe();    
-  }
+    infoUpdated(updatedUser: User) {
+        this.userService.updateUserInfo(updatedUser).pipe(
+            tap((res: IdentityResult) => {
+                if(res.succeeded) {
+                    this.accountStore.dispatch(AccountActions.setLoggedOnUser({user: updatedUser}))
+                    this.displayUserUpdatedMessage();
+                }
+            })  
+        ).subscribe();    
+    }
 
-  private displayUserUpdatedMessage() {
-    this.messageHandlingService.onDisplayNewMessage({
-      message: "Successfully Updated",
-      action: SnackbarAction.Close,
-      classType: SnackbarClassType.Success,
-      duration: SnackbarDuration.Medium
-    });
-  }
+    private displayUserUpdatedMessage() {
+        this.messageHandlingService.onDisplayNewMessage({
+            message: "Successfully Updated",
+            action: SnackbarAction.Close,
+            classType: SnackbarClassType.Success,
+            duration: SnackbarDuration.Medium
+        });
+    }
 }

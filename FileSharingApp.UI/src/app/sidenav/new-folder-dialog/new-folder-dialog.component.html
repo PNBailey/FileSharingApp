@@ -1,0 +1,33 @@
+<h2 mat-dialog-title>New Folder</h2>
+<mat-dialog-content>
+    <div class="container my-5">
+        <form [formGroup]="form" class="row d-flex justify-content-center">
+            <mat-form-field class="col-11">
+                <mat-label>Name</mat-label>
+                <input formControlName="name" matInput placeholder="Enter folder name...">
+            </mat-form-field>
+            <mat-form-field class="col-11 mt-2">
+                <mat-label>Description</mat-label>
+                <input formControlName="description" matInput placeholder="Enter description...">
+            </mat-form-field>
+            <mat-form-field class="col-11 mt-2">
+                <mat-label>Parent Folder</mat-label>
+                <mat-select placeholder="Select parent folder...">
+                    <mat-option>Placeholder 1</mat-option>
+                    <mat-option>Placeholder 2</mat-option>
+                    <mat-option>Placeholder 3</mat-option>
+                </mat-select>
+            </mat-form-field>
+        </form>
+    </div>
+</mat-dialog-content>
+<mat-dialog-actions>
+    <button mat-flat-button color="warn" (click)="cancel()">Cancel</button>
+    <button
+        mat-flat-button
+        cdkFocusInitial
+        color="primary"
+        class="mx-3"
+        (click)="confirm()">Upload
+    </button>
+</mat-dialog-actions>

@@ -18,17 +18,17 @@ import { FileEffects } from './app/state/file/file.effects';
 import { fileReducer } from './app/state/file/file.reducer';
 
 if (environment.production) {
-  enableProdMode();
+    enableProdMode();
 }
 
 bootstrapApplication(AppComponent, {
-  providers: [
-    importProvidersFrom(BrowserModule, AppRoutingModule, FormsModule, ReactiveFormsModule, MatDialogModule, MatSnackBarModule),
-    { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
-    provideAnimations(),
-    provideHttpClient(withInterceptorsFromDi()),
-    provideStore({ account: accountReducer, files: fileReducer }),
-    provideEffects(AccountEffects, FileEffects)
-  ]
+    providers: [
+        importProvidersFrom(BrowserModule, AppRoutingModule, FormsModule, ReactiveFormsModule, MatDialogModule, MatSnackBarModule),
+        { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
+        provideAnimations(),
+        provideHttpClient(withInterceptorsFromDi()),
+        provideStore({ account: accountReducer, files: fileReducer }),
+        provideEffects(AccountEffects, FileEffects)
+    ]
 })
-  .catch(err => console.error(err));
+    .catch(err => console.error(err));

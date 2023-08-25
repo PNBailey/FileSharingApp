@@ -13,33 +13,33 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { FileUploadComponent } from './file-upload/file-upload.component';
 
 @Component({
-  selector: 'app-files',
-  standalone: true,
-  imports: [
-    CommonModule,
-    MatDividerModule,
-    MatButtonModule,
-    MatIconModule,
-    FileComponent,
-    MatDialogModule
-  ],
-  templateUrl: './files.component.html',
-  styleUrls: ['./files.component.scss']
+    selector: 'app-files',
+    standalone: true,
+    imports: [
+        CommonModule,
+        MatDividerModule,
+        MatButtonModule,
+        MatIconModule,
+        FileComponent,
+        MatDialogModule
+    ],
+    templateUrl: './files.component.html',
+    styleUrls: ['./files.component.scss']
 })
 export class FilesComponent {
 
-  files$: Observable<AppFile[]> = this.store.select(getAllFiles);
+    files$: Observable<AppFile[]> = this.store.select(getAllFiles);
 
-  constructor(
+    constructor(
     private store: Store,
     public dialog: MatDialog
-  ) {
-    this.store.dispatch(MyFilesActions.getAllFiles());
-  }
+    ) {
+        this.store.dispatch(MyFilesActions.getAllFiles());
+    }
 
-  openDialog() {
-    this.dialog.open(FileUploadComponent, {
-      minWidth: '80vw',
-    });
-  }
+    openDialog() {
+        this.dialog.open(FileUploadComponent, {
+            minWidth: '80vw',
+        });
+    }
 }

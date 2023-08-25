@@ -76,5 +76,5 @@ describe('ErrorHandlingService', () => {
         expect(service['logError']).toHaveBeenCalled();
         expect(service['displayErrorToUser']).toHaveBeenCalled();
     });
-  });
+});
   

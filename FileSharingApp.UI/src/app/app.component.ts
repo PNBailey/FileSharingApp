@@ -5,67 +5,76 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { AccountDialogComponent } from './account/account-dialog.component';
 import { Store } from '@ngrx/store';
 import { AccountActions, AccountAppCompActions } from './state/account/account.actions';
-import { Observable, tap } from 'rxjs';
+import { Observable } from 'rxjs';
 import { User } from './models/user';
 import { AsyncPipe, NgIf } from '@angular/common';
 import { getLoggedOnUser } from './state/account/account.selectors';
 import { SidenavComponent } from './sidenav/sidenav.component';
-import { AccountState } from './state/account/account.reducer';
+import { NewFolderDialogComponent } from './sidenav/new-folder-dialog/new-folder-dialog.component';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
-  selector: 'app-root',
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss'],
-  standalone: true,
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
-    ToolbarComponent,
-    MatDialogModule,
-    NgIf,
-    AsyncPipe,
-    SidenavComponent
-  ]
+    selector: 'app-root',
+    templateUrl: './app.component.html',
+    styleUrls: ['./app.component.scss'],
+    standalone: true,
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [
+        ToolbarComponent,
+        MatDialogModule,
+        NgIf,
+        AsyncPipe,
+        SidenavComponent,
+        MatDialogModule
+    ]
 })
 
 export class AppComponent implements OnInit {
-  title = 'FileSharingApp';
+    title = 'FileSharingApp';
 
-  constructor(
-    public dialog: MatDialog,
-    private store: Store,
-    private router: Router
-  ) {}
+    constructor(
+        public dialog: MatDialog,
+        private store: Store,
+        private router: Router
+    ) {}
 
-  loggedOnUser$: Observable<User | null> = this.store.select(getLoggedOnUser);
+    loggedOnUser$: Observable<User | null> = this.store.select(getLoggedOnUser);
 
-  ngOnInit(): void {
-    this.setCurrentUser();
-  }
-
-  setCurrentUser() {
-    const storedUser = localStorage.getItem('user');    
-    if (storedUser) {
-       this.store.dispatch(AccountActions.setLoggedOnUser({ user: JSON.parse(storedUser) }));
+    ngOnInit(): void {
+        this.setCurrentUser();
     }
-  }
 
-  logoutUser() {
-    this.store.dispatch(AccountAppCompActions.logout());
-    this.router.navigateByUrl('/home');
-  }
+    setCurrentUser() {
+        const storedUser = localStorage.getItem('user');    
+        if (storedUser) {
+            this.store.dispatch(AccountActions.setLoggedOnUser({ user: JSON.parse(storedUser) }));
+        }
+    }
 
-  openDialog(): void {
-    this.dialog.open(AccountDialogComponent, {
-      width: '350px'
-    });
-  }
+    logoutUser() {
+        this.store.dispatch(AccountAppCompActions.logout());
+        this.router.navigateByUrl('/home');
+    }
 
-  routeToEditProfile() {
-    this.router.navigateByUrl('/edit-profile');
-  }
+    openAccountDialog(): void {
+        this.dialog.open(AccountDialogComponent, {
+            width: '350px'
+        });
+    }
 
-  createNewFolder() {
-    console.log("trig new folder");
-    
-  }
+    openNewFolderDialog() {
+        const dialogRef = this.dialog.open(NewFolderDialogComponent, {
+            width: '500px'
+        });
+
+        dialogRef.afterClosed()
+            .pipe(takeUntilDestroyed())
+            .subscribe(folder => {
+                
+            })
+    }
+
+    routeToEditProfile() {
+        this.router.navigateByUrl('/edit-profile');
+    }
 }
