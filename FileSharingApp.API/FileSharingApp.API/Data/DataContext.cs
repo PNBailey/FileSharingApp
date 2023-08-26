@@ -1,6 +1,7 @@
 ﻿using FileSharingApp.API.Models;
 using FileSharingApp.API.Models.Enums;
 using FileSharingApp.API.Models.Files;
+using FileSharingApp.API.Models.Folders;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -43,6 +44,22 @@ namespace FileSharingApp.API.Data
                 .WithOne(u => u.Role)
                 .HasForeignKey(ur => ur.RoleId)
                 .IsRequired();
+
+            builder.Entity<UserFolder>()
+                .HasKey(key => new { key.FolderId, key.FolderOwnerId });
+
+            builder.Entity<UserFolder>()
+                .HasOne(uf => uf.FolderOwner)
+                .WithMany(u => u.Folders)
+                .HasForeignKey(uf => uf.FolderOwnerId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            builder.Entity<UserFolder>()
+               .HasOne(uf => uf.Folder)
+               .WithMany(f => f.Users)
+               .HasForeignKey(uf => uf.FolderId)
+               .OnDelete(DeleteBehavior.Cascade);
+
         }
 
     }
