@@ -44,9 +44,8 @@ export class AppComponent implements OnInit {
         public dialog: MatDialog,
         private store: Store,
         private router: Router
-    ) {}
-
-
+    ) { }
+    
     ngOnInit(): void {
         this.setCurrentUser();
         this.getFolders();
@@ -54,7 +53,6 @@ export class AppComponent implements OnInit {
 
     getFolders() {
         this.store.dispatch(FolderActions.getAllFolders());
-        
     }
 
     setCurrentUser() {

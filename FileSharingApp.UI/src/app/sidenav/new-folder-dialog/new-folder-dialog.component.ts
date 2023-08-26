@@ -1,11 +1,11 @@
-import { Component, EventEmitter, Inject, Optional, Output } from '@angular/core';
+import { Component, Inject, Optional } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { Folder } from 'src/app/models/folder';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, UntypedFormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 
@@ -46,10 +46,10 @@ export class NewFolderDialogComponent {
     }
 
     cancel() {
-        this.dialogRef.close({ folder: null });
+        this.dialogRef.close(null);
     }
 
     confirm() {
-        this.dialogRef.close({ folder: this.folderToAdd });
+        this.dialogRef.close(this.form.value);
     }
 }
