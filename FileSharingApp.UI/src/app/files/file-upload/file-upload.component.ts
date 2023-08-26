@@ -8,7 +8,7 @@ import { Store } from '@ngrx/store';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
-import { MyFilesActions } from 'src/app/state/file/file.actions';
+import { FilesActions } from 'src/app/state/file/file.actions';
 
 @Component({
     selector: 'app-file-upload',
@@ -60,6 +60,6 @@ export class FileUploadComponent {
   }
   
   uploadFiles() {
-      this.store.dispatch(MyFilesActions.uploadFiles({ files: this.filesToUpload }))
+      this.store.dispatch(FilesActions.uploadFiles({ files: this.filesToUpload }))
   }
 }

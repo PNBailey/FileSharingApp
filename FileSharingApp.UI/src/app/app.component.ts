@@ -1,17 +1,20 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { ToolbarComponent } from './toolbar/toolbar.component';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { AccountDialogComponent } from './account/account-dialog.component';
 import { Store } from '@ngrx/store';
 import { AccountActions, AccountAppCompActions } from './state/account/account.actions';
-import { Observable } from 'rxjs';
+import { Observable, tap } from 'rxjs';
 import { User } from './models/user';
 import { AsyncPipe, NgIf } from '@angular/common';
 import { getLoggedOnUser } from './state/account/account.selectors';
 import { SidenavComponent } from './sidenav/sidenav.component';
 import { NewFolderDialogComponent } from './sidenav/new-folder-dialog/new-folder-dialog.component';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { FolderActions } from './state/folder/folder.actions';
+import { Folder } from './models/folder';
+import { getAllFolders } from './state/folder/folder.selector';
 
 @Component({
     selector: 'app-root',
@@ -31,6 +34,11 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 export class AppComponent implements OnInit {
     title = 'FileSharingApp';
+    destroyRef = inject(DestroyRef);
+    loggedOnUser$: Observable<User | null> = this.store.select(getLoggedOnUser);
+    folders$: Observable<Folder[]> = this.store.select(getAllFolders).pipe(
+        tap((folders) => console.log(folders))
+    );
 
     constructor(
         public dialog: MatDialog,
@@ -38,10 +46,15 @@ export class AppComponent implements OnInit {
         private router: Router
     ) {}
 
-    loggedOnUser$: Observable<User | null> = this.store.select(getLoggedOnUser);
 
     ngOnInit(): void {
         this.setCurrentUser();
+        this.getFolders();
+    }
+
+    getFolders() {
+        this.store.dispatch(FolderActions.getAllFolders());
+        
     }
 
     setCurrentUser() {
@@ -68,9 +81,11 @@ export class AppComponent implements OnInit {
         });
 
         dialogRef.afterClosed()
-            .pipe(takeUntilDestroyed())
+            .pipe(takeUntilDestroyed(this.destroyRef))
             .subscribe(folder => {
-                
+                if (folder) {
+                    this.store.dispatch(FolderActions.addNewFolder({folder: folder}));
+                }
             })
     }
 

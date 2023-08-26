@@ -7,6 +7,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { Folder } from 'src/app/models/folder';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, UntypedFormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
     selector: 'app-new-folder-dialog',
@@ -19,7 +20,8 @@ import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/materia
         MatFormFieldModule,
         FormsModule,
         ReactiveFormsModule,
-        MatSelectModule
+        MatSelectModule,
+        MatButtonModule
     ],
     templateUrl: './new-folder-dialog.component.html',
     styleUrls: ['./new-folder-dialog.component.css']

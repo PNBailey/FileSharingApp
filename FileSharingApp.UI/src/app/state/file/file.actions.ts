@@ -1,15 +1,15 @@
 import { createActionGroup, emptyProps, props } from "@ngrx/store";
 import { AppFile } from "src/app/models/app-file";
 
-export const MyFilesActions = createActionGroup({
-    source: 'My Files',
+export const FilesActions = createActionGroup({
+    source: 'Files',
     events: {
         'Upload Files': props<{ files: File[] }>(),
         'Get All Files': emptyProps()
     }
 });
 
-export const MyFilesApiActions = createActionGroup({
+export const FilesApiActions = createActionGroup({
     source: 'Files API',
     events: {
         'Upload Files Successful': props<{ files: AppFile[] }>(),
