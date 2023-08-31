@@ -49,7 +49,7 @@ export class NewFolderDialogComponent {
         this.dialogRef.close(null);
     }
 
-    confirm() {
+    confirm() {       
         this.dialogRef.close(this.form.value);
     }
 }

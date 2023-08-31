@@ -1,9 +1,9 @@
 import { createFeatureSelector, createSelector } from "@ngrx/store";
 import { FolderState } from "./folder.reducer";
 
-export const filesFeatureSelector = createFeatureSelector<FolderState>('folders');
+export const foldersFeatureSelector = createFeatureSelector<FolderState>('folders');
 
 export const getAllFolders = createSelector(
-    filesFeatureSelector,
+    foldersFeatureSelector,
     (state: FolderState) => state.folders
 );

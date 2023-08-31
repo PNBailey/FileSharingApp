@@ -29,7 +29,7 @@ bootstrapApplication(AppComponent, {
         { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
         provideAnimations(),
         provideHttpClient(withInterceptorsFromDi()),
-        provideStore({ account: accountReducer, files: fileReducer, folder: folderReducer }),
+        provideStore({ account: accountReducer, files: fileReducer, folders: folderReducer }),
         provideEffects(AccountEffects, FileEffects, FolderEffects)
     ]
 })

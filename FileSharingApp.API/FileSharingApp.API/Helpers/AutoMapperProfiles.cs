@@ -25,6 +25,7 @@ namespace API.Helpers
             CreateMap<BaseFile, FileDto>()
                 .ForMember(dest => dest.FileTypeName, opt => opt.MapFrom(bf => bf.GetType().Name));
 
+            CreateMap<FolderDto, Folder>();
         }
     }
 }

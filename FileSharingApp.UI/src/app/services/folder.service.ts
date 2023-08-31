@@ -1,33 +1,33 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, tap } from 'rxjs';
 import { Folder } from '../models/folder';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
     providedIn: 'root'
 })
 export class FolderService {
 
-    private baseUrl = 'your_api_base_url'; // Replace with your API base URL
+    private baseUrl = `${environment.baseUrl}/Folder`;
 
     constructor(private http: HttpClient) { }
 
-    createFolder(folder: Folder): Observable<Folder> {
-        return this.http.post<Folder>(`${this.baseUrl}/folder`, folder);
+    createFolder(folder: Folder): Observable<Folder> {        
+        return this.http.post<Folder>(this.baseUrl, folder);
     }
 
     getFolder(folderId: number): Observable<any> {
-        const url = `${this.baseUrl}/folder/${folderId}`;
+        const url = `${this.baseUrl}/${folderId}`;
         return this.http.get(url);
     }
 
     getFoldersList(): Observable<Folder[]> {
-        const url = `${this.baseUrl}/folders`;
-        return this.http.get<Folder[]>(url);
+        return this.http.get<Folder[]>(this.baseUrl);
     }
 
     deleteFolder(folderId: number) {
-        const url = `${this.baseUrl}/folders/${folderId}`;
+        const url = `${this.baseUrl}/${folderId}`;
         return this.http.delete(url);
     }
 }

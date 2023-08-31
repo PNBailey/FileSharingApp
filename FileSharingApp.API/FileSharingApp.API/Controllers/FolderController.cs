@@ -1,16 +1,32 @@
-﻿using FileSharingApp.API.Models.Files;
+﻿using AutoMapper;
+using FileSharingApp.API.ExtensionMethods;
+using FileSharingApp.API.Models.DTOs;
+using FileSharingApp.API.Models.Files;
+using FileSharingApp.API.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FileSharingApp.API.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
     public class FolderController : BaseController
     {
+        private readonly IFolderService folderService;
+        private readonly IMapper mapper;
+        private readonly IUserService userService;
+
+        public FolderController(
+            IFolderService folderService, 
+            IMapper mapper,
+            IUserService userService)
+        {
+            this.folderService = folderService;
+            this.mapper = mapper;
+            this.userService = userService;
+        }
+
         [HttpGet]
         public IEnumerable<Folder> Get()
         {
-            throw new NotImplementedException();
+            return folderService.GetFolderList(User.GetUserId());
         }
 
         [HttpGet("{id}")]
@@ -20,13 +36,15 @@ namespace FileSharingApp.API.Controllers
         }
 
         [HttpPost]
-        public void Post([FromBody] string value)
+        public async Task Post([FromBody] FolderDto folderDto)
         {
-            throw new NotImplementedException();
+            var folder = mapper.Map<Folder>(folderDto);
+            folder.FolderOwner = await userService.FindByIdAsync(User.GetUserId());
+            folderService.CreateFolder(folder);
         }
 
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        public void Put(int id, [FromBody] Folder folder)
         {
             throw new NotImplementedException();
         }

@@ -112,10 +112,11 @@ try
     builder.Services.AddScoped<IErrorService, ErrorService>();
     builder.Services.AddScoped<IFileService, FileService>();
     builder.Services.AddScoped<IValidationService, ValidationService>();
+    builder.Services.AddScoped<IFolderService, FolderService>();
 
     //Adding Repositories
     builder.Services.AddScoped<IFileRepository, FileRepository>();
-
+    builder.Services.AddScoped<IFolderRepository, FolderRepository>();
 
     // NLog: Setup NLog for Dependency injection
     builder.Logging.ClearProviders(); 

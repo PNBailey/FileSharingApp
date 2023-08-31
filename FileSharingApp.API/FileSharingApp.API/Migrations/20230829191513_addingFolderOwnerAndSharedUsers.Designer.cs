@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FileSharingApp.API.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20230826172756_addingFolderOwnerAndSharedUsers")]
+    [Migration("20230829191513_addingFolderOwnerAndSharedUsers")]
     partial class addingFolderOwnerAndSharedUsers
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -187,6 +187,10 @@ namespace FileSharingApp.API.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("FolderOwnerId")
                         .HasColumnType("int");

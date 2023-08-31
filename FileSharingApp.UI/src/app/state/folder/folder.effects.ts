@@ -4,6 +4,7 @@ import { FolderActions, FolderApiActions } from "./folder.actions";
 import { FolderService } from "src/app/services/folder.service";
 import { catchError, map, of, switchMap, tap } from "rxjs";
 import { MessageHandlingService } from "src/app/services/message-handling.service";
+import { Folder } from "src/app/models/folder";
 
 @Injectable()
 export class FolderEffects {
@@ -12,7 +13,7 @@ export class FolderEffects {
         this.actions$.pipe(
             ofType(FolderActions.getAllFolders),
             switchMap(() => this.folderService.getFoldersList()),
-            map((folders) => FolderApiActions.getAllFoldersSuccessful({ folders: folders })),
+            map((folders: Folder[]) => FolderApiActions.getAllFoldersSuccessful({ folders: folders })),
             catchError(() => of(FolderApiActions.getAllFoldersUnsuccessful()))
         )
     );

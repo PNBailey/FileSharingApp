@@ -4,6 +4,7 @@
         <mat-icon fontIcon="add"></mat-icon>
         Add New Folder
       </button>
+      <p *ngFor="let folder of folders$ | async">{{folder.name}}</p>
     </mat-sidenav>
     <mat-sidenav-content class="p-4">
       <mat-card>

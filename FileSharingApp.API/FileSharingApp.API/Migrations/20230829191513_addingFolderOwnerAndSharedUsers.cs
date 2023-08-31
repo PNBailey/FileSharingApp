@@ -8,6 +8,13 @@ namespace FileSharingApp.API.Migrations
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.AddColumn<string>(
+                name: "Description",
+                table: "Folders",
+                type: "nvarchar(max)",
+                nullable: false,
+                defaultValue: "");
+
             migrationBuilder.AddColumn<int>(
                 name: "FolderOwnerId",
                 table: "Folders",
@@ -55,7 +62,7 @@ namespace FileSharingApp.API.Migrations
                 column: "FolderOwnerId",
                 principalTable: "AspNetUsers",
                 principalColumn: "Id",
-                onDelete: ReferentialAction.Cascade);
+                onDelete: ReferentialAction.NoAction);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -69,6 +76,10 @@ namespace FileSharingApp.API.Migrations
 
             migrationBuilder.DropIndex(
                 name: "IX_Folders_FolderOwnerId",
+                table: "Folders");
+
+            migrationBuilder.DropColumn(
+                name: "Description",
                 table: "Folders");
 
             migrationBuilder.DropColumn(

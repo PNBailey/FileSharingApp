@@ -8,6 +8,8 @@ namespace FileSharingApp.API.Models.Files
 
         public string Name { get; set; } = string.Empty;
 
+        public string Description { get; set; } = string.Empty;
+
         public AppUser FolderOwner { get; set; } = null!;
 
         public ICollection<UserFolder>? Users { get; set; } 

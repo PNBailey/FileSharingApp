@@ -36,9 +36,7 @@ export class AppComponent implements OnInit {
     title = 'FileSharingApp';
     destroyRef = inject(DestroyRef);
     loggedOnUser$: Observable<User | null> = this.store.select(getLoggedOnUser);
-    folders$: Observable<Folder[]> = this.store.select(getAllFolders).pipe(
-        tap((folders) => console.log(folders))
-    );
+    folders$: Observable<Folder[]> = this.store.select(getAllFolders);
 
     constructor(
         public dialog: MatDialog,
