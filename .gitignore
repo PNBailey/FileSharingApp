@@ -53,9 +53,7 @@ FileSharingApp.API/FileSharingApp.Service/obj/
 FileSharingApp.UI/.browserslistrc
 FileSharingApp.UI/.editorconfig
 FileSharingApp.UI/karma.conf.js
-FileSharingApp.UI/tsconfig.app.json
-FileSharingApp.UI/tsconfig.json
-FileSharingApp.UI/tsconfig.spec.json
 FileSharingApp.UI/src/favicon.ico
 Resources/
 FileSharingApp.API/obj/
+FileSharingApp.UI/package-lock.json
