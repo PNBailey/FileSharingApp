@@ -43,9 +43,6 @@ FileSharingApp.API/FileSharingAppUnitTests/bin/
 FileSharingApp.API/FileSharingAppUnitTests/obj/
 FileSharingApp.API/FileSharingApp.API/bin/
 FileSharingApp.API/.vs/
-FileSharingApp.API/FileSharingApp.API/appsettings.Development.json
-FileSharingApp.API/FileSharingApp.API/appsettings.json
-FileSharingApp.API/FileSharingApp.API/.config/
 FileSharingApp.API/FileSharingApp.API/obj/
 FileSharingApp.API/FileSharingApp.Domain/bin/
 FileSharingApp.API/FileSharingApp.Domain/obj/
