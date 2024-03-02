@@ -1,13 +1,13 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { AppFile } from '../models/app-file';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class FileService {
-  baseUrl = "https://localhost:7249/api/File";
-
+  private baseUrl = `${environment.apiUrl}/File`;
   constructor(
     private http: HttpClient
   ) { }

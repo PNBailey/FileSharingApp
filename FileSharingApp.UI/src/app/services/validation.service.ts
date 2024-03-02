@@ -3,14 +3,14 @@ import { Injectable } from '@angular/core';
 import { AbstractControl, AsyncValidatorFn, ValidationErrors } from '@angular/forms';
 import { debounceTime, distinctUntilChanged, first, map, Observable, switchMap, tap, withLatestFrom } from 'rxjs';
 import { LoadingObsName, LoadingService } from 'src/app/services/loading.service';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ValidationService {
 
-  baseUrl = "https://localhost:7249/api/Account";
-
+  private baseUrl = `${environment.apiUrl}/Account`;
   constructor( 
     private loadingService: LoadingService,
     private http: HttpClient

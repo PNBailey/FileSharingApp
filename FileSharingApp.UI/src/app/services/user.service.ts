@@ -6,13 +6,13 @@ import { IdentityResult } from '../models/identity-result';
 import { User } from '../models/user';
 import { LoadingObsName, LoadingService } from './loading.service';
 import { ImageUploadResult } from '../models/image-upload-result';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UserService {
-  baseUrl = 'https://localhost:7249/api/User/';
-
+  private baseUrl = `${environment.apiUrl}/User`;
   constructor(private http: HttpClient, private loadingService: LoadingService) { }
 
   uploadProfilePicture(file: File) {
