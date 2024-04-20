@@ -73,7 +73,8 @@ export class AppComponent implements OnInit {
 
     openNewFolderDialog() {
         const dialogRef = this.dialog.open(NewFolderDialogComponent, {
-            width: '500px'
+            width: '500px',
+            data: {folders: this.folders$}
         });
 
         dialogRef.afterClosed()

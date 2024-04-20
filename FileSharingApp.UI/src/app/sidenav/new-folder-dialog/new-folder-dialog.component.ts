@@ -1,4 +1,4 @@
-import { Component, Inject, Optional } from '@angular/core';
+import { Component, Inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
@@ -8,6 +8,7 @@ import { Folder } from 'src/app/models/folder';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
+import { Observable } from 'rxjs';
 
 @Component({
     selector: 'app-new-folder-dialog',
@@ -31,9 +32,9 @@ export class NewFolderDialogComponent {
     form: FormGroup;
 
     constructor(
-    private fb: FormBuilder,
-    public dialogRef: MatDialogRef<NewFolderDialogComponent>,
-    @Optional() @Inject(MAT_DIALOG_DATA) public folderToAdd: Folder
+        private fb: FormBuilder,
+        public dialogRef: MatDialogRef<NewFolderDialogComponent>,
+        @Inject(MAT_DIALOG_DATA) public data: {folders: Observable<Folder[]>}
     ) {
         this.buildForm();
     }
@@ -41,7 +42,8 @@ export class NewFolderDialogComponent {
     buildForm() {
         this.form = this.fb.group({
             'name': this.fb.control('', Validators.required),
-            'description': this.fb.control('')
+            'description': this.fb.control('', Validators.required),
+            'parentFolder': this.fb.control(null)
         })
     }
 

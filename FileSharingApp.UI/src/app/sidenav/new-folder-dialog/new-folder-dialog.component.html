@@ -12,10 +12,8 @@
             </mat-form-field>
             <mat-form-field class="col-11 mt-2">
                 <mat-label>Parent Folder</mat-label>
-                <mat-select placeholder="Select parent folder...">
-                    <mat-option>Placeholder 1</mat-option>
-                    <mat-option>Placeholder 2</mat-option>
-                    <mat-option>Placeholder 3</mat-option>
+                <mat-select formControlName="parentFolder" placeholder="Select parent folder...">
+                    <mat-option *ngFor="let folder of data.folders | async" [value]="folder">{{folder.name}}</mat-option>
                 </mat-select>
             </mat-form-field>
         </form>
