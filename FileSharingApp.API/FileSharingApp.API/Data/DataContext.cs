@@ -52,13 +52,13 @@ namespace FileSharingApp.API.Data
                 .HasOne(uf => uf.FolderOwner)
                 .WithMany(u => u.Folders)
                 .HasForeignKey(uf => uf.FolderOwnerId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.NoAction);
 
             builder.Entity<UserFolder>()
                .HasOne(uf => uf.Folder)
                .WithMany(f => f.Users)
                .HasForeignKey(uf => uf.FolderId)
-               .OnDelete(DeleteBehavior.Cascade);
+               .OnDelete(DeleteBehavior.NoAction);
 
         }
 
