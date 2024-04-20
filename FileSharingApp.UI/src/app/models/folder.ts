@@ -5,4 +5,5 @@ export class Folder {
     name: string;
     description: string;
     folderOwner: User;
+    parentFolder: Folder;
 }

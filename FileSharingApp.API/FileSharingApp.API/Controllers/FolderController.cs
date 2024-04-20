@@ -36,11 +36,12 @@ namespace FileSharingApp.API.Controllers
         }
 
         [HttpPost]
-        public async Task Post([FromBody] FolderDto folderDto)
+        public async Task<Folder> Post([FromBody] FolderDto folderDto)
         {
             var folder = mapper.Map<Folder>(folderDto);
-            folder.FolderOwner = await userService.FindByIdAsync(User.GetUserId());
+            folder.FolderOwner = folderDto.ParentFolder?.FolderOwner ?? await userService.FindByIdAsync(User.GetUserId());
             folderService.CreateFolder(folder);
+            return folder;
         }
 
         [HttpPut("{id}")]
