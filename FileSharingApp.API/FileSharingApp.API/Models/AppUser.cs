@@ -1,8 +1,5 @@
-﻿using FileSharingApp.API.Models.Files;
-using FileSharingApp.API.Models.Folders;
-using FluentValidation;
+﻿using FileSharingApp.API.Models.Folders;
 using Microsoft.AspNetCore.Identity;
-using System.Security.Claims;
 
 namespace FileSharingApp.API.Models
 {

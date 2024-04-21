@@ -214,12 +214,12 @@ namespace FileSharingApp.API.Migrations
                     b.Property<int>("FolderId")
                         .HasColumnType("int");
 
-                    b.Property<int>("FolderOwnerId")
+                    b.Property<int>("UserId")
                         .HasColumnType("int");
 
-                    b.HasKey("FolderId", "FolderOwnerId");
+                    b.HasKey("FolderId", "UserId");
 
-                    b.HasIndex("FolderOwnerId");
+                    b.HasIndex("UserId");
 
                     b.ToTable("UserFolder");
                 });
@@ -394,15 +394,15 @@ namespace FileSharingApp.API.Migrations
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
-                    b.HasOne("FileSharingApp.API.Models.AppUser", "FolderOwner")
+                    b.HasOne("FileSharingApp.API.Models.AppUser", "User")
                         .WithMany("Folders")
-                        .HasForeignKey("FolderOwnerId")
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Folder");
 
-                    b.Navigation("FolderOwner");
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>

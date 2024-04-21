@@ -46,12 +46,12 @@ namespace FileSharingApp.API.Data
                 .IsRequired();
 
             builder.Entity<UserFolder>()
-                .HasKey(key => new { key.FolderId, key.FolderOwnerId });
+                .HasKey(key => new { key.FolderId, key.UserId });
 
             builder.Entity<UserFolder>()
-                .HasOne(uf => uf.FolderOwner)
+                .HasOne(uf => uf.User)
                 .WithMany(u => u.Folders)
-                .HasForeignKey(uf => uf.FolderOwnerId)
+                .HasForeignKey(uf => uf.UserId)
                 .OnDelete(DeleteBehavior.NoAction);
 
             builder.Entity<UserFolder>()

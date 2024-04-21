@@ -8,8 +8,8 @@ namespace FileSharingApp.API.Models.Folders
 
         public int FolderId { get; set; }
 
-        public AppUser FolderOwner { get; set; } = null!;
+        public AppUser User { get; set; } = null!;
 
-        public int FolderOwnerId { get; set; }
+        public int UserId { get; set; }
     }
 }
