@@ -1,10 +1,23 @@
 <mat-sidenav-container class="sidenav-container">
-    <mat-sidenav class="sidenav" opened mode="side">
-      <button class="mx-5 my-3 folders-btn" mat-flat-button (click)="createNewFolder()">
-        <mat-icon fontIcon="add"></mat-icon>
-        Add New Folder
-      </button>
-      <p *ngFor="let folder of folders$ | async">{{folder.name}}</p>
+    <mat-sidenav class="sidenav p-3" opened mode="side">
+        <button class="mx-3 my-3 folders-btn" mat-flat-button (click)="createNewFolder()">
+          <mat-icon fontIcon="add"></mat-icon>
+          Add New Folder
+        </button>
+        <mat-tree [dataSource]="dataSource" [treeControl]="treeControl">
+            <mat-tree-node *matTreeNodeDef="let node" matTreeNodePadding>
+                <button mat-icon-button disabled></button>
+                <button mat-button>{{node.name}}</button>
+            </mat-tree-node>
+            <mat-tree-node *matTreeNodeDef="let node;when: hasChild" matTreeNodePadding>
+                <button mat-icon-button matTreeNodeToggle [attr.aria-label]="'Toggle ' + node.name">
+                    <mat-icon class="mat-icon-rtl-mirror">
+                    {{treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right'}}
+                    </mat-icon>
+                </button>
+                <button mat-button>{{node.name}}</button>
+            </mat-tree-node>
+        </mat-tree>
     </mat-sidenav>
     <mat-sidenav-content class="p-4">
       <mat-card>

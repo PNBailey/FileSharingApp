@@ -36,7 +36,7 @@ namespace FileSharingApp.API.Controllers
         }
 
         [HttpPost]
-        public async Task<Folder> Post([FromBody] FolderDto folderDto)
+        public Folder Post([FromBody] FolderDto folderDto)
         {
             var folder = mapper.Map<Folder>(folderDto);
             folderService.CreateFolder(folder, User.GetUserId());

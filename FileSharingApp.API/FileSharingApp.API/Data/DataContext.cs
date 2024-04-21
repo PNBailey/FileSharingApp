@@ -60,6 +60,11 @@ namespace FileSharingApp.API.Data
                .HasForeignKey(uf => uf.FolderId)
                .OnDelete(DeleteBehavior.NoAction);
 
+            builder.Entity<Folder>()
+                .HasOne(f => f.ParentFolder)
+                .WithMany(pf => pf.SubFolders)
+                .HasForeignKey(f => f.ParentFolderId);
+
         }
 
     }
