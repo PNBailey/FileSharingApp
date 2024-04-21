@@ -16,6 +16,8 @@ namespace FileSharingApp.API.Models.Files
 
         public IEnumerable<BaseFile>? Files { get; set; }
 
+        public int? ParentFolderId { get; set; }
+
         public Folder? ParentFolder { get; set; }    
 
         public IEnumerable<Folder>? SubFolders { get; set; }
