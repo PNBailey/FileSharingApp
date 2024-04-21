@@ -4,7 +4,7 @@ namespace FileSharingApp.API.DAL.Interfaces
 {
     public interface IFolderRepository
     {
-        void CreateFolder(Folder folder);
+        void CreateFolder(Folder folder, int userId);
 
         IEnumerable<Folder> GetFolderList(int userId);
 

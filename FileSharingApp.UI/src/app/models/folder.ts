@@ -6,4 +6,5 @@ export class Folder {
     description: string;
     folderOwner: User;
     parentFolder: Folder;
+    parentFolderId: number;
 }

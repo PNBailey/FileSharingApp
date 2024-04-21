@@ -14,8 +14,9 @@ namespace FileSharingApp.API.DAL
             this.context = context;
         }
 
-        public void CreateFolder(Folder folder)
+        public void CreateFolder(Folder folder, int userId)
         {
+            folder.FolderOwner = context.Users.First(user => user.Id == userId);
             context.Folders.Add(folder);
             context.SaveChanges();
         }
@@ -35,6 +36,7 @@ namespace FileSharingApp.API.DAL
             var folders = context.Folders
                 .Where(folder => folder.FolderOwner.Id == userId)
                 .Include(f => f.FolderOwner)
+                .AsNoTracking()
                 .ToList();
             return folders;
         }

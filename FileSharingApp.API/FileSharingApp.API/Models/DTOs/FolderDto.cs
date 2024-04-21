@@ -9,6 +9,6 @@ namespace FileSharingApp.API.Models.DTOs
 
         public string Description { get; set; } = string.Empty;
 
-        public Folder? ParentFolder { get; set; }
+        public int? ParentFolderId { get; set; }
     }
 }

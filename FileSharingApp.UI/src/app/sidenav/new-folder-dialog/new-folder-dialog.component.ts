@@ -43,7 +43,7 @@ export class NewFolderDialogComponent {
         this.form = this.fb.group({
             'name': this.fb.control('', Validators.required),
             'description': this.fb.control('', Validators.required),
-            'parentFolder': this.fb.control(null)
+            'parentFolderId': this.fb.control(null)
         })
     }
 

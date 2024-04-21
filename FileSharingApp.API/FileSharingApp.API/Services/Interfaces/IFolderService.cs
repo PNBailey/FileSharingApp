@@ -4,7 +4,7 @@ namespace FileSharingApp.API.Services.Interfaces
 {
     public interface IFolderService
     {
-        void CreateFolder(Folder folder);
+        void CreateFolder(Folder folder, int userId);
 
         IEnumerable<Folder> GetFolderList(int userId);
     }

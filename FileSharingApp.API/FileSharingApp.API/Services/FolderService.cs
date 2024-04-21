@@ -13,9 +13,9 @@ namespace FileSharingApp.API.Services
             this.folderRepository = folderRepository;
         }
 
-        public void CreateFolder(Folder folder)
+        public void CreateFolder(Folder folder, int userId)
         {
-            folderRepository.CreateFolder(folder);
+            folderRepository.CreateFolder(folder, userId);
         }
 
         public IEnumerable<Folder> GetFolderList(int userId)
