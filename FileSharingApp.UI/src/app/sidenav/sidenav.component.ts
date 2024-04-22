@@ -5,7 +5,6 @@ import { RouterOutlet } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
-import { MatDialogModule } from '@angular/material/dialog';
 import { Observable } from 'rxjs';
 import { Folder } from '../models/folder';
 import {FlatTreeControl} from '@angular/cdk/tree';
@@ -45,29 +44,29 @@ export class SidenavComponent implements AfterViewInit {
         return {
           expandable: !!node.subFolders && node.subFolders.length > 0,
           name: node.name,
-          level: level,
+          level: level
         };
-      };
+    };
     
-      treeControl = new FlatTreeControl<FlatNode>(
+    treeControl = new FlatTreeControl<FlatNode>(
         node => node.level,
         node => node.expandable,
-      );
+    );
     
-      treeFlattener = new MatTreeFlattener(
+    treeFlattener = new MatTreeFlattener(
         this._transformer,
         node => node.level,
         node => node.expandable,
-        node => node.subFolders,
-      );
+        node => node.subFolders
+    );
     
-      dataSource = new MatTreeFlatDataSource(this.treeControl, this.treeFlattener);
+    dataSource = new MatTreeFlatDataSource(this.treeControl, this.treeFlattener);
     
-      ngAfterViewInit(): void {
+    ngAfterViewInit(): void {
         this.folders$.subscribe(folders => {            
-            this.dataSource.data = folders;
+            this.dataSource.data = folders.filter(f => !f.parentFolderId);            
         });
-      }
+    }
     
-      hasChild = (_: number, node: FlatNode) => node.expandable;
+    hasChild = (_: number, node: FlatNode) => node.expandable;
 }
