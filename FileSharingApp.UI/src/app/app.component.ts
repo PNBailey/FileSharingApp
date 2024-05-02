@@ -5,7 +5,7 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { AccountDialogComponent } from './account/account-dialog.component';
 import { Store } from '@ngrx/store';
 import { AccountActions, AccountAppCompActions } from './state/account/account.actions';
-import { Observable, tap } from 'rxjs';
+import { Observable } from 'rxjs';
 import { User } from './models/user';
 import { AsyncPipe, NgIf } from '@angular/common';
 import { getLoggedOnUser } from './state/account/account.selectors';
@@ -43,7 +43,7 @@ export class AppComponent implements OnInit {
         private store: Store,
         private router: Router
     ) { }
-    
+
     ngOnInit(): void {
         this.setCurrentUser();
         this.getFolders();
@@ -54,7 +54,7 @@ export class AppComponent implements OnInit {
     }
 
     setCurrentUser() {
-        const storedUser = localStorage.getItem('user');    
+        const storedUser = localStorage.getItem('user');
         if (storedUser) {
             this.store.dispatch(AccountActions.setLoggedOnUser({ user: JSON.parse(storedUser) }));
         }
@@ -74,14 +74,14 @@ export class AppComponent implements OnInit {
     openNewFolderDialog() {
         const dialogRef = this.dialog.open(NewFolderDialogComponent, {
             width: '500px',
-            data: {folders: this.folders$}
+            data: { folders: this.folders$ }
         });
 
         dialogRef.afterClosed()
             .pipe(takeUntilDestroyed(this.destroyRef))
             .subscribe(folder => {
                 if (folder) {
-                    this.store.dispatch(FolderActions.addNewFolder({folder: folder}));
+                    this.store.dispatch(FolderActions.addNewFolder({ folder: folder }));
                 }
             })
     }

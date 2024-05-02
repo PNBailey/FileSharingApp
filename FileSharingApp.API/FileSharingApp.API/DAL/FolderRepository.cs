@@ -37,6 +37,15 @@ namespace FileSharingApp.API.DAL
                 .Where(folder => folder.FolderOwner.Id == userId)
                 .Include(f => f.SubFolders)
                 .ThenInclude(sf => sf.SubFolders)
+                .ThenInclude(sf => sf.SubFolders)
+                .ThenInclude(sf => sf.SubFolders)
+                .ThenInclude(sf => sf.SubFolders)
+                .ThenInclude(sf => sf.SubFolders)
+                .ThenInclude(sf => sf.SubFolders)
+                .ThenInclude(sf => sf.SubFolders)
+                .ThenInclude(sf => sf.SubFolders)
+                .ThenInclude(sf => sf.SubFolders)
+                .ThenInclude(sf => sf.SubFolders)
                 .AsNoTracking()
                 .ToList();
             return folders;
