@@ -7,7 +7,7 @@ import { SafePipe } from 'src/app/shared/pipes/safe-pipe';
 import { RawToImagePipe } from 'src/app/shared/pipes/raw-to-image-pipe';
 import { MatDividerModule } from '@angular/material/divider';
 import { FileTypeNamePipe } from 'src/app/shared/pipes/file-type-name-pipe';
-import { FileNamePipe } from 'src/app/shared/pipes/file-name-pipe';
+import { TextLengthPipe } from 'src/app/shared/pipes/text-length-pipe';
 import { PdfToJpgPipe } from 'src/app/shared/pipes/pdf-to-jpg-pipe';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
@@ -22,7 +22,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
         RawToImagePipe,
         MatDividerModule,
         FileTypeNamePipe,
-        FileNamePipe,
+        TextLengthPipe,
         PdfToJpgPipe,
         MatProgressSpinnerModule
     ],
@@ -31,5 +31,5 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 })
 export class FileComponent {
     imageHasLoaded = false;
-  @Input() file: AppFile;
+    @Input() file: AppFile;
 }

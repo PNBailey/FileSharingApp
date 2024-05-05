@@ -10,6 +10,8 @@ import { Folder } from '../models/folder';
 import { FlatTreeControl } from '@angular/cdk/tree';
 import { MatTreeFlatDataSource, MatTreeFlattener, MatTreeModule } from '@angular/material/tree';
 import { ParentFolderFilterPipe } from '../shared/pipes/parent-folder-filter.pipe';
+import { TextLengthPipe } from '../shared/pipes/text-length-pipe';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 interface FlatNode {
     expandable: boolean;
@@ -28,7 +30,9 @@ interface FlatNode {
         MatCardModule,
         MatIconModule,
         MatTreeModule,
-        ParentFolderFilterPipe
+        ParentFolderFilterPipe,
+        TextLengthPipe,
+        MatTooltipModule
     ],
     templateUrl: './sidenav.component.html',
     styleUrls: ['./sidenav.component.scss']
