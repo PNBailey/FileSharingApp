@@ -12,6 +12,7 @@ import { MatTreeFlatDataSource, MatTreeFlattener, MatTreeModule } from '@angular
 import { ParentFolderFilterPipe } from '../shared/pipes/parent-folder-filter.pipe';
 import { TextLengthPipe } from '../shared/pipes/text-length-pipe';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { User } from '../models/user';
 
 interface FlatNode {
     expandable: boolean;
@@ -41,6 +42,7 @@ interface FlatNode {
 export class SidenavComponent {
     @Output() createNewFolderEvent = new EventEmitter();
     @Input() folders$: Observable<Folder[]>;
+    @Input() loggedOnUser$: Observable<User | null>;
 
     createNewFolder() {
         this.createNewFolderEvent.emit();
