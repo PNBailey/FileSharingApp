@@ -17,10 +17,10 @@ import { AccountDialogActions } from '../state/account/account.actions';
 import { AccountState } from '../state/account/account.reducer';
 
 export interface Action {
-  type: string, 
-  linkLabel: string, 
-  linkText: string, 
-  buttonAction: string
+    type: string,
+    linkLabel: string,
+    linkText: string,
+    buttonAction: string
 }
 
 @Component({
@@ -44,12 +44,12 @@ export interface Action {
 })
 
 export class AccountDialogComponent {
-  
+
     constructor(
-    private loadingService: LoadingService,
-    private validationService: ValidationService,
-    private fb: FormBuilder,
-    private store: Store<{ account: AccountState }>
+        private loadingService: LoadingService,
+        private validationService: ValidationService,
+        private fb: FormBuilder,
+        private store: Store<{ account: AccountState }>
     ) {
         this.accountAccessFormSubmitted.pipe(
             withLatestFrom(this.loginRegisterUrl$),
@@ -72,20 +72,20 @@ export class AccountDialogComponent {
         scan(previous => !previous, false),
         startWith(false)
     );
-    
+
     private loginRegisterUrl$ = this.userIsRegistering$.pipe(
         map(userIsRegistering => {
-            const loginRegisterUrl = userIsRegistering ?  `/Register` : `/Login`;
+            const loginRegisterUrl = userIsRegistering ? `/Register` : `/Login`;
             return loginRegisterUrl;
         })
     );
-  
+
     private accountAccessForm$: Observable<UntypedFormGroup> = this.userIsRegistering$.pipe(
         map((userIsRegistering) => {
             const form = this.buildLoginForm(userIsRegistering);
-            if(userIsRegistering) {
+            if (userIsRegistering) {
                 this.createEmailFormControl(form);
-            } 
+            }
             return form;
         })
     );
@@ -101,9 +101,9 @@ export class AccountDialogComponent {
         })
     );
 
-    accountAccessObs$: Observable<{userIsRegistering: boolean, form: UntypedFormGroup, action: Action}> = combineLatest(([
-        this.userIsRegistering$, 
-        this.accountAccessForm$, 
+    accountAccessObs$: Observable<{ userIsRegistering: boolean, form: UntypedFormGroup, action: Action }> = combineLatest(([
+        this.userIsRegistering$,
+        this.accountAccessForm$,
         this.accountAction$,
     ]), (userIsRegistering, accountAccessForm, accountAction) => {
         return {
