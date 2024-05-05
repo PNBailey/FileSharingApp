@@ -13,5 +13,7 @@ namespace FileSharingApp.API.DAL.Interfaces
         void UpdateFolder(Folder folder);
 
         void DeleteFolder(int folderId);
+
+        Boolean CheckFolderName(string folderName, int userId);
     }
 }

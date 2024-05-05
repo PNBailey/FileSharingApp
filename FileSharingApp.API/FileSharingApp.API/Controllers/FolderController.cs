@@ -3,6 +3,7 @@ using FileSharingApp.API.ExtensionMethods;
 using FileSharingApp.API.Models.DTOs;
 using FileSharingApp.API.Models.Files;
 using FileSharingApp.API.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FileSharingApp.API.Controllers
@@ -53,6 +54,13 @@ namespace FileSharingApp.API.Controllers
         public void Delete(int id)
         {
             throw new NotImplementedException();
+        }
+
+        [AllowAnonymous]
+        [HttpGet("CheckFolderName")]
+        public Boolean CheckFolderName([FromQuery] string folderName)
+        {
+            return folderService.CheckFolderName(folderName, User.GetUserId());
         }
     }
 }

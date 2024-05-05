@@ -9,6 +9,9 @@ import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } 
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { Observable } from 'rxjs';
+import { ValidationService } from 'src/app/services/validation.service';
+import { LoadingObsName, LoadingService } from 'src/app/services/loading.service';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @Component({
     selector: 'app-new-folder-dialog',
@@ -22,7 +25,8 @@ import { Observable } from 'rxjs';
         FormsModule,
         ReactiveFormsModule,
         MatSelectModule,
-        MatButtonModule
+        MatButtonModule,
+        MatProgressSpinnerModule
     ],
     templateUrl: './new-folder-dialog.component.html',
     styleUrls: ['./new-folder-dialog.component.css']
@@ -30,9 +34,12 @@ import { Observable } from 'rxjs';
 export class NewFolderDialogComponent {
 
     form: FormGroup;
+    checkingFolderName$ = this.loadingService.getLoadingObs(LoadingObsName.CHECKING_FOLDERNAME);
 
     constructor(
         private fb: FormBuilder,
+        private validationService: ValidationService,
+        private loadingService: LoadingService,
         public dialogRef: MatDialogRef<NewFolderDialogComponent>,
         @Inject(MAT_DIALOG_DATA) public data: { folders: Observable<Folder[]> }
     ) {
@@ -41,7 +48,7 @@ export class NewFolderDialogComponent {
 
     buildForm() {
         this.form = this.fb.group({
-            'name': this.fb.control('', Validators.required),
+            'name': this.fb.control('', Validators.required, this.validationService.uniqueFolderValidatorFn()),
             'description': this.fb.control('', Validators.required),
             'parentFolderId': this.fb.control(null)
         })

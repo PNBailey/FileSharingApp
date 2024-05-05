@@ -9,15 +9,15 @@ import { LoadingObsName, LoadingService } from 'src/app/services/loading.service
 })
 export class ValidationService {
 
-    baseUrl = "https://localhost:7249/api/Account";
+    baseUrl = "https://localhost:7249/api";
 
-    constructor( 
-    private loadingService: LoadingService,
-    private http: HttpClient
-    ) {}
+    constructor(
+        private loadingService: LoadingService,
+        private http: HttpClient
+    ) { }
 
     uniqueUsernameValidatorFn(mustBeUnique: boolean, originalUsername: string | null = null): AsyncValidatorFn {
-        return (control: AbstractControl): Observable<ValidationErrors | {string : boolean} | null> => 
+        return (control: AbstractControl): Observable<ValidationErrors | { string: boolean } | null> =>
             control.valueChanges
                 .pipe(
                     debounceTime(400),
@@ -27,10 +27,10 @@ export class ValidationService {
                     withLatestFrom(control.valueChanges),
                     map(
                         ([usernameIsUnique, controlValue]) => (
-                            (usernameIsUnique && mustBeUnique) || 
-            (!usernameIsUnique && !mustBeUnique) || 
-            (!usernameIsUnique && mustBeUnique && controlValue == originalUsername) 
-                                ? null : {'usernameUniquenessViolated': true})
+                            (usernameIsUnique && mustBeUnique) ||
+                                (!usernameIsUnique && !mustBeUnique) ||
+                                (!usernameIsUnique && mustBeUnique && controlValue == originalUsername)
+                                ? null : { 'usernameUniquenessViolated': true })
                     ),
                     tap(() => this.loadingService.toggleLoadingObs(LoadingObsName.CHECKING_USERNAME)),
                     first()
@@ -38,23 +38,40 @@ export class ValidationService {
     }
 
     uniqueEmailValidatorFn(): AsyncValidatorFn {
-        return (control: AbstractControl): Observable<ValidationErrors | {string : boolean} | null> => control.valueChanges
+        return (control: AbstractControl): Observable<ValidationErrors | { string: boolean } | null> => control.valueChanges
             .pipe(
                 debounceTime(400),
                 tap(() => this.loadingService.toggleLoadingObs(LoadingObsName.CHECKING_EMAIL)),
                 distinctUntilChanged(),
                 switchMap(value => this.checkEmailUnique(value)),
-                map((usernameIsUnique: boolean) => (usernameIsUnique ? null : {'emailUniquenessViolated': true})),
+                map((usernameIsUnique: boolean) => (usernameIsUnique ? null : { 'emailUniquenessViolated': true })),
                 tap(() => this.loadingService.toggleLoadingObs(LoadingObsName.CHECKING_EMAIL)),
                 first()
             );
     }
 
-    checkUsernameUnique(username: string): Observable<boolean> {        
-        return this.http.get<boolean>(`${this.baseUrl}/CheckUsername?username=${username}`);
+    uniqueFolderValidatorFn(): AsyncValidatorFn {
+        return (control: AbstractControl): Observable<ValidationErrors | { string: boolean } | null> => control.valueChanges
+            .pipe(
+                debounceTime(400),
+                tap(() => this.loadingService.toggleLoadingObs(LoadingObsName.CHECKING_FOLDERNAME)),
+                distinctUntilChanged(),
+                switchMap(value => this.checkFolderNameUnique(value)),
+                map((folderIsNotUnique: boolean) => (folderIsNotUnique ? { 'folderUniquenessViolated': true } : null)),
+                tap(() => this.loadingService.toggleLoadingObs(LoadingObsName.CHECKING_FOLDERNAME)),
+                first()
+            );
     }
-    
+
+    checkUsernameUnique(username: string): Observable<boolean> {
+        return this.http.get<boolean>(`${this.baseUrl}/Account/CheckUsername?username=${username}`);
+    }
+
     checkEmailUnique(email: string): Observable<boolean> {
-        return this.http.get<boolean>(`${this.baseUrl}/CheckEmail?email=${email}`);
+        return this.http.get<boolean>(`${this.baseUrl}/Account/CheckEmail?email=${email}`);
+    }
+
+    checkFolderNameUnique(folderName: string): Observable<boolean> {
+        return this.http.get<boolean>(`${this.baseUrl}/Folder/CheckFolderName?folderName=${folderName}`);
     }
 }

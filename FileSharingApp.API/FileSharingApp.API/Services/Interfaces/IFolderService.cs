@@ -7,5 +7,7 @@ namespace FileSharingApp.API.Services.Interfaces
         void CreateFolder(Folder folder, int userId);
 
         IEnumerable<Folder> GetFolderList(int userId);
+
+        Boolean CheckFolderName(string folderName, int userId);
     }
 }

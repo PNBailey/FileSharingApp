@@ -22,5 +22,10 @@ namespace FileSharingApp.API.Services
         {
             return folderRepository.GetFolderList(userId);
         }
+
+        public Boolean CheckFolderName(string folderName, int userId)
+        {
+            return folderRepository.CheckFolderName(folderName, userId);
+        }
     }
 }

@@ -31,6 +31,11 @@ namespace FileSharingApp.API.DAL
             throw new NotImplementedException();
         }
 
+        public Boolean CheckFolderName(string folderName, int userId)
+        {
+            return context.Folders.Any(folder => folder.Name == folderName && folder.FolderOwner.Id == userId);
+        }
+
         public IEnumerable<Folder> GetFolderList(int userId)
         {
             var folders = context.Folders
