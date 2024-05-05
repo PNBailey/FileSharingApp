@@ -5,7 +5,8 @@ export const FolderActions = createActionGroup({
     source: 'New Folder Dialog',
     events: {
         'Add New Folder': props<{ folder: Folder }>(),
-        'Get All Folders': emptyProps()
+        'Get All Folders': emptyProps(),
+        'Clear Folders': emptyProps()
     }
 });
 
