@@ -13,6 +13,7 @@ using Microsoft.IdentityModel.Tokens;
 using NLog;
 using NLog.Web;
 using System.Text;
+using System.Text.Json.Serialization;
 
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 var builder = WebApplication.CreateBuilder(args);
@@ -103,7 +104,11 @@ try
         options.User.RequireUniqueEmail = true;
     });
 
-    builder.Services.AddControllers();
+    builder.Services.AddControllers()
+        .AddJsonOptions(options =>
+        {
+            options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+        });
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddSwaggerGen();
 
@@ -112,10 +117,11 @@ try
     builder.Services.AddScoped<IErrorService, ErrorService>();
     builder.Services.AddScoped<IFileService, FileService>();
     builder.Services.AddScoped<IValidationService, ValidationService>();
+    builder.Services.AddScoped<IFolderService, FolderService>();
 
     //Adding Repositories
     builder.Services.AddScoped<IFileRepository, FileRepository>();
-
+    builder.Services.AddScoped<IFolderRepository, FolderRepository>();
 
     // NLog: Setup NLog for Dependency injection
     builder.Logging.ClearProviders(); 

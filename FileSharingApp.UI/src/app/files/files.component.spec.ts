@@ -6,31 +6,31 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { provideMockStore } from '@ngrx/store/testing';
 
 describe('FilesComponent', () => {
-  let component: FilesComponent;
-  let fixture: ComponentFixture<FilesComponent>;
-  let loader: HarnessLoader;
-  const initialState = { files: [] };
+    let component: FilesComponent;
+    let fixture: ComponentFixture<FilesComponent>;
+    let loader: HarnessLoader;
+    const initialState = { files: [] };
 
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      imports: [
-        FilesComponent
-      ],
-      providers: [
-        provideMockStore({
-          initialState
+    beforeEach(async () => {
+        await TestBed.configureTestingModule({
+            imports: [
+                FilesComponent
+            ],
+            providers: [
+                provideMockStore({
+                    initialState
+                })
+            ]
         })
-      ]
-    })
-    .compileComponents();
+            .compileComponents();
 
-    fixture = TestBed.createComponent(FilesComponent);
-    component = fixture.componentInstance;
-    loader = TestbedHarnessEnvironment.loader(fixture);
-    fixture.detectChanges();
-  });
+        fixture = TestBed.createComponent(FilesComponent);
+        component = fixture.componentInstance;
+        loader = TestbedHarnessEnvironment.loader(fixture);
+        fixture.detectChanges();
+    });
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
-  });
+    it('should create', () => {
+        expect(component).toBeTruthy();
+    });
 });

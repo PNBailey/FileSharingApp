@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FileSharingApp.API.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20240106114028_IntialCreate")]
-    partial class IntialCreate
+    [Migration("20240421074203_InitialCreate")]
+    partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -158,6 +158,9 @@ namespace FileSharingApp.API.Migrations
                     b.Property<int>("FileOwnerId")
                         .HasColumnType("int");
 
+                    b.Property<int?>("FolderId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -170,9 +173,57 @@ namespace FileSharingApp.API.Migrations
 
                     b.HasIndex("FileOwnerId");
 
+                    b.HasIndex("FolderId");
+
                     b.ToTable("Files");
 
                     b.HasDiscriminator<string>("Discriminator").HasValue("BaseFile");
+                });
+
+            modelBuilder.Entity("FileSharingApp.API.Models.Files.Folder", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("FolderOwnerId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("ParentFolderId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FolderOwnerId");
+
+                    b.HasIndex("ParentFolderId");
+
+                    b.ToTable("Folders");
+                });
+
+            modelBuilder.Entity("FileSharingApp.API.Models.Folders.UserFolder", b =>
+                {
+                    b.Property<int>("FolderId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("FolderId", "UserId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("UserFolder");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
@@ -311,7 +362,49 @@ namespace FileSharingApp.API.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("FileSharingApp.API.Models.Files.Folder", "Folder")
+                        .WithMany("Files")
+                        .HasForeignKey("FolderId");
+
                     b.Navigation("FileOwner");
+
+                    b.Navigation("Folder");
+                });
+
+            modelBuilder.Entity("FileSharingApp.API.Models.Files.Folder", b =>
+                {
+                    b.HasOne("FileSharingApp.API.Models.AppUser", "FolderOwner")
+                        .WithMany()
+                        .HasForeignKey("FolderOwnerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("FileSharingApp.API.Models.Files.Folder", "ParentFolder")
+                        .WithMany("SubFolders")
+                        .HasForeignKey("ParentFolderId");
+
+                    b.Navigation("FolderOwner");
+
+                    b.Navigation("ParentFolder");
+                });
+
+            modelBuilder.Entity("FileSharingApp.API.Models.Folders.UserFolder", b =>
+                {
+                    b.HasOne("FileSharingApp.API.Models.Files.Folder", "Folder")
+                        .WithMany("Users")
+                        .HasForeignKey("FolderId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("FileSharingApp.API.Models.AppUser", "User")
+                        .WithMany("Folders")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Folder");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
@@ -357,7 +450,18 @@ namespace FileSharingApp.API.Migrations
 
             modelBuilder.Entity("FileSharingApp.API.Models.AppUser", b =>
                 {
+                    b.Navigation("Folders");
+
                     b.Navigation("UserRoles");
+                });
+
+            modelBuilder.Entity("FileSharingApp.API.Models.Files.Folder", b =>
+                {
+                    b.Navigation("Files");
+
+                    b.Navigation("SubFolders");
+
+                    b.Navigation("Users");
                 });
 #pragma warning restore 612, 618
         }

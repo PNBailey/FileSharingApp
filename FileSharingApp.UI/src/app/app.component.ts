@@ -1,70 +1,92 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { ToolbarComponent } from './toolbar/toolbar.component';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { AccountDialogComponent } from './account/account-dialog.component';
 import { Store } from '@ngrx/store';
 import { AccountActions, AccountAppCompActions } from './state/account/account.actions';
-import { Observable, tap } from 'rxjs';
+import { Observable } from 'rxjs';
 import { User } from './models/user';
 import { AsyncPipe, NgIf } from '@angular/common';
 import { getLoggedOnUser } from './state/account/account.selectors';
 import { SidenavComponent } from './sidenav/sidenav.component';
-import { AccountState } from './state/account/account.reducer';
+import { NewFolderDialogComponent } from './sidenav/new-folder-dialog/new-folder-dialog.component';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { FolderActions } from './state/folder/folder.actions';
+import { Folder } from './models/folder';
+import { getAllFolders } from './state/folder/folder.selector';
 
 @Component({
-  selector: 'app-root',
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss'],
-  standalone: true,
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
-    ToolbarComponent,
-    MatDialogModule,
-    NgIf,
-    AsyncPipe,
-    SidenavComponent
-  ]
+    selector: 'app-root',
+    templateUrl: './app.component.html',
+    styleUrls: ['./app.component.scss'],
+    standalone: true,
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [
+        ToolbarComponent,
+        MatDialogModule,
+        NgIf,
+        AsyncPipe,
+        SidenavComponent,
+        MatDialogModule
+    ]
 })
 
 export class AppComponent implements OnInit {
-  title = 'FileSharingApp';
+    title = 'FileSharingApp';
+    destroyRef = inject(DestroyRef);
+    loggedOnUser$: Observable<User | null> = this.store.select(getLoggedOnUser);
+    folders$: Observable<Folder[]> = this.store.select(getAllFolders);
 
-  constructor(
-    public dialog: MatDialog,
-    private store: Store,
-    private router: Router
-  ) {}
+    constructor(
+        public dialog: MatDialog,
+        private store: Store,
+        private router: Router
+    ) { }
 
-  loggedOnUser$: Observable<User | null> = this.store.select(getLoggedOnUser);
-
-  ngOnInit(): void {
-    this.setCurrentUser();
-  }
-
-  setCurrentUser() {
-    const storedUser = localStorage.getItem('user');    
-    if (storedUser) {
-       this.store.dispatch(AccountActions.setLoggedOnUser({ user: JSON.parse(storedUser) }));
+    ngOnInit(): void {
+        this.setCurrentUser();
+        this.getFolders();
     }
-  }
 
-  logoutUser() {
-    this.store.dispatch(AccountAppCompActions.logout());
-    this.router.navigateByUrl('/home');
-  }
+    getFolders() {
+        this.store.dispatch(FolderActions.getAllFolders());
+    }
 
-  openDialog(): void {
-    this.dialog.open(AccountDialogComponent, {
-      width: '350px'
-    });
-  }
+    setCurrentUser() {
+        const storedUser = localStorage.getItem('user');
+        if (storedUser) {
+            this.store.dispatch(AccountActions.setLoggedOnUser({ user: JSON.parse(storedUser) }));
+        }
+    }
 
-  routeToEditProfile() {
-    this.router.navigateByUrl('/edit-profile');
-  }
+    logoutUser() {
+        this.store.dispatch(AccountAppCompActions.logout());
+        this.router.navigateByUrl('/home');
+    }
 
-  goToMyFiles() {
-    this.router.navigateByUrl('/files');
-  }
+    openAccountDialog(): void {
+        this.dialog.open(AccountDialogComponent, {
+            width: '350px'
+        });
+    }
+
+    openNewFolderDialog() {
+        const dialogRef = this.dialog.open(NewFolderDialogComponent, {
+            width: '500px',
+            data: { folders: this.folders$ }
+        });
+
+        dialogRef.afterClosed()
+            .pipe(takeUntilDestroyed(this.destroyRef))
+            .subscribe((folder: Folder) => {
+                if (folder) {
+                    this.store.dispatch(FolderActions.addNewFolder({ folder: folder }));
+                }
+            })
+    }
+
+    routeToEditProfile() {
+        this.router.navigateByUrl('/edit-profile');
+    }
 }

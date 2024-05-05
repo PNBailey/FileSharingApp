@@ -7,20 +7,20 @@ import { User } from '../models/user';
 import { LoadingService } from './loading.service';
 
 @Injectable({
-  providedIn: 'root'
+    providedIn: 'root'
 })
 
 export class AccountService {
 
-  constructor(
+    constructor(
     private http: HttpClient, 
     public dialog: MatDialog,
     public loadingService: LoadingService
-  ) { }
+    ) { }
 
-  private baseUrl = "https://localhost:7249/api/Account";
+    private baseUrl = "https://localhost:7249/api/Account";
 
-  loginOrRegister(user: RegisterUser | LoginUser, url: string) {
-    return this.http.post<User>(`${this.baseUrl}${url}`, user);
-  }
+    loginOrRegister(user: RegisterUser | LoginUser, url: string) {
+        return this.http.post<User>(`${this.baseUrl}${url}`, user);
+    }
 }

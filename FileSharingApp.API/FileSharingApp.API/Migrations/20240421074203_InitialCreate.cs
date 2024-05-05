@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace FileSharingApp.API.Migrations
 {
-    public partial class IntialCreate : Migration
+    public partial class InitialCreate : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -159,6 +159,33 @@ namespace FileSharingApp.API.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Folders",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    FolderOwnerId = table.Column<int>(type: "int", nullable: false),
+                    ParentFolderId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Folders", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Folders_AspNetUsers_FolderOwnerId",
+                        column: x => x.FolderOwnerId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Folders_Folders_ParentFolderId",
+                        column: x => x.ParentFolderId,
+                        principalTable: "Folders",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Files",
                 columns: table => new
                 {
@@ -167,6 +194,7 @@ namespace FileSharingApp.API.Migrations
                     FileOwnerId = table.Column<int>(type: "int", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Url = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    FolderId = table.Column<int>(type: "int", nullable: true),
                     Discriminator = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
@@ -178,6 +206,33 @@ namespace FileSharingApp.API.Migrations
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Files_Folders_FolderId",
+                        column: x => x.FolderId,
+                        principalTable: "Folders",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "UserFolder",
+                columns: table => new
+                {
+                    FolderId = table.Column<int>(type: "int", nullable: false),
+                    UserId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserFolder", x => new { x.FolderId, x.UserId });
+                    table.ForeignKey(
+                        name: "FK_UserFolder_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_UserFolder_Folders_FolderId",
+                        column: x => x.FolderId,
+                        principalTable: "Folders",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateIndex(
@@ -223,6 +278,26 @@ namespace FileSharingApp.API.Migrations
                 name: "IX_Files_FileOwnerId",
                 table: "Files",
                 column: "FileOwnerId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Files_FolderId",
+                table: "Files",
+                column: "FolderId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Folders_FolderOwnerId",
+                table: "Folders",
+                column: "FolderOwnerId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Folders_ParentFolderId",
+                table: "Folders",
+                column: "ParentFolderId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserFolder_UserId",
+                table: "UserFolder",
+                column: "UserId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -246,7 +321,13 @@ namespace FileSharingApp.API.Migrations
                 name: "Files");
 
             migrationBuilder.DropTable(
+                name: "UserFolder");
+
+            migrationBuilder.DropTable(
                 name: "AspNetRoles");
+
+            migrationBuilder.DropTable(
+                name: "Folders");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");

@@ -23,6 +23,7 @@
             "style": "camelCase"
           }
         ],
+        "indent": ["error", 4],
         "@angular-eslint/component-selector": [
           "error",
           {

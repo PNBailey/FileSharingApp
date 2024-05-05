@@ -9,20 +9,20 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatToolbarModule } from '@angular/material/toolbar';
 
 @Component({
-  selector: 'app-toolbar',
-  templateUrl: './toolbar.component.html',
-  styleUrls: ['./toolbar.component.scss'],
-  standalone: true,
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
-    MatToolbarModule,
-    MatButtonModule,
-    MatIconModule,
-    NgIf,
-    MatMenuModule,
-    RouterLink,
-    AsyncPipe
-  ],
+    selector: 'app-toolbar',
+    templateUrl: './toolbar.component.html',
+    styleUrls: ['./toolbar.component.scss'],
+    standalone: true,
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [
+        MatToolbarModule,
+        MatButtonModule,
+        MatIconModule,
+        NgIf,
+        MatMenuModule,
+        RouterLink,
+        AsyncPipe
+    ],
 })
 export class ToolbarComponent {
 
@@ -33,14 +33,14 @@ export class ToolbarComponent {
   @Input() loggedOnUser$: Observable<User | null>;
 
   openDialog(): void {
-    this.openAccountDialog.emit();
+      this.openAccountDialog.emit();
   }
 
   logout() {    
-    this.logoutUser.emit();
+      this.logoutUser.emit();
   }
 
   openEditProfile() {
-    this.routeToEditProfile.emit();
+      this.routeToEditProfile.emit();
   }
 }

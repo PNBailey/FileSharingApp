@@ -35,7 +35,7 @@ namespace FileSharingApp.API.Controllers
 
         [HttpPost]
         public async Task<FileDto> Post([FromForm]IFormFile fileData)
-        {
+            {
             var fileExtension = Path.GetExtension(fileData.FileName);
             var fileTypeName = this.fileService.GetFileTypeName(fileExtension);
             BaseFile newFile = (BaseFile)this.fileService.CreateFileType(fileTypeName);

@@ -1,5 +1,5 @@
 import { createReducer, on } from "@ngrx/store";
-import { MyFilesApiActions } from "./file.actions";
+import { FilesApiActions } from "./file.actions";
 import { AppFile } from "src/app/models/app-file";
 
 export interface FilesState {
@@ -12,6 +12,6 @@ export const initialState: FilesState = {
 
 export const fileReducer = createReducer(
     initialState,
-    on(MyFilesApiActions.uploadFilesSuccessful, (state, payload) => ({ ...state, files: [...state.files, ...payload.files] })),
-    on(MyFilesApiActions.getFilesSuccessful, (state, payload) => ({...state, files: payload.files}))
+    on(FilesApiActions.uploadFilesSuccessful, (state, payload) => ({ ...state, files: [...state.files, ...payload.files] })),
+    on(FilesApiActions.getFilesSuccessful, (state, payload) => ({...state, files: payload.files}))
 )

@@ -99,6 +99,7 @@ $custom-theme: mat.define-light-theme((
 @include mat.divider-theme($custom-theme);
 @include mat.tabs-theme($custom-theme);
 @include mat.input-theme($custom-theme);
+@include mat.select-theme($custom-theme);
 
 /* ANGULAR MATERIAL AUTO DEFINED STYLE */
 

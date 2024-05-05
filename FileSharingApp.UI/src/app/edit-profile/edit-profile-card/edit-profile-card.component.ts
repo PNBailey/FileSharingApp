@@ -27,15 +27,15 @@ export class EditProfileCardComponent {
   @Output() newImageSelected: EventEmitter<File> = new EventEmitter<File>();
 
   onFileSelected(event: Event) {  
-    const eventTarget = event.target as HTMLInputElement;
-    if (!eventTarget.files?.length) {
-      return;
-    }
-    const file: File = eventTarget.files[0];
-    if(file.type != ValidFileTypes.JPG && file.type != ValidFileTypes.PNG) {
-      this.incorrectFileTypeSelected.emit();
-    } else {      
-      this.newImageSelected.emit(file);
-    }
+      const eventTarget = event.target as HTMLInputElement;
+      if (!eventTarget.files?.length) {
+          return;
+      }
+      const file: File = eventTarget.files[0];
+      if(file.type != ValidFileTypes.JPG && file.type != ValidFileTypes.PNG) {
+          this.incorrectFileTypeSelected.emit();
+      } else {      
+          this.newImageSelected.emit(file);
+      }
   }
 }

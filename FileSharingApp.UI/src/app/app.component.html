@@ -1,10 +1,4 @@
-<app-toolbar
-  data-cy="toolbar"
-  [loggedOnUser$]="loggedOnUser$"
-  (logoutUser)="logoutUser()"
-  (openAccountDialog)="openDialog()"
-  (routeToEditProfile)="routeToEditProfile()">
+<app-toolbar data-cy="toolbar" [loggedOnUser$]="loggedOnUser$" (logoutUser)="logoutUser()"
+    (openAccountDialog)="openAccountDialog()" (routeToEditProfile)="routeToEditProfile()">
 </app-toolbar>
-<app-sidenav
-  (goToMyFilesEvent)="goToMyFiles()"
-></app-sidenav>
+<app-sidenav (createNewFolderEvent)="openNewFolderDialog()" [folders$]="folders$"></app-sidenav>

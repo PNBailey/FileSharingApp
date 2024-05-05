@@ -16,19 +16,21 @@ import { accountReducer } from './app/state/account/account.reducer';
 import { AccountEffects } from './app/state/account/account.effects';
 import { FileEffects } from './app/state/file/file.effects';
 import { fileReducer } from './app/state/file/file.reducer';
+import { FolderEffects } from './app/state/folder/folder.effects';
+import { folderReducer } from './app/state/folder/folder.reducer';
 
 if (environment.production) {
-  enableProdMode();
+    enableProdMode();
 }
 
 bootstrapApplication(AppComponent, {
-  providers: [
-    importProvidersFrom(BrowserModule, AppRoutingModule, FormsModule, ReactiveFormsModule, MatDialogModule, MatSnackBarModule),
-    { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
-    provideAnimations(),
-    provideHttpClient(withInterceptorsFromDi()),
-    provideStore({ account: accountReducer, files: fileReducer }),
-    provideEffects(AccountEffects, FileEffects)
-  ]
+    providers: [
+        importProvidersFrom(BrowserModule, AppRoutingModule, FormsModule, ReactiveFormsModule, MatDialogModule, MatSnackBarModule),
+        { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
+        provideAnimations(),
+        provideHttpClient(withInterceptorsFromDi()),
+        provideStore({ account: accountReducer, files: fileReducer, folders: folderReducer }),
+        provideEffects(AccountEffects, FileEffects, FolderEffects)
+    ]
 })
-  .catch(err => console.error(err));
+    .catch(err => console.error(err));

@@ -21,7 +21,7 @@ import { NgIf, AsyncPipe } from '@angular/common';
 })
 export class EditProfileInfoComponent implements OnInit {
 
-  constructor(private fb: FormBuilder, private validationService: ValidationService, private loadingService: LoadingService) {}
+    constructor(private fb: FormBuilder, private validationService: ValidationService, private loadingService: LoadingService) {}
   
   @Input() loggedOnUser$: Observable<null | User>;
   @Output() infoUpdated = new EventEmitter<User>();
@@ -32,36 +32,36 @@ export class EditProfileInfoComponent implements OnInit {
   checkingEmail$ = this.loadingService.getLoadingObs(LoadingObsName.CHECKING_EMAIL);
 
   ngOnInit(): void {
-    this.buildForm();
+      this.buildForm();
   }
 
   private buildForm() {
-    this.userInfoForm$ = this.loggedOnUser$.pipe(
-      map(user => {
-        const form = this.fb.group({
-          'bio': this.fb.control(user?.bio, [Validators.maxLength(256)]),
-          'username': this.fb.control(user?.username, [Validators.required], [this.validationService.uniqueUsernameValidatorFn(true, user?.username)]),
-          'email': this.fb.control(user?.email, [Validators.required])
-        })
-        this.reactToFormValueChanges(form);
-        return form;
-      })
-    )
+      this.userInfoForm$ = this.loggedOnUser$.pipe(
+          map(user => {
+              const form = this.fb.group({
+                  'bio': this.fb.control(user?.bio, [Validators.maxLength(256)]),
+                  'username': this.fb.control(user?.username, [Validators.required], [this.validationService.uniqueUsernameValidatorFn(true, user?.username)]),
+                  'email': this.fb.control(user?.email, [Validators.required])
+              })
+              this.reactToFormValueChanges(form);
+              return form;
+          })
+      )
   }
 
   private reactToFormValueChanges(form: UntypedFormGroup) {
-    form.valueChanges.pipe(
-      withLatestFrom(this.loggedOnUser$),
-      map(([formValue, originalUser]) => {        
-        this.updatedUser = {
-          ...originalUser,
-          ...formValue
-        } as User;                
-      })
-    ).subscribe();
+      form.valueChanges.pipe(
+          withLatestFrom(this.loggedOnUser$),
+          map(([formValue, originalUser]) => {        
+              this.updatedUser = {
+                  ...originalUser,
+                  ...formValue
+              } as User;                
+          })
+      ).subscribe();
   }
 
   updateInfo() {
-    this.infoUpdated.emit(this.updatedUser);
+      this.infoUpdated.emit(this.updatedUser);
   }
 }

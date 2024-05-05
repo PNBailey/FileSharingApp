@@ -1,6 +1,7 @@
 ﻿using FileSharingApp.API.Models;
 using FileSharingApp.API.Models.Enums;
 using FileSharingApp.API.Models.Files;
+using FileSharingApp.API.Models.Folders;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -26,6 +27,7 @@ namespace FileSharingApp.API.Data
         public DbSet<XmlFile> XmlFiles { get; set; }
         public DbSet<PdfFile> PdfFiles { get; set; }
         public DbSet<ImageFile> ImageFiles { get; set; }
+        public DbSet<Folder> Folders { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -42,6 +44,27 @@ namespace FileSharingApp.API.Data
                 .WithOne(u => u.Role)
                 .HasForeignKey(ur => ur.RoleId)
                 .IsRequired();
+
+            builder.Entity<UserFolder>()
+                .HasKey(key => new { key.FolderId, key.UserId });
+
+            builder.Entity<UserFolder>()
+                .HasOne(uf => uf.User)
+                .WithMany(u => u.Folders)
+                .HasForeignKey(uf => uf.UserId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            builder.Entity<UserFolder>()
+               .HasOne(uf => uf.Folder)
+               .WithMany(f => f.Users)
+               .HasForeignKey(uf => uf.FolderId)
+               .OnDelete(DeleteBehavior.NoAction);
+
+            builder.Entity<Folder>()
+                .HasOne(f => f.ParentFolder)
+                .WithMany(pf => pf.SubFolders)
+                .HasForeignKey(f => f.ParentFolderId);
+
         }
 
     }

@@ -4,18 +4,18 @@ import { FileService } from './file.service';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 
 describe('FileService', () => {
-  let service: FileService;
+    let service: FileService;
 
-  beforeEach(() => {
-    TestBed.configureTestingModule({
-      imports: [
-        HttpClientTestingModule,
-      ]
+    beforeEach(() => {
+        TestBed.configureTestingModule({
+            imports: [
+                HttpClientTestingModule,
+            ]
+        });
+        service = TestBed.inject(FileService);
     });
-    service = TestBed.inject(FileService);
-  });
 
-  it('should be created', () => {
-    expect(service).toBeTruthy();
-  });
+    it('should be created', () => {
+        expect(service).toBeTruthy();
+    });
 });

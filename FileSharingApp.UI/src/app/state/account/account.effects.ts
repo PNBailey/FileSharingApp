@@ -26,7 +26,7 @@ export class AccountEffects {
             ofType(AccountApiActions.loginOrRegisterSuccessful),
             tap(() => {
                 this.dialog.closeAll();
-                this.router.navigate(['/home']);                 
+                this.router.navigate(['/files']);                 
             }),
             map((action) => AccountActions.setLoggedOnUser({user: action.user}))
         )
