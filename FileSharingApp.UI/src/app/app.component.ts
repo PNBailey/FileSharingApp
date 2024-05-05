@@ -79,7 +79,7 @@ export class AppComponent implements OnInit {
 
         dialogRef.afterClosed()
             .pipe(takeUntilDestroyed(this.destroyRef))
-            .subscribe(folder => {
+            .subscribe((folder: Folder) => {
                 if (folder) {
                     this.store.dispatch(FolderActions.addNewFolder({ folder: folder }));
                 }

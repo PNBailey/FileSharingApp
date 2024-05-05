@@ -34,7 +34,7 @@ export class NewFolderDialogComponent {
     constructor(
         private fb: FormBuilder,
         public dialogRef: MatDialogRef<NewFolderDialogComponent>,
-        @Inject(MAT_DIALOG_DATA) public data: {folders: Observable<Folder[]>}
+        @Inject(MAT_DIALOG_DATA) public data: { folders: Observable<Folder[]> }
     ) {
         this.buildForm();
     }
@@ -51,7 +51,7 @@ export class NewFolderDialogComponent {
         this.dialogRef.close(null);
     }
 
-    confirm() {       
+    confirm() {
         this.dialogRef.close(this.form.value);
     }
 }
