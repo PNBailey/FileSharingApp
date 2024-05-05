@@ -9,7 +9,7 @@ import { Folder } from "src/app/models/folder";
 @Injectable()
 export class FolderEffects {
 
-    getAllFolders$ = createEffect(() => 
+    getAllFolders$ = createEffect(() =>
         this.actions$.pipe(
             ofType(FolderActions.getAllFolders),
             switchMap(() => this.folderService.getFoldersList()),
@@ -18,45 +18,46 @@ export class FolderEffects {
         )
     );
 
-    getAllFoldersUnsuccessful$ = createEffect(() => 
+    getAllFoldersUnsuccessful$ = createEffect(() =>
         this.actions$.pipe(
             ofType(FolderApiActions.getAllFoldersUnsuccessful),
             tap(() => {
                 this.messageHandlingService.onDisplayNewMessage({
                     message: "An error occured when retrieving folders. Please try again later"
                 });
-            })   
+            })
         ), { dispatch: false }
     );
 
-    addNewFolder$ = createEffect(() => 
+    addNewFolder$ = createEffect(() =>
         this.actions$.pipe(
             ofType(FolderActions.addNewFolder),
             switchMap((action) => this.folderService.createFolder(action.folder)),
-            map((folder) => FolderApiActions.addNewFolderSuccessful({ folder: folder })),
+            map(() => FolderApiActions.addNewFolderSuccessful()),
             catchError(() => of(FolderApiActions.addNewFolderUnsuccessful()))
         )
     );
 
-    addNewFolderSuccessful$ = createEffect(() => 
+    addNewFolderSuccessful$ = createEffect(() =>
         this.actions$.pipe(
             ofType(FolderApiActions.addNewFolderSuccessful),
             tap(() => {
                 this.messageHandlingService.onDisplayNewMessage({
                     message: "New folder added"
                 });
-            })   
-        ), { dispatch: false }
+            }),
+            map(() => FolderActions.getAllFolders())
+        )
     );
 
-    addNewFolderUnsuccessful$ = createEffect(() => 
+    addNewFolderUnsuccessful$ = createEffect(() =>
         this.actions$.pipe(
             ofType(FolderApiActions.addNewFolderUnsuccessful),
             tap(() => {
                 this.messageHandlingService.onDisplayNewMessage({
                     message: "An error occured during the folder creation process. Please try again later"
                 });
-            })   
+            })
         ), { dispatch: false }
     );
 

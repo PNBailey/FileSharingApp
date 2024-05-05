@@ -12,7 +12,7 @@ export const FolderActions = createActionGroup({
 export const FolderApiActions = createActionGroup({
     source: 'New Folder Dialog',
     events: {
-        'Add New Folder Successful': props<{ folder: Folder }>(),
+        'Add New Folder Successful': emptyProps(),
         'Add New Folder Unsuccessful': emptyProps(),
         'Get All Folders Successful': props<{ folders: Folder[] }>(),
         'Get All Folders Unsuccessful': emptyProps()
