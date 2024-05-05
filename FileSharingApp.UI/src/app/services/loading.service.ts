@@ -2,9 +2,10 @@ import { Injectable } from '@angular/core';
 import { filter, Observable, scan, Subject } from 'rxjs';
 
 export enum LoadingObsName {
-  CHECKING_EMAIL = 'checkingEmail$',
-  CHECKING_USERNAME = 'checkingUsername$',
-  UPDATING_PROFILE = 'updatingProfile$'
+    CHECKING_EMAIL = 'checkingEmail$',
+    CHECKING_USERNAME = 'checkingUsername$',
+    UPDATING_PROFILE = 'updatingProfile$',
+    CHECKING_FOLDERNAME = 'checkingFolderName$',
 }
 @Injectable({
     providedIn: 'root'
@@ -17,7 +18,8 @@ export class LoadingService {
     private loadingObs: Map<LoadingObsName, Observable<boolean>> = new Map([
         [LoadingObsName.CHECKING_EMAIL, this.setupObservable(LoadingObsName.CHECKING_EMAIL)],
         [LoadingObsName.CHECKING_USERNAME, this.setupObservable(LoadingObsName.CHECKING_USERNAME)],
-        [LoadingObsName.UPDATING_PROFILE, this.setupObservable(LoadingObsName.UPDATING_PROFILE)]
+        [LoadingObsName.UPDATING_PROFILE, this.setupObservable(LoadingObsName.UPDATING_PROFILE)],
+        [LoadingObsName.CHECKING_FOLDERNAME, this.setupObservable(LoadingObsName.CHECKING_FOLDERNAME)]
     ]);
 
     private setupObservable(loadingObsName: LoadingObsName): Observable<boolean> {
@@ -27,7 +29,7 @@ export class LoadingService {
         )
     }
 
-    toggleLoadingObs(loadingObsName: LoadingObsName) {        
+    toggleLoadingObs(loadingObsName: LoadingObsName) {
         this.toggleLoadingObs$.next(loadingObsName);
     }
 
