@@ -6,10 +6,9 @@ import { Pipe, PipeTransform } from '@angular/core';
 })
 
 export class TextLengthPipe implements PipeTransform {
-
     transform(text: string, maxLength: number) {
         if (text.length > maxLength) {
-            return text.replace(text.substring(maxLength - 1, text.length), '...');
+            return text.substring(0, maxLength - 3) + '...';
         } else {
             return text;
         }

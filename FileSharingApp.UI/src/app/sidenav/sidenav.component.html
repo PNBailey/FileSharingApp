@@ -15,7 +15,7 @@
                         {{treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right'}}
                     </mat-icon>
                 </button>
-                <button mat-button [matTooltip]="node.name">{{node.name}}</button>
+                <button mat-button [matTooltip]="node.name">{{node.name | textLength: 17}}</button>
             </mat-tree-node>
         </mat-tree>
     </mat-sidenav>
