@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
 import { UntypedFormGroup, FormsModule, ReactiveFormsModule, FormControl, Validators, FormBuilder } from '@angular/forms';
 import { combineLatest, map, Observable, scan, startWith, Subject, tap, withLatestFrom } from 'rxjs';
 import { LoadingObsName, LoadingService } from '../services/loading.service';
@@ -15,6 +15,7 @@ import { ValidationService } from '../services/validation.service';
 import { Store } from '@ngrx/store';
 import { AccountDialogActions } from '../state/account/account.actions';
 import { AccountState } from '../state/account/account.reducer';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 export interface Action {
     type: string,
@@ -45,6 +46,8 @@ export interface Action {
 
 export class AccountDialogComponent {
 
+    destroyRef = inject(DestroyRef);
+
     constructor(
         private loadingService: LoadingService,
         private validationService: ValidationService,
@@ -58,7 +61,8 @@ export class AccountDialogComponent {
                     user: formValue,
                     url: loginRegisterUrl
                 }))
-            })
+            }),
+            takeUntilDestroyed(this.destroyRef)
         ).subscribe();
     }
 
