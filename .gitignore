@@ -54,3 +54,4 @@ FileSharingApp.UI/src/favicon.ico
 Resources/
 FileSharingApp.API/obj/
 FileSharingApp.UI/package-lock.json
+FileSharingApp.UI/.nx/cache/
