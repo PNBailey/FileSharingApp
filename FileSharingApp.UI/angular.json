@@ -73,10 +73,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "FileSharingApp.UI:build:production"
+              "buildTarget": "FileSharingApp.UI:build:production"
             },
             "development": {
-              "browserTarget": "FileSharingApp.UI:build:development"
+              "buildTarget": "FileSharingApp.UI:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -84,7 +84,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "FileSharingApp.UI:build"
+            "buildTarget": "FileSharingApp.UI:build"
           }
         },
         "test": {
