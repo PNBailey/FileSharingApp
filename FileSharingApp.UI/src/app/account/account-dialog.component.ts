@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
 import { UntypedFormGroup, FormsModule, ReactiveFormsModule, FormControl, Validators, FormBuilder } from '@angular/forms';
 import { combineLatest, map, Observable, scan, startWith, Subject, tap, withLatestFrom } from 'rxjs';
 import { LoadingObsName, LoadingService } from '../services/loading.service';
@@ -15,12 +15,13 @@ import { ValidationService } from '../services/validation.service';
 import { Store } from '@ngrx/store';
 import { AccountDialogActions } from '../state/account/account.actions';
 import { AccountState } from '../state/account/account.reducer';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 export interface Action {
-  type: string, 
-  linkLabel: string, 
-  linkText: string, 
-  buttonAction: string
+    type: string,
+    linkLabel: string,
+    linkText: string,
+    buttonAction: string
 }
 
 @Component({
@@ -44,12 +45,14 @@ export interface Action {
 })
 
 export class AccountDialogComponent {
-  
+
+    destroyRef = inject(DestroyRef);
+
     constructor(
-    private loadingService: LoadingService,
-    private validationService: ValidationService,
-    private fb: FormBuilder,
-    private store: Store<{ account: AccountState }>
+        private loadingService: LoadingService,
+        private validationService: ValidationService,
+        private fb: FormBuilder,
+        private store: Store<{ account: AccountState }>
     ) {
         this.accountAccessFormSubmitted.pipe(
             withLatestFrom(this.loginRegisterUrl$),
@@ -58,7 +61,8 @@ export class AccountDialogComponent {
                     user: formValue,
                     url: loginRegisterUrl
                 }))
-            })
+            }),
+            takeUntilDestroyed(this.destroyRef)
         ).subscribe();
     }
 
@@ -72,20 +76,20 @@ export class AccountDialogComponent {
         scan(previous => !previous, false),
         startWith(false)
     );
-    
+
     private loginRegisterUrl$ = this.userIsRegistering$.pipe(
         map(userIsRegistering => {
-            const loginRegisterUrl = userIsRegistering ?  `/Register` : `/Login`;
+            const loginRegisterUrl = userIsRegistering ? `/Register` : `/Login`;
             return loginRegisterUrl;
         })
     );
-  
+
     private accountAccessForm$: Observable<UntypedFormGroup> = this.userIsRegistering$.pipe(
         map((userIsRegistering) => {
             const form = this.buildLoginForm(userIsRegistering);
-            if(userIsRegistering) {
+            if (userIsRegistering) {
                 this.createEmailFormControl(form);
-            } 
+            }
             return form;
         })
     );
@@ -101,9 +105,9 @@ export class AccountDialogComponent {
         })
     );
 
-    accountAccessObs$: Observable<{userIsRegistering: boolean, form: UntypedFormGroup, action: Action}> = combineLatest(([
-        this.userIsRegistering$, 
-        this.accountAccessForm$, 
+    accountAccessObs$: Observable<{ userIsRegistering: boolean, form: UntypedFormGroup, action: Action }> = combineLatest(([
+        this.userIsRegistering$,
+        this.accountAccessForm$,
         this.accountAction$,
     ]), (userIsRegistering, accountAccessForm, accountAction) => {
         return {

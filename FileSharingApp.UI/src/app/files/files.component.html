@@ -1,15 +1,15 @@
 <div class="d-flex justify-content-between align-items-center">
-  <h3 class="p-3">My Files</h3>
-  <button mat-flat-button (click)="openDialog()" class="me-3" color="primary">
-    <mat-icon fontIcon="add"></mat-icon>
-    Add Files
-  </button>
+    <h3 class="p-3">My Files</h3>
+    <button mat-flat-button (click)="openDialog()" class="me-3" color="primary">
+        <mat-icon fontIcon="add"></mat-icon>
+        Add Files
+    </button>
 </div>
 <mat-divider></mat-divider>
-<div class="container px-4 pb-2 d-flex justify-content-center">
-  <div class="row">
-    <div *ngFor="let file of files$ | async" class="col mt-4 mb-5 app-file-list-item">
-      <app-file [file]="file"></app-file>
+<div class="container px-4 pb-2 d-flex justify-content-start">
+    <div class="row">
+        <div *ngFor="let file of files$ | async" class="col mt-4 mb-5 app-file-list-item">
+            <app-file [file]="file"></app-file>
+        </div>
     </div>
-  </div>
 </div>

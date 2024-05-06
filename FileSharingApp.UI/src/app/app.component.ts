@@ -5,7 +5,7 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { AccountDialogComponent } from './account/account-dialog.component';
 import { Store } from '@ngrx/store';
 import { AccountActions, AccountAppCompActions } from './state/account/account.actions';
-import { Observable } from 'rxjs';
+import { Observable, filter, of, switchMap, tap } from 'rxjs';
 import { User } from './models/user';
 import { AsyncPipe, NgIf } from '@angular/common';
 import { getLoggedOnUser } from './state/account/account.selectors';
@@ -15,6 +15,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FolderActions } from './state/folder/folder.actions';
 import { Folder } from './models/folder';
 import { getAllFolders } from './state/folder/folder.selector';
+import { FilesActions } from './state/file/file.actions';
 
 @Component({
     selector: 'app-root',
@@ -36,7 +37,13 @@ export class AppComponent implements OnInit {
     title = 'FileSharingApp';
     destroyRef = inject(DestroyRef);
     loggedOnUser$: Observable<User | null> = this.store.select(getLoggedOnUser);
-    folders$: Observable<Folder[]> = this.store.select(getAllFolders);
+    folders$: Observable<Folder[]> = this.loggedOnUser$.pipe(
+        filter(user => !!user),
+        tap(() => this.getFolders()),
+        switchMap((user) => {
+            return user ? this.store.select(getAllFolders) : of([]);
+        })
+    );
 
     constructor(
         public dialog: MatDialog,
@@ -46,7 +53,6 @@ export class AppComponent implements OnInit {
 
     ngOnInit(): void {
         this.setCurrentUser();
-        this.getFolders();
     }
 
     getFolders() {
@@ -62,6 +68,8 @@ export class AppComponent implements OnInit {
 
     logoutUser() {
         this.store.dispatch(AccountAppCompActions.logout());
+        this.store.dispatch(FilesActions.clearFiles());
+        this.store.dispatch(FolderActions.clearFolders());
         this.router.navigateByUrl('/home');
     }
 

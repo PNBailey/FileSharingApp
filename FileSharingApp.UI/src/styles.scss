@@ -14,7 +14,6 @@
     background: #2e7d32;
 }
 
-/* TODO(mdc-migration): The following rule targets internal classes of button that may no longer apply for the MDC version. */
 .mat-snack-bar-container,
 .mat-simple-snackbar-action>.mat-mdc-button>.mat-button-wrapper {
     color: white;
@@ -22,13 +21,4 @@
 
 .mat-mdc-snack-bar-action>.mat-mdc-button {
     border-left: 3px white;
-}
-
-.sidenav-container {
-    height: 100%;
-}
-
-.sidenav-content {
-    width: 250px;
-    overflow-x: auto;
 }
