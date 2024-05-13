@@ -56,9 +56,10 @@ namespace FileSharingApp.API.DAL
             return folders;
         }
 
-        public void UpdateFolder(Folder folder)
+        public void ChangeFolderParent(int id, int parentFolderId)
         {
-            throw new NotImplementedException();
+            context.Folders.First(f => f.Id == id).ParentFolderId = parentFolderId;
+            context.SaveChanges();
         }
     }
 }

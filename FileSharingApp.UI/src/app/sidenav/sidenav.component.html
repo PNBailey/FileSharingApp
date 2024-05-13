@@ -1,29 +1,13 @@
 <mat-sidenav-container class="sidenav-container">
     <mat-sidenav [opened]="loggedOnUser$ | async" mode="side">
         <div class="sidenav-content">
-            <button class="mx-3 my-3 folders-btn" mat-flat-button (click)="createNewFolder()"
-                *ngIf="loggedOnUser$ | async">
+            <button class="mx-3 my-3 folders-btn" mat-flat-button (click)="createNewFolder()">
                 <mat-icon fontIcon="add"></mat-icon>
                 Add New Folder
             </button>
-            <!-- <mat-tree [dataSource]="dataSource" [treeControl]="treeControl">
-                <mat-tree-node *matTreeNodeDef="let node" matTreeNodePadding>
-                    <button mat-icon-button disabled aria-hidden="true"></button>
-                    <button mat-button [matTooltip]="node.name">{{node.name | textLength: (17 - (node.level *
-                        2))}}</button>
-                </mat-tree-node>
-                <mat-tree-node *matTreeNodeDef="let node;when: hasChild" matTreeNodePadding>
-                    <button mat-icon-button matTreeNodeToggle [attr.aria-label]="'Toggle ' + node.name">
-                        <mat-icon class="mat-icon-rtl-mirror">
-                            {{treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right'}}
-                        </mat-icon>
-                    </button>
-                    <button mat-button [matTooltip]="node.name">{{node.name | textLength: (17 - (node.level *
-                        2))}}</button>
-                </mat-tree-node>
-            </mat-tree> -->
-            <p-tree *ngIf="folders && folders.length > 0" class="w-full md:w-30rem" [value]="folders"
-                [draggableNodes]="true" [droppableNodes]="true" draggableScope="self" droppableScope="self" />
+            <p-tree *ngIf="(folders$ | async).length > 0"
+                [value]="(folders$ | async) | parentFolderFilter | convertToFolderNodes" [draggableNodes]="true"
+                [droppableNodes]="true" draggableScope="self" droppableScope="self" (onNodeDrop)="onDrop($event)" />
         </div>
     </mat-sidenav>
     <mat-sidenav-content class="p-3">

@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { RouterOutlet } from '@angular/router';
@@ -13,12 +13,8 @@ import { User } from '../models/user';
 import { TreeModule } from 'primeng/tree';
 import { FolderNode } from '../models/folder-node';
 import { TreeDragDropService } from 'primeng/api';
-
-// interface FlatNode {
-//     expandable: boolean;
-//     name: string;
-//     level: number;
-// }
+import { ParentFolderFilterPipe } from '../shared/pipes/parent-folder-filter-pipe';
+import { ConvertToFolderNodesPipe } from '../shared/pipes/convert-to-folder-nodes-pipe';
 
 @Component({
     selector: 'app-sidenav',
@@ -32,15 +28,19 @@ import { TreeDragDropService } from 'primeng/api';
         MatIconModule,
         TextLengthPipe,
         MatTooltipModule,
-        TreeModule
+        TreeModule,
+        ParentFolderFilterPipe,
+        ConvertToFolderNodesPipe
     ],
     templateUrl: './sidenav.component.html',
     styleUrls: ['./sidenav.component.scss'],
     providers: [TreeDragDropService]
 })
 
-export class SidenavComponent implements AfterViewInit {
+export class SidenavComponent {
+
     @Output() createNewFolderEvent = new EventEmitter();
+    @Output() changeFolderParentEvent = new EventEmitter<{ folderId: number, parentFolderId: number }>();
     @Input() folders$: Observable<Folder[]>;
     @Input() loggedOnUser$: Observable<User | null>;
     folders!: FolderNode[];
@@ -49,37 +49,12 @@ export class SidenavComponent implements AfterViewInit {
         this.createNewFolderEvent.emit();
     }
 
-    // private _transformer = (node: Folder, level: number) => {
-    //     return {
-    //         expandable: !!node.subFolders && node.subFolders.length > 0,
-    //         name: node.name,
-    //         level: level
-    //     };
-    // };
-
-    // treeControl = new FlatTreeControl<FlatNode>(
-    //     node => node.level,
-    //     node => node.expandable,
-    // );
-
-    // treeFlattener = new MatTreeFlattener(
-    //     this._transformer,
-    //     node => node.level,
-    //     node => node.expandable,
-    //     node => node.subFolders
-    // );
-
-    // dataSource = new MatTreeFlatDataSource(this.treeControl, this.treeFlattener);
-
-    ngAfterViewInit(): void {
-        this.folders$.subscribe(folders => {
-            this.folders = folders.filter(f => !f.parentFolderId).map(f => new FolderNode(f));
-            console.log(this.folders);
-
-        });
+    onDrop(event: any) {
+        let folderToUpdate = new Folder();
+        folderToUpdate = {
+            ...event.dragNode.data,
+            parentFolderId: event.dropNode.data.id
+        }
+        this.changeFolderParentEvent.emit({ folderId: event.dragNode.data.id, parentFolderId: event.dropNode.data.id });
     }
-
-    // hasChild = (_: number, node: FlatNode) => node.expandable;
-
-
 }

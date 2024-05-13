@@ -44,10 +44,10 @@ namespace FileSharingApp.API.Controllers
             return folder;
         }
 
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] Folder folder)
+        [HttpPost("ChangeFolderParent/{id}/{parentFolderId}")]
+        public void ChangeFolderParent(int id, int parentFolderId)
         {
-            throw new NotImplementedException();
+            this.folderService.ChangeFolderParent(id, parentFolderId);
         }
 
         [HttpDelete("{id}")]

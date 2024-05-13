@@ -61,6 +61,37 @@ export class FolderEffects {
         ), { dispatch: false }
     );
 
+    changeFolderParent$ = createEffect(() =>
+        this.actions$.pipe(
+            ofType(FolderActions.changeFolderParent),
+            switchMap((action) => this.folderService.changeFolderParent(action.folderId, action.parentFolderId)),
+            map(() => FolderApiActions.changeFolderParentSuccessful()),
+            catchError((error) => of(FolderApiActions.changeFolderParentUnsuccessful()))
+        )
+    );
+
+    changeFolderParentSuccessful$ = createEffect(() =>
+        this.actions$.pipe(
+            ofType(FolderApiActions.changeFolderParentSuccessful),
+            tap(() => {
+                this.messageHandlingService.onDisplayNewMessage({
+                    message: "Folder moved"
+                });
+            })
+        ), { dispatch: false }
+    );
+
+    changeFolderParentUnsuccessful$ = createEffect(() =>
+        this.actions$.pipe(
+            ofType(FolderApiActions.changeFolderParentUnsuccessful),
+            tap(() => {
+                this.messageHandlingService.onDisplayNewMessage({
+                    message: "Unable to move folder. Please try again later"
+                });
+            })
+        ), { dispatch: false }
+    );
+
     constructor(
         private actions$: Actions,
         private folderService: FolderService,
