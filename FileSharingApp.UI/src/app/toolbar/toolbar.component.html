@@ -2,38 +2,20 @@
     <span>File Sharing App</span>
     <span class="spacer"></span>
     <div class="d-flex align-items-center">
-      <button
-        *ngIf="(loggedOnUser$ | async) === undefined || (loggedOnUser$ | async) === null"
-        (click)="openDialog()"
-        color="white"
-        mat-button
-        class="login-button"
-        aria-label="Login button">
-        Login
-      </button>
-      <button
-        *ngIf="loggedOnUser$ | async"
-        mat-icon-button
-        class="user-menu-button"
-        aria-label="User menu button"
-        [matMenuTriggerFor]="menu">
-        <mat-icon>person</mat-icon>
-      </button>
+        <button *ngIf="(loggedOnUser$ | async) === undefined || (loggedOnUser$ | async) === null" (click)="openDialog()"
+            color="primary" mat-flat-button class="login-button" aria-label="Login button">
+            Login
+        </button>
+        <button *ngIf="loggedOnUser$ | async" mat-icon-button class="user-menu-button" aria-label="User menu button"
+            [matMenuTriggerFor]="menu">
+            <mat-icon>person</mat-icon>
+        </button>
     </div>
 </mat-toolbar>
 <mat-menu #menu="matMenu" class="user-menu">
-  <button
-    mat-menu-item
-    class="edit-profile-button"
-    aria-label="Edit profile button"
-    (click)="openEditProfile()"
-    >Edit Profile
-  </button>
-  <button
-    mat-menu-item
-    aria-label="Logout button"
-    class="logout-button"
-    (click)="logout()"
-    >Logout
-  </button>
+    <button mat-menu-item class="edit-profile-button" aria-label="Edit profile button" (click)="openEditProfile()">Edit
+        Profile
+    </button>
+    <button mat-menu-item aria-label="Logout button" class="logout-button" (click)="logout()">Logout
+    </button>
 </mat-menu>

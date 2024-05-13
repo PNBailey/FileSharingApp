@@ -27,5 +27,10 @@ namespace FileSharingApp.API.Services
         {
             return folderRepository.CheckFolderName(folderName, userId);
         }
+
+        public void ChangeFolderParent(int id, int parentFolderId)
+        {
+            folderRepository.ChangeFolderParent(id, parentFolderId);
+        }
     }
 }

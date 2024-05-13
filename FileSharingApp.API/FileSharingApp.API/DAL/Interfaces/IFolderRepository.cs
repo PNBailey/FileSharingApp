@@ -10,10 +10,10 @@ namespace FileSharingApp.API.DAL.Interfaces
 
         Folder GetFolder(int folerId);
 
-        void UpdateFolder(Folder folder);
-
         void DeleteFolder(int folderId);
 
         Boolean CheckFolderName(string folderName, int userId);
+
+        void ChangeFolderParent(int id, int parentFolderId);
     }
 }

@@ -7,9 +7,9 @@
         <mat-card-subtitle class="file-card-subtitle p-0">{{ file.fileTypeName | fileTypeName }}</mat-card-subtitle>
     </mat-card-header>
     <div class="file-image-container">
-        <img (load)="imageHasLoaded = true" mat-card-image class="file-image px-2"
-            [src]="(file.fileTypeName === 'XmlFile' ? file.url + '.jpg' : file.url) | rawToImage | safe "
-            alt="file image" onerror="this.style.display='none'">
+        <img #imageRef (load)="imageHasLoaded = true" mat-card-image class="file-image px-2"
+            [ngSrc]="(file.fileTypeName === 'XmlFile' ? file.url + '.pdf' : file.url) | rawToImage | safe "
+            alt="file image" onerror="this.style.display='none'" width="170" height="240" priority>
         <div class="d-flex justify-content-center pt-2">
             <mat-spinner diameter="25" *ngIf="!imageHasLoaded"></mat-spinner>
         </div>

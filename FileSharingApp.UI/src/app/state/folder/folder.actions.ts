@@ -6,7 +6,8 @@ export const FolderActions = createActionGroup({
     events: {
         'Add New Folder': props<{ folder: Folder }>(),
         'Get All Folders': emptyProps(),
-        'Clear Folders': emptyProps()
+        'Clear Folders': emptyProps(),
+        'Change Folder Parent': props<{ folderId: number, parentFolderId: number }>()
     }
 });
 
@@ -16,6 +17,8 @@ export const FolderApiActions = createActionGroup({
         'Add New Folder Successful': emptyProps(),
         'Add New Folder Unsuccessful': emptyProps(),
         'Get All Folders Successful': props<{ folders: Folder[] }>(),
-        'Get All Folders Unsuccessful': emptyProps()
+        'Get All Folders Unsuccessful': emptyProps(),
+        'Change Folder Parent Successful': emptyProps(),
+        'Change Folder Parent Unsuccessful': emptyProps()
     }
 });

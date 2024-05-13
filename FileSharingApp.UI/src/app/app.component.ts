@@ -97,4 +97,8 @@ export class AppComponent implements OnInit {
     routeToEditProfile() {
         this.router.navigateByUrl('/edit-profile');
     }
+
+    changeFolderParent(updateEvent: { folderId: number, parentFolderId: number }) {
+        this.store.dispatch(FolderActions.changeFolderParent(updateEvent))
+    }
 }

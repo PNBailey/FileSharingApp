@@ -13,7 +13,7 @@ export class FolderService {
 
     constructor(private http: HttpClient) { }
 
-    createFolder(folder: Folder): Observable<Folder> {        
+    createFolder(folder: Folder): Observable<Folder> {
         return this.http.post<Folder>(this.baseUrl, folder);
     }
 
@@ -24,6 +24,10 @@ export class FolderService {
 
     getFoldersList(): Observable<Folder[]> {
         return this.http.get<Folder[]>(this.baseUrl);
+    }
+
+    changeFolderParent(folderId: number, newParentFolderId: number) {
+        return this.http.post(`${this.baseUrl}/changeFolderParent/${folderId}/${newParentFolderId}`, {});
     }
 
     deleteFolder(folderId: number) {

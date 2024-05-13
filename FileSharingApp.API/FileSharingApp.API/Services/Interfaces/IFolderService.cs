@@ -9,5 +9,7 @@ namespace FileSharingApp.API.Services.Interfaces
         IEnumerable<Folder> GetFolderList(int userId);
 
         Boolean CheckFolderName(string folderName, int userId);
+
+        void ChangeFolderParent(int id, int parentFolderId);
     }
 }
