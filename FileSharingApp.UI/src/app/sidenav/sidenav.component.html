@@ -6,7 +6,7 @@
                 <mat-icon fontIcon="add"></mat-icon>
                 Add New Folder
             </button>
-            <mat-tree [dataSource]="dataSource" [treeControl]="treeControl">
+            <!-- <mat-tree [dataSource]="dataSource" [treeControl]="treeControl">
                 <mat-tree-node *matTreeNodeDef="let node" matTreeNodePadding>
                     <button mat-icon-button disabled aria-hidden="true"></button>
                     <button mat-button [matTooltip]="node.name">{{node.name | textLength: (17 - (node.level *
@@ -21,7 +21,9 @@
                     <button mat-button [matTooltip]="node.name">{{node.name | textLength: (17 - (node.level *
                         2))}}</button>
                 </mat-tree-node>
-            </mat-tree>
+            </mat-tree> -->
+            <p-tree *ngIf="folders && folders.length > 0" class="w-full md:w-30rem" [value]="folders"
+                [draggableNodes]="true" [droppableNodes]="true" draggableScope="self" droppableScope="self" />
         </div>
     </mat-sidenav>
     <mat-sidenav-content class="p-3">

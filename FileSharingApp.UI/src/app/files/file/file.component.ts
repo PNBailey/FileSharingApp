@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { AppFile } from 'src/app/models/app-file';
@@ -24,7 +24,8 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
         FileTypeNamePipe,
         TextLengthPipe,
         PdfToJpgPipe,
-        MatProgressSpinnerModule
+        MatProgressSpinnerModule,
+        NgOptimizedImage
     ],
     templateUrl: './file.component.html',
     styleUrls: ['./file.component.scss']
