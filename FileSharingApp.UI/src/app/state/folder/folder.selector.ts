@@ -7,3 +7,8 @@ export const getAllFolders = createSelector(
     foldersFeatureSelector,
     (state: FolderState) => state.folders
 );
+
+export const getFolderById = (folderId: number) => createSelector(
+    foldersFeatureSelector,
+    (state: FolderState) => state.folders.find(f => f.id == folderId)
+);

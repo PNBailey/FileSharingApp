@@ -2,4 +2,4 @@
     (openAccountDialog)="openAccountDialog()" (routeToEditProfile)="routeToEditProfile()">
 </app-toolbar>
 <app-sidenav (createNewFolderEvent)="openNewFolderDialog()" (changeFolderParentEvent)="changeFolderParent($event)"
-    [loggedOnUser$]="loggedOnUser$" [folders$]="folders$"></app-sidenav>
+    (folderSelectedEvent)="folderSelected($event)" [loggedOnUser$]="loggedOnUser$" [folders$]="folders$"></app-sidenav>

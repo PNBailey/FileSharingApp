@@ -5,12 +5,13 @@ import { catchError, forkJoin, map, of, switchMap, tap } from "rxjs";
 import { FileService } from "src/app/services/file.service";
 import { MessageHandlingService } from "src/app/services/message-handling.service";
 import { AppFile } from "src/app/models/app-file";
+import { ActivatedRoute } from "@angular/router";
 
 
 @Injectable()
 export class FileEffects {
 
-    uploadFiles$ = createEffect(() => 
+    uploadFiles$ = createEffect(() =>
         this.actions$.pipe(
             ofType(FilesActions.uploadFiles),
             switchMap((action) => {
@@ -20,7 +21,7 @@ export class FileEffects {
                 });
                 return forkJoin(filesObservableArray).pipe(
                     map((files) => {
-                        return FilesApiActions.uploadFilesSuccessful({files: files})
+                        return FilesApiActions.uploadFilesSuccessful({ files: files })
                     }),
                     catchError(() => {
                         return of(FilesApiActions.uploadFilesUnsuccessful())
@@ -30,7 +31,7 @@ export class FileEffects {
         )
     );
 
-    uploadFilesSuccessful$ = createEffect(() => 
+    uploadFilesSuccessful$ = createEffect(() =>
         this.actions$.pipe(
             ofType(FilesApiActions.uploadFilesSuccessful),
             tap(() => {
@@ -41,7 +42,7 @@ export class FileEffects {
         ), { dispatch: false }
     );
 
-    uploadFilesUnsuccessful$ = createEffect(() => 
+    uploadFilesUnsuccessful$ = createEffect(() =>
         this.actions$.pipe(
             ofType(FilesApiActions.uploadFilesUnsuccessful),
             tap(() => {
@@ -52,17 +53,39 @@ export class FileEffects {
         ), { dispatch: false }
     );
 
-    getAllFiles$ = createEffect(() => 
+    getAllFiles$ = createEffect(() =>
         this.actions$.pipe(
             ofType(FilesActions.getAllFiles),
             switchMap(() => this.fileService.getAllFiles()),
-            map((files: AppFile[]) => FilesApiActions.getFilesSuccessful({files: files}))
+            map((files: AppFile[]) => FilesApiActions.getFilesSuccessful({ files: files })),
+            catchError(() => of(FilesApiActions.getFilesUnsuccessful()))
         )
-    )
+    );
+
+    getFilesUnsuccessful$ = createEffect(() =>
+        this.actions$.pipe(
+            ofType(FilesApiActions.getFilesUnsuccessful),
+            tap(() => {
+                this.messageHandlingService.onDisplayNewMessage({
+                    message: "Unable to get files. Please try again later"
+                });
+            }),
+        ), { dispatch: false }
+    );
+
+    getFolderFiles$ = createEffect(() =>
+        this.actions$.pipe(
+            ofType(FilesActions.getFolderFiles),
+            switchMap((action) => this.fileService.getFolderFiles(action.folderId)),
+            map((files: AppFile[]) => FilesApiActions.getFilesSuccessful({ files: files })),
+            catchError(() => of(FilesApiActions.getFilesUnsuccessful()))
+        )
+    );
 
     constructor(
         private actions$: Actions,
         private fileService: FileService,
-        private messageHandlingService: MessageHandlingService
+        private messageHandlingService: MessageHandlingService,
+        private route: ActivatedRoute
     ) { }
 }

@@ -5,7 +5,8 @@ const routes: Routes = [
     { path: '*', loadComponent: () => import('./home/home.component').then(mod => mod.HomeComponent) },
     { path: 'home', loadComponent: () => import('./home/home.component').then(mod => mod.HomeComponent) },
     { path: 'edit-profile', loadComponent: () => import('./edit-profile/edit-profile.component').then(mod => mod.EditProfileComponent) },
-    { path: 'files', loadComponent: () => import('./files/files.component').then(mod => mod.FilesComponent) }
+    { path: 'files', loadComponent: () => import('./files/files.component').then(mod => mod.FilesComponent) },
+    { path: 'folder/:folderId', loadComponent: () => import('./files/files.component').then(mod => mod.FilesComponent) }
 ];
 
 @NgModule({

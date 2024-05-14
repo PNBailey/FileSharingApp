@@ -7,5 +7,8 @@ namespace FileSharingApp.API.DAL.Interfaces
         void UploadFile(BaseFile file);
 
         IEnumerable<BaseFile> GetAllFiles(int userId);
+
+
+        IEnumerable<BaseFile> GetFolderFiles(int folderId, int userId);
     }
 }

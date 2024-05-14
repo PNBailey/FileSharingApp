@@ -10,9 +10,9 @@ export class FileService {
     baseUrl = `${environment.baseUrl}/File`;
 
     constructor(
-    private http: HttpClient
+        private http: HttpClient
     ) { }
-  
+
     uploadFile(file: File) {
         const formData = new FormData();
         formData.append('fileData', file);
@@ -21,5 +21,9 @@ export class FileService {
 
     getAllFiles() {
         return this.http.get<AppFile[]>(this.baseUrl);
+    }
+
+    getFolderFiles(folderId: number) {
+        return this.http.get<AppFile[]>(`${this.baseUrl}/Folder/${folderId}`);
     }
 }

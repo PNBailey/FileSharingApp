@@ -11,5 +11,7 @@ namespace FileSharingApp.API.Services.Interfaces
         string GetFileTypeName(string fileExtension);
 
         IEnumerable<BaseFile> GetAllFiles(int userId);
+
+        IEnumerable<BaseFile> GetFolderFiles(int folderId, int userId);
     }
 }

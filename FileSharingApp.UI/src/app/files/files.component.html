@@ -1,5 +1,10 @@
 <div class="d-flex justify-content-between align-items-center">
-    <h3 class="p-3">My Files</h3>
+    <ng-container *ngIf="folder$ | async as folder; else allFiles">
+        <h3 class="p-3">{{ folder.name }}</h3>
+    </ng-container>
+    <ng-template #allFiles>
+        <h3 class="p-3">All Files</h3>
+    </ng-template>
     <button mat-flat-button (click)="openDialog()" class="me-3" color="primary">
         <mat-icon fontIcon="add"></mat-icon>
         Add Files

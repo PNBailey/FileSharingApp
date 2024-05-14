@@ -92,6 +92,25 @@ export class FolderEffects {
         ), { dispatch: false }
     );
 
+    getFolderById$ = createEffect(() =>
+        this.actions$.pipe(
+            ofType(FolderActions.getFolderById),
+            switchMap((action) => this.folderService.getFolder(action.selectedFolderId)),
+            catchError(() => of(FolderApiActions.getFolderByIdUnsuccessful()))
+        ), { dispatch: false }
+    );
+
+    getFolderByIdUnsuccessful$ = createEffect(() =>
+        this.actions$.pipe(
+            ofType(FolderApiActions.getFolderByIdUnsuccessful),
+            tap(() => {
+                this.messageHandlingService.onDisplayNewMessage({
+                    message: "Unable to get folder. Please try again later"
+                });
+            })
+        ), { dispatch: false }
+    );
+
     constructor(
         private actions$: Actions,
         private folderService: FolderService,

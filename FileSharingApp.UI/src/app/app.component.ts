@@ -101,4 +101,8 @@ export class AppComponent implements OnInit {
     changeFolderParent(updateEvent: { folderId: number, parentFolderId: number }) {
         this.store.dispatch(FolderActions.changeFolderParent(updateEvent))
     }
+
+    folderSelected(selectedFolderId: number) {
+        this.router.navigateByUrl(`/folder/${selectedFolderId}`);
+    }
 }

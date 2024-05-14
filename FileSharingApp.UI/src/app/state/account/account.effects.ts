@@ -14,7 +14,7 @@ export class AccountEffects {
             ofType(AccountDialogActions.loginOrRegister),
             exhaustMap(action => this.accountService.loginOrRegister(action.user, action.url)
                 .pipe(
-                    map((user) => AccountApiActions.loginOrRegisterSuccessful({user: user})),
+                    map((user) => AccountApiActions.loginOrRegisterSuccessful({ user: user })),
                     catchError(error => of(AccountApiActions.loginOrRegisterError(error)))
                 )
             )
@@ -26,17 +26,17 @@ export class AccountEffects {
             ofType(AccountApiActions.loginOrRegisterSuccessful),
             tap(() => {
                 this.dialog.closeAll();
-                this.router.navigate(['/files']);                 
+                this.router.navigate(['/files']);
             }),
-            map((action) => AccountActions.setLoggedOnUser({user: action.user}))
+            map((action) => AccountActions.setLoggedOnUser({ user: action.user }))
         )
     );
 
     setLoggedOnUser$ = createEffect(() =>
         this.actions$.pipe(
             ofType(AccountActions.setLoggedOnUser),
-            tap((action) => {                
-                localStorage.setItem('user', JSON.stringify(action.user));                
+            tap((action) => {
+                localStorage.setItem('user', JSON.stringify(action.user));
             })
         ), { dispatch: false }
     );
@@ -44,7 +44,7 @@ export class AccountEffects {
     logout$ = createEffect(() =>
         this.actions$.pipe(
             ofType(AccountAppCompActions.logout),
-            map(() => AccountActions.setLoggedOnUser({user: null}))
+            map(() => AccountActions.setLoggedOnUser({ user: null }))
         )
     );
 
@@ -53,5 +53,5 @@ export class AccountEffects {
         private accountService: AccountService,
         private dialog: MatDialog,
         private router: Router
-    ) {}
+    ) { }
 }

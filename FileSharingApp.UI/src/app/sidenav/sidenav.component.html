@@ -7,7 +7,8 @@
             </button>
             <p-tree *ngIf="(folders$ | async).length > 0"
                 [value]="(folders$ | async) | parentFolderFilter | convertToFolderNodes" [draggableNodes]="true"
-                [droppableNodes]="true" draggableScope="self" droppableScope="self" (onNodeDrop)="onDrop($event)" />
+                [droppableNodes]="true" draggableScope="self" droppableScope="self" (onNodeDrop)="onDrop($event)"
+                selectionMode="single" (onNodeSelect)="folderSelected($event)" />
         </div>
     </mat-sidenav>
     <mat-sidenav-content class="p-3">
