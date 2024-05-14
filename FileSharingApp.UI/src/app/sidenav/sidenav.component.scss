@@ -18,3 +18,21 @@
         border: none;
     }
 }
+
+:host {
+    ::ng-deep .p-treenode-selectable.p-highlight {
+        color: #04a78bd5;
+    }
+}
+
+:host {
+    ::ng-deep .p-treenode-selectable.p-highlight>.p-treenode-icon {
+        color: #04a78bd5;
+    }
+}
+
+:host {
+    ::ng-deep .p-treenode-selectable.p-highlight>.p-tree-toggler>.p-icon-wrapper>.p-tree-toggler-icon {
+        color: #04a78bd5;
+    }
+}

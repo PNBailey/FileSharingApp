@@ -61,5 +61,10 @@ namespace FileSharingApp.API.DAL
             context.Folders.First(f => f.Id == id).ParentFolderId = parentFolderId;
             context.SaveChanges();
         }
+
+        public Folder Get(int id)
+        {
+            return context.Folders.First(f => f.Id == id);
+        }
     }
 }

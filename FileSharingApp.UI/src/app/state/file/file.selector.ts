@@ -3,7 +3,7 @@ import { FilesState } from "./file.reducer";
 
 export const filesFeatureSelector = createFeatureSelector<FilesState>('files');
 
-export const getAllFiles = createSelector(
+export const getFiles = createSelector(
     filesFeatureSelector,
     (state: FilesState) => state.files
 );

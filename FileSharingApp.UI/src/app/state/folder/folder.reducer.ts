@@ -4,10 +4,12 @@ import { FolderActions, FolderApiActions } from "./folder.actions";
 
 export interface FolderState {
     folders: Folder[];
+    selectedFolder: Folder
 }
 
 export const initialState: FolderState = {
-    folders: []
+    folders: [],
+    selectedFolder: null
 }
 
 export const folderReducer = createReducer(

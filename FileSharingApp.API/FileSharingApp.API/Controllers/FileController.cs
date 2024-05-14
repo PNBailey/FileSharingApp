@@ -3,6 +3,7 @@ using AutoMapper;
 using FileSharingApp.API.ExtensionMethods;
 using FileSharingApp.API.Models.DTOs;
 using FileSharingApp.API.Models.Files;
+using FileSharingApp.API.Services;
 using FileSharingApp.API.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -45,14 +46,12 @@ namespace FileSharingApp.API.Controllers
             return fileDto;
         }
 
-        //[HttpPut("{id}")]
-        //public void Put(IFormFile file)
-        //{
-        //}
-
-        //[HttpDelete("{id}")]
-        //public void Delete(int id)
-        //{
-        //}
+        [HttpGet("Folder/{folderId}")]
+        public IEnumerable<FileDto> GetFolderFiles(int folderId)
+        {
+            var files = this.fileService.GetFolderFiles(folderId, User.GetUserId());
+            var fileDtos = this.mapper.Map<IEnumerable<FileDto>>(files);
+            return fileDtos;
+        }
     }
 }

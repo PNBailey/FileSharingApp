@@ -99,5 +99,10 @@ namespace FileSharingApp.API.Services
         {
             return fileRepository.GetAllFiles(userId);
         }
+
+        public IEnumerable<BaseFile> GetFolderFiles(int folderId, int userId)
+        {
+            return fileRepository.GetFolderFiles(folderId, userId);
+        }
     }
 }

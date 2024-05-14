@@ -11,5 +11,7 @@ namespace FileSharingApp.API.Services.Interfaces
         Boolean CheckFolderName(string folderName, int userId);
 
         void ChangeFolderParent(int id, int parentFolderId);
+
+        Folder Get(int id);
     }
 }

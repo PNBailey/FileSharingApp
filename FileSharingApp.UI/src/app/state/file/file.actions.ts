@@ -6,7 +6,9 @@ export const FilesActions = createActionGroup({
     events: {
         'Upload Files': props<{ files: File[] }>(),
         'Get All Files': emptyProps(),
-        'Clear Files': emptyProps()
+        'Clear Files': emptyProps(),
+        'Get Folder Files': props<{ folderId: number }>(),
+        'Get Files': emptyProps()
     }
 });
 
@@ -15,6 +17,7 @@ export const FilesApiActions = createActionGroup({
     events: {
         'Upload Files Successful': props<{ files: AppFile[] }>(),
         'Upload Files Unsuccessful': emptyProps(),
-        'Get Files Successful': props<{ files: AppFile[] }>()
+        'Get Files Successful': props<{ files: AppFile[] }>(),
+        'Get Files Unsuccessful': emptyProps()
     }
 });

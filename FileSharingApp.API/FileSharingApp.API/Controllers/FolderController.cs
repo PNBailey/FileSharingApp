@@ -33,7 +33,7 @@ namespace FileSharingApp.API.Controllers
         [HttpGet("{id}")]
         public Folder Get(int id)
         {
-            throw new NotImplementedException();
+            return this.folderService.Get(id);
         }
 
         [HttpPost]

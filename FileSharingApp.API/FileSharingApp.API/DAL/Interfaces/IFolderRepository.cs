@@ -15,5 +15,7 @@ namespace FileSharingApp.API.DAL.Interfaces
         Boolean CheckFolderName(string folderName, int userId);
 
         void ChangeFolderParent(int id, int parentFolderId);
+
+        Folder Get(int id);
     }
 }

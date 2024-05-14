@@ -26,5 +26,10 @@ namespace FileSharingApp.API.DAL
             this.context.Files.Add(file);
             this.context.SaveChanges();
         }
+
+        public IEnumerable<BaseFile> GetFolderFiles(int folderId, int userId)
+        {
+            return context.Files.Where(f => f.Folder.Id == folderId && f.FileOwner.Id == userId).ToList();
+        }
     }
 }

@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { RouterOutlet } from '@angular/router';
@@ -41,20 +41,21 @@ export class SidenavComponent {
 
     @Output() createNewFolderEvent = new EventEmitter();
     @Output() changeFolderParentEvent = new EventEmitter<{ folderId: number, parentFolderId: number }>();
+    @Output() folderSelectedEvent = new EventEmitter<Folder>();
     @Input() folders$: Observable<Folder[]>;
     @Input() loggedOnUser$: Observable<User | null>;
     folders!: FolderNode[];
+    // selectedFolder!: FolderNode;
 
     createNewFolder() {
         this.createNewFolderEvent.emit();
     }
 
     onDrop(event: any) {
-        let folderToUpdate = new Folder();
-        folderToUpdate = {
-            ...event.dragNode.data,
-            parentFolderId: event.dropNode.data.id
-        }
         this.changeFolderParentEvent.emit({ folderId: event.dragNode.data.id, parentFolderId: event.dropNode.data.id });
+    }
+
+    folderSelected(event: any) {
+        this.folderSelectedEvent.emit(event.node.data.id)
     }
 }
