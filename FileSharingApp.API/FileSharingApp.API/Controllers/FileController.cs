@@ -34,13 +34,14 @@ namespace FileSharingApp.API.Controllers
         //    return "value";
         //}
 
-        [HttpPost]
-        public async Task<FileDto> Post([FromForm]IFormFile fileData)
+        [HttpPost("{folderId?}")]
+        public async Task<FileDto> Post(int? folderId, [FromForm]IFormFile file)
         {
-            var fileExtension = Path.GetExtension(fileData.FileName);
+            var fileExtension = Path.GetExtension(file.FileName);
             var fileTypeName = this.fileService.GetFileTypeName(fileExtension);
             BaseFile newFile = (BaseFile)this.fileService.CreateFileType(fileTypeName);
-            newFile.FileData = fileData;
+            newFile.FileData = file;
+            newFile.FolderId = folderId;
             var uploadedfile = await this.fileService.UploadFile(newFile, User.GetUserId());
             var fileDto = mapper.Map<FileDto>(uploadedfile);
             return fileDto;

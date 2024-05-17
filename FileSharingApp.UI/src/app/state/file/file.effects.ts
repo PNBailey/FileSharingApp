@@ -17,7 +17,7 @@ export class FileEffects {
             switchMap((action) => {
                 const files = action.files;
                 const filesObservableArray = files.map(file => {
-                    return this.fileService.uploadFile(file);
+                    return this.fileService.uploadFile(file, action.folderId);
                 });
                 return forkJoin(filesObservableArray).pipe(
                     map((files) => {

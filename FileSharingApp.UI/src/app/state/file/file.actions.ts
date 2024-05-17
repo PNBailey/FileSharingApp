@@ -4,7 +4,7 @@ import { AppFile } from "src/app/models/app-file";
 export const FilesActions = createActionGroup({
     source: 'Files',
     events: {
-        'Upload Files': props<{ files: File[] }>(),
+        'Upload Files': props<{ files: File[], folderId: number | null }>(),
         'Get All Files': emptyProps(),
         'Clear Files': emptyProps(),
         'Get Folder Files': props<{ folderId: number }>(),
