@@ -1,11 +1,11 @@
 import { Injectable } from "@angular/core";
 import { Actions, createEffect, ofType } from "@ngrx/effects";
 import { FilesActions, FilesApiActions } from "./file.actions";
-import { catchError, forkJoin, map, of, switchMap, tap } from "rxjs";
+import { catchError, debounceTime, finalize, forkJoin, map, of, switchMap, tap } from "rxjs";
 import { FileService } from "src/app/services/file.service";
 import { MessageHandlingService } from "src/app/services/message-handling.service";
 import { AppFile } from "src/app/models/app-file";
-import { ActivatedRoute } from "@angular/router";
+import { LoadingObsName, LoadingService } from "src/app/services/loading.service";
 
 
 @Injectable()
@@ -56,6 +56,8 @@ export class FileEffects {
     getAllFiles$ = createEffect(() =>
         this.actions$.pipe(
             ofType(FilesActions.getAllFiles),
+            tap(() => this.loadingService.toggleLoadingObs(LoadingObsName.LOADING_FILES)),
+            // debounceTime(1000),
             switchMap(() => this.fileService.getAllFiles()),
             map((files: AppFile[]) => FilesApiActions.getFilesSuccessful({ files: files })),
             catchError(() => of(FilesApiActions.getFilesUnsuccessful()))
@@ -76,16 +78,25 @@ export class FileEffects {
     getFolderFiles$ = createEffect(() =>
         this.actions$.pipe(
             ofType(FilesActions.getFolderFiles),
+            tap(() => this.loadingService.toggleLoadingObs(LoadingObsName.LOADING_FILES)),
+            // debounceTime(2000),
             switchMap((action) => this.fileService.getFolderFiles(action.folderId)),
             map((files: AppFile[]) => FilesApiActions.getFilesSuccessful({ files: files })),
-            catchError(() => of(FilesApiActions.getFilesUnsuccessful()))
+            catchError(() => of(FilesApiActions.getFilesUnsuccessful())),
         )
+    );
+
+    getFilesSuccessful$ = createEffect(() =>
+        this.actions$.pipe(
+            ofType(FilesApiActions.getFilesSuccessful),
+            tap(() => this.loadingService.toggleLoadingObs(LoadingObsName.LOADING_FILES))
+        ), { dispatch: false }
     );
 
     constructor(
         private actions$: Actions,
         private fileService: FileService,
         private messageHandlingService: MessageHandlingService,
-        private route: ActivatedRoute
+        private loadingService: LoadingService
     ) { }
 }

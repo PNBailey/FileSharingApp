@@ -11,10 +11,18 @@
     </button>
 </div>
 <mat-divider></mat-divider>
+<mat-spinner class="container my-5 d-flex justify-content-center" matSuffix [diameter]="40"
+    *ngIf="(loadingFiles$ | async)"></mat-spinner>
 <div class="container px-4 pb-2 d-flex justify-content-start">
     <div class="row">
         <div *ngFor="let file of files$ | async" class="col mt-4 mb-5 app-file-list-item">
             <app-file [file]="file"></app-file>
         </div>
+    </div>
+</div>
+<div *ngIf="(files$ | async).length < 1 && !(loadingFiles$ | async)"
+    class="container my-5 d-flex justify-content-center">
+    <div class="row">
+        <p>No files found...</p>
     </div>
 </div>

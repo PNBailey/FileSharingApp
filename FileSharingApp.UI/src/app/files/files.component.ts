@@ -14,6 +14,8 @@ import { FileUploadComponent } from './file-upload/file-upload.component';
 import { ActivatedRoute } from '@angular/router';
 import { getFolderById } from '../state/folder/folder.selector';
 import { Folder } from '../models/folder';
+import { LoadingObsName, LoadingService } from '../services/loading.service';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @Component({
     selector: 'app-files',
@@ -24,7 +26,8 @@ import { Folder } from '../models/folder';
         MatButtonModule,
         MatIconModule,
         FileComponent,
-        MatDialogModule
+        MatDialogModule,
+        MatProgressSpinnerModule
     ],
     templateUrl: './files.component.html',
     styleUrls: ['./files.component.scss']
@@ -35,17 +38,20 @@ export class FilesComponent {
     folder$: Observable<Folder | null> = this.route.paramMap.pipe(
         map((params) => parseInt(params.get('folderId'))),
         tap((folderId) => {
+            this.store.dispatch(FilesActions.clearFiles());
             folderId > 0 ?
                 this.store.dispatch(FilesActions.getFolderFiles({ folderId: folderId })) :
                 this.store.dispatch(FilesActions.getAllFiles());
         }),
         switchMap((folderId) => this.store.select(getFolderById(folderId)))
     );
+    loadingFiles$ = this.loadingService.getLoadingObs(LoadingObsName.LOADING_FILES);
 
     constructor(
         private store: Store,
         public dialog: MatDialog,
-        private route: ActivatedRoute
+        private route: ActivatedRoute,
+        private loadingService: LoadingService
     ) { }
 
     openDialog() {
