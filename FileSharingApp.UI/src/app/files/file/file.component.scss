@@ -16,11 +16,39 @@ mat-card-content {
     width: 100%;
     height: 100%;
     overflow: hidden;
+    position: relative;
 }
 
 .file-image {
-    border: 10px rgb(22, 22, 22);
+    border: 10px rgba(22, 22, 22, 0.049);
     border-radius: 10px;
     width: auto;
     height: auto;
+}
+
+.overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.564) !important;
+    z-index: 1;
+}
+
+.icon-buttons {
+    position: absolute;
+    top: 30%;
+    left: 1%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    /* Adjust the width of the buttons container */
+    padding: 8px;
+    z-index: 2;
+}
+
+.icon-buttons button {
+    background-color: rgba(255, 255, 255, 0.7);
 }

@@ -10,6 +10,9 @@ import { FileTypeNamePipe } from 'src/app/shared/pipes/file-type-name-pipe';
 import { TextLengthPipe } from 'src/app/shared/pipes/text-length-pipe';
 import { PdfToJpgPipe } from 'src/app/shared/pipes/pdf-to-jpg-pipe';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { animate, state, style, transition, trigger } from '@angular/animations';
+import { MatButtonModule } from '@angular/material/button';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 @Component({
     selector: 'app-file',
@@ -25,12 +28,39 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
         TextLengthPipe,
         PdfToJpgPipe,
         MatProgressSpinnerModule,
-        NgOptimizedImage
+        NgOptimizedImage,
+        MatButtonModule,
+        MatTooltipModule
     ],
     templateUrl: './file.component.html',
-    styleUrls: ['./file.component.scss']
+    styleUrls: ['./file.component.scss'],
+    animations: [
+        trigger('overlayAnimation', [
+            state('void', style({
+                opacity: 0
+            })),
+            state('*', style({
+                opacity: 0.6,
+                backgroundColor: 'black'
+            })),
+            transition('void <=> *', animate('200ms ease-in-out'))
+        ]),
+        trigger('iconButtonsAnimation', [
+            state('void', style({
+                transform: 'translateY(100%)'
+            })),
+            state('*', style({
+                transform: 'translateY(0)'
+            })),
+            transition('void <=> *', animate('200ms ease-in-out'))
+        ])
+    ]
 })
 export class FileComponent {
+    isHovered: boolean = false;
     imageHasLoaded = false;
     @Input() file: AppFile;
+
+    onButtonClick(event: any) {
+    }
 }
