@@ -13,10 +13,11 @@ export class FileService {
         private http: HttpClient
     ) { }
 
-    uploadFile(file: File) {
+    uploadFile(file: File, folderId: number | null) {
         const formData = new FormData();
-        formData.append('fileData', file);
-        return this.http.post<AppFile>(this.baseUrl, formData);
+        formData.append('file', file);
+        const url = folderId ? `${this.baseUrl}/${folderId}` : this.baseUrl
+        return this.http.post<AppFile>(url, formData);
     }
 
     getAllFiles() {

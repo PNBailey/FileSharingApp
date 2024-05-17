@@ -1,7 +1,7 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, Inject, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NgxFileDropEntry, NgxFileDropModule } from 'ngx-file-drop';
-import { MatDialogModule } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { MatTable, MatTableModule } from '@angular/material/table';
 import { Store } from '@ngrx/store';
@@ -31,7 +31,10 @@ export class FileUploadComponent {
     public columnNames = ['name', 'file type', 'file size', 'last updated', 'delete'];
     @ViewChild(MatTable) table: MatTable<File>;
 
-    constructor(private store: Store) { }
+    constructor(
+        private store: Store,
+        @Inject(MAT_DIALOG_DATA) public data: { folderId: number | null }
+    ) { }
 
     public onFileDropped(files: NgxFileDropEntry[]) {
         for (const droppedFile of files) {
@@ -60,6 +63,6 @@ export class FileUploadComponent {
     }
 
     uploadFiles() {
-        this.store.dispatch(FilesActions.uploadFiles({ files: this.filesToUpload }))
+        this.store.dispatch(FilesActions.uploadFiles({ files: this.filesToUpload, folderId: this.data.folderId }))
     }
 }

@@ -19,5 +19,7 @@ namespace FileSharingApp.API.Models.Files
         public abstract RawUploadParams GetUploadParams(int userId);
 
         public Folder? Folder { get; set; }
+
+        public int? FolderId { get; set; }
     }
 }

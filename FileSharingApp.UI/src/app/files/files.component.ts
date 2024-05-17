@@ -6,7 +6,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { Store } from '@ngrx/store';
 import { FilesActions } from '../state/file/file.actions';
 import { getFiles } from '../state/file/file.selector';
-import { Observable, filter, map, switchMap, tap } from 'rxjs';
+import { Observable, map, switchMap, tap } from 'rxjs';
 import { AppFile } from '../models/app-file';
 import { FileComponent } from './file/file.component';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
@@ -54,9 +54,10 @@ export class FilesComponent {
         private loadingService: LoadingService
     ) { }
 
-    openDialog() {
+    openDialog(folderId: number = null) {
         this.dialog.open(FileUploadComponent, {
             minWidth: '80vw',
+            data: { folderId: folderId }
         });
     }
 }
