@@ -21,6 +21,6 @@ export const FilesApiActions = createActionGroup({
         'Get Files Successful': props<{ files: AppFile[] }>(),
         'Get Files Unsuccessful': emptyProps(),
         'Delete File Successful': props<{ file: AppFile }>(),
-        'Delete File Unsuccessful': props<{ error: any }>()
+        'Delete File Unsuccessful': props<{ file: AppFile }>()
     }
 });

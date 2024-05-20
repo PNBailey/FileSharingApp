@@ -1,12 +1,10 @@
-﻿using Azure;
-using CloudinaryDotNet;
+﻿using CloudinaryDotNet;
 using CloudinaryDotNet.Actions;
 using FileSharingApp.API.CustomExceptions;
 using FileSharingApp.API.DAL.Interfaces;
 using FileSharingApp.API.Helpers;
 using FileSharingApp.API.Models.Files;
 using FileSharingApp.API.Services.Interfaces;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 
 namespace FileSharingApp.API.Services

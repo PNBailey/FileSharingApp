@@ -1,7 +1,7 @@
 import { Injectable } from "@angular/core";
 import { Actions, createEffect, ofType } from "@ngrx/effects";
 import { FilesActions, FilesApiActions } from "./file.actions";
-import { catchError, debounceTime, finalize, forkJoin, map, of, switchMap, tap } from "rxjs";
+import { catchError, forkJoin, map, mergeMap, of, switchMap, tap } from "rxjs";
 import { FileService } from "src/app/services/file.service";
 import { MessageHandlingService } from "src/app/services/message-handling.service";
 import { AppFile } from "src/app/models/app-file";
@@ -94,19 +94,21 @@ export class FileEffects {
     deleteFile$ = createEffect(() =>
         this.actions$.pipe(
             ofType(FilesActions.deleteFile),
-            switchMap((action) => this.fileService.deleteFile(action.file)),
+            tap((action) => this.loadingService.toggleLoadingObs(action.file.name)),
+            mergeMap((action) => this.fileService.deleteFile(action.file)),
             map((file: AppFile) => FilesApiActions.deleteFileSuccessful({ file: file })),
-            catchError((error) => of(FilesApiActions.deleteFileUnsuccessful(error))),
+            catchError((action) => of(FilesApiActions.deleteFileUnsuccessful(action))),
         )
     );
 
     deleteFileSuccessful$ = createEffect(() =>
         this.actions$.pipe(
             ofType(FilesApiActions.deleteFileSuccessful),
-            tap(() => {
+            tap((action) => {
                 this.messageHandlingService.onDisplayNewMessage({
                     message: "File deleted"
                 });
+                this.loadingService.toggleLoadingObs(action.file.name)
             }),
         ), { dispatch: false }
     );
@@ -114,10 +116,12 @@ export class FileEffects {
     deleteFileUnsuccessful$ = createEffect(() =>
         this.actions$.pipe(
             ofType(FilesApiActions.deleteFileUnsuccessful),
-            tap((error) => {
+            tap((action) => {
                 this.messageHandlingService.onDisplayNewMessage({
                     message: "Unable to delete file. Please try again later"
                 });
+                this.loadingService.toggleLoadingObs(action.file.name)
+
             }),
         ), { dispatch: false }
     );

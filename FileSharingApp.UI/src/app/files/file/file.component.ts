@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { AfterViewInit, Component, EventEmitter, Input, Output } from '@angular/core';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
@@ -13,6 +13,8 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { MatButtonModule } from '@angular/material/button';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { LoadingService } from 'src/app/services/loading.service';
+import { Observable } from 'rxjs';
 
 @Component({
     selector: 'app-file',
@@ -56,13 +58,21 @@ import { MatTooltipModule } from '@angular/material/tooltip';
         ])
     ]
 })
-export class FileComponent {
+export class FileComponent implements AfterViewInit {
+
     isHovered: boolean = false;
     imageHasLoaded = false;
+    deletingFile$: Observable<boolean>;
     @Input() file: AppFile;
     @Output() deleteFileEvent = new EventEmitter<AppFile>();
     @Output() viewFileEvent = new EventEmitter<AppFile>();
     @Output() downloadFileEvent = new EventEmitter<AppFile>();
+
+    constructor(private loadingService: LoadingService) { }
+
+    ngAfterViewInit(): void {
+        this.deletingFile$ = this.loadingService.getLoadingObs(this.file.name);
+    }
 
     deleteFile() {
         this.deleteFileEvent.emit(this.file);

@@ -14,20 +14,21 @@ export enum LoadingObsName {
 
 export class LoadingService {
 
-    private loadingObs: Map<LoadingObsName, BehaviorSubject<boolean>> = new Map([
-        [LoadingObsName.CHECKING_EMAIL, new BehaviorSubject<boolean>(false)],
-        [LoadingObsName.CHECKING_USERNAME, new BehaviorSubject<boolean>(false)],
-        [LoadingObsName.UPDATING_PROFILE, new BehaviorSubject<boolean>(false)],
-        [LoadingObsName.CHECKING_FOLDERNAME, new BehaviorSubject<boolean>(false)],
-        [LoadingObsName.LOADING_FILES, new BehaviorSubject<boolean>(false)]
-    ]);
+    private loadingObservables: Map<LoadingObsName | string, BehaviorSubject<boolean>> = new Map();
 
-    toggleLoadingObs(loadingObsName: LoadingObsName) {
-        const loadingObs = this.loadingObs.get(loadingObsName);
-        loadingObs.next(!loadingObs.value);
+    toggleLoadingObs(loadingObsName: LoadingObsName | string) {
+        const loadingObservable = this.loadingObservables.get(loadingObsName);
+        loadingObservable.next(!loadingObservable.value);
     }
 
-    getLoadingObs(loadingObsName: LoadingObsName) {
-        return this.loadingObs.get(loadingObsName);
+    getLoadingObs(loadingObsName: LoadingObsName | string) {
+        this.createLoadingObsIfNotPresent(loadingObsName);
+        return this.loadingObservables.get(loadingObsName);
+    }
+
+    private createLoadingObsIfNotPresent(loadingObsName: string) {
+        if (!this.loadingObservables.has(loadingObsName)) {
+            this.loadingObservables.set(loadingObsName, new BehaviorSubject<boolean>(false));
+        }
     }
 }

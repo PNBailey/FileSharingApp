@@ -66,7 +66,7 @@ export class FolderEffects {
             ofType(FolderActions.changeFolderParent),
             switchMap((action) => this.folderService.changeFolderParent(action.folderId, action.parentFolderId)),
             map(() => FolderApiActions.changeFolderParentSuccessful()),
-            catchError((error) => of(FolderApiActions.changeFolderParentUnsuccessful()))
+            catchError(() => of(FolderApiActions.changeFolderParentUnsuccessful()))
         )
     );
 

@@ -44,11 +44,16 @@ mat-card-content {
     display: flex;
     justify-content: space-between;
     width: 100%;
-    /* Adjust the width of the buttons container */
     padding: 8px;
     z-index: 2;
 }
 
 .icon-buttons button {
     background-color: rgba(255, 255, 255, 0.7);
+}
+
+.image-loading-spinner {
+    position: absolute;
+    top: 36%;
+    left: 43%;
 }
