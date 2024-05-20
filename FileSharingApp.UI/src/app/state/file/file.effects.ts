@@ -1,7 +1,7 @@
 import { Injectable } from "@angular/core";
 import { Actions, createEffect, ofType } from "@ngrx/effects";
 import { FilesActions, FilesApiActions } from "./file.actions";
-import { catchError, debounceTime, finalize, forkJoin, map, of, switchMap, tap } from "rxjs";
+import { catchError, forkJoin, map, mergeMap, of, switchMap, tap } from "rxjs";
 import { FileService } from "src/app/services/file.service";
 import { MessageHandlingService } from "src/app/services/message-handling.service";
 import { AppFile } from "src/app/models/app-file";
@@ -57,7 +57,6 @@ export class FileEffects {
         this.actions$.pipe(
             ofType(FilesActions.getAllFiles),
             tap(() => this.loadingService.toggleLoadingObs(LoadingObsName.LOADING_FILES)),
-            // debounceTime(1000),
             switchMap(() => this.fileService.getAllFiles()),
             map((files: AppFile[]) => FilesApiActions.getFilesSuccessful({ files: files })),
             catchError(() => of(FilesApiActions.getFilesUnsuccessful()))
@@ -79,7 +78,6 @@ export class FileEffects {
         this.actions$.pipe(
             ofType(FilesActions.getFolderFiles),
             tap(() => this.loadingService.toggleLoadingObs(LoadingObsName.LOADING_FILES)),
-            // debounceTime(2000),
             switchMap((action) => this.fileService.getFolderFiles(action.folderId)),
             map((files: AppFile[]) => FilesApiActions.getFilesSuccessful({ files: files })),
             catchError(() => of(FilesApiActions.getFilesUnsuccessful())),
@@ -90,6 +88,41 @@ export class FileEffects {
         this.actions$.pipe(
             ofType(FilesApiActions.getFilesSuccessful),
             tap(() => this.loadingService.toggleLoadingObs(LoadingObsName.LOADING_FILES))
+        ), { dispatch: false }
+    );
+
+    deleteFile$ = createEffect(() =>
+        this.actions$.pipe(
+            ofType(FilesActions.deleteFile),
+            tap((action) => this.loadingService.toggleLoadingObs(action.file.name)),
+            mergeMap((action) => this.fileService.deleteFile(action.file)),
+            map((file: AppFile) => FilesApiActions.deleteFileSuccessful({ file: file })),
+            catchError((action) => of(FilesApiActions.deleteFileUnsuccessful(action))),
+        )
+    );
+
+    deleteFileSuccessful$ = createEffect(() =>
+        this.actions$.pipe(
+            ofType(FilesApiActions.deleteFileSuccessful),
+            tap((action) => {
+                this.messageHandlingService.onDisplayNewMessage({
+                    message: "File deleted"
+                });
+                this.loadingService.toggleLoadingObs(action.file.name)
+            }),
+        ), { dispatch: false }
+    );
+
+    deleteFileUnsuccessful$ = createEffect(() =>
+        this.actions$.pipe(
+            ofType(FilesApiActions.deleteFileUnsuccessful),
+            tap((action) => {
+                this.messageHandlingService.onDisplayNewMessage({
+                    message: "Unable to delete file. Please try again later"
+                });
+                this.loadingService.toggleLoadingObs(action.file.name)
+
+            }),
         ), { dispatch: false }
     );
 

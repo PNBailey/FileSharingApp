@@ -8,7 +8,8 @@ namespace FileSharingApp.API.DAL.Interfaces
 
         IEnumerable<BaseFile> GetAllFiles(int userId);
 
-
         IEnumerable<BaseFile> GetFolderFiles(int folderId, int userId);
+
+        void DeleteFile(string url);
     }
 }

@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output, output } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { RouterOutlet } from '@angular/router';
@@ -8,7 +8,6 @@ import { MatIconModule } from '@angular/material/icon';
 import { Observable } from 'rxjs';
 import { Folder } from '../models/folder';
 import { TextLengthPipe } from '../shared/pipes/text-length-pipe';
-import { MatTooltipModule } from '@angular/material/tooltip';
 import { User } from '../models/user';
 import { TreeModule } from 'primeng/tree';
 import { FolderNode } from '../models/folder-node';
@@ -27,7 +26,6 @@ import { ConvertToFolderNodesPipe } from '../shared/pipes/convert-to-folder-node
         MatCardModule,
         MatIconModule,
         TextLengthPipe,
-        MatTooltipModule,
         TreeModule,
         ParentFolderFilterPipe,
         ConvertToFolderNodesPipe
@@ -45,7 +43,6 @@ export class SidenavComponent {
     @Input() folders$: Observable<Folder[]>;
     @Input() loggedOnUser$: Observable<User | null>;
     folders!: FolderNode[];
-    // selectedFolder!: FolderNode;
 
     createNewFolder() {
         this.createNewFolderEvent.emit();

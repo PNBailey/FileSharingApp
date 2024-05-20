@@ -60,4 +60,14 @@ export class FilesComponent {
             data: { folderId: folderId }
         });
     }
+
+    deleteFile(file: AppFile) {
+        this.store.dispatch(FilesActions.deleteFile({ file: file }));
+    }
+
+    viewFile(file: AppFile) {
+    }
+
+    downloadFile(file: AppFile) {
+    }
 }

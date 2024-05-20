@@ -1,4 +1,7 @@
-<mat-card class="file-card">
+<mat-card class="file-card" (mouseenter)="isHovered = true" (mouseleave)="isHovered = false" [matTooltip]="file.name"
+    matTooltipPosition="above">
+    <!-- Overlay -->
+    <div class="overlay" *ngIf="isHovered || (deletingFile$ | async)" [@overlayAnimation]></div>
     <mat-card-header class="pt-2 file-card-header">
         <div mat-card-avatar class="m-0 file-icon">
             <mat-icon color="primary" fontIcon="article"></mat-icon>
@@ -11,10 +14,24 @@
             [ngSrc]="(file.fileTypeName === 'XmlFile' ? file.url + '.pdf' : file.url) | rawToImage | safe "
             alt="file image" onerror="this.style.display='none'" width="170" height="240" priority>
         <div class="d-flex justify-content-center pt-2">
-            <mat-spinner diameter="25" *ngIf="!imageHasLoaded"></mat-spinner>
+            <mat-spinner class="image-loading-spinner" diameter="25"
+                *ngIf="!imageHasLoaded || (deletingFile$ | async)"></mat-spinner>
+        </div>
+
+
+        <!-- Icon buttons -->
+        <div class="icon-buttons" *ngIf="isHovered" [@iconButtonsAnimation]>
+            <button mat-icon-button class="m-1" aria-label="Delete" (click)="deleteFile()">
+                <mat-icon color="warn">delete</mat-icon>
+            </button>
+            <button mat-icon-button class="m-1" aria-label="View" (click)="viewFile()">
+                <mat-icon color="primary">visibility</mat-icon>
+            </button>
+            <button mat-icon-button class="m-1" aria-label="Download" (click)="downloadFile()">
+                <mat-icon color="accent">download</mat-icon>
+            </button>
         </div>
     </div>
-    <mat-card-content class="p-3">
-        <p>Placeholder</p>
+    <mat-card-content class="p-2">
     </mat-card-content>
 </mat-card>

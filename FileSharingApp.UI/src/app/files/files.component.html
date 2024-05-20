@@ -19,8 +19,9 @@
     *ngIf="(loadingFiles$ | async)"></mat-spinner>
 <div class="container px-4 pb-2 d-flex justify-content-start">
     <div class="row">
-        <div *ngFor="let file of files$ | async" class="col mt-4 mb-5 app-file-list-item">
-            <app-file [file]="file"></app-file>
+        <div *ngFor="let file of files$ | async" class="col my-4 app-file-list-item">
+            <app-file [file]="file" (deleteFileEvent)="deleteFile($event)" (viewFileEvent)="viewFile($event)"
+                (downloadFileEvent)="downloadFile($event)"></app-file>
         </div>
     </div>
 </div>

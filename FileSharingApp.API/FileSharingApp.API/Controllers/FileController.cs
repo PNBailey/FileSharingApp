@@ -6,6 +6,7 @@ using FileSharingApp.API.Models.Files;
 using FileSharingApp.API.Services;
 using FileSharingApp.API.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using System.Web;
 
 namespace FileSharingApp.API.Controllers
 {
@@ -53,6 +54,13 @@ namespace FileSharingApp.API.Controllers
             var files = this.fileService.GetFolderFiles(folderId, User.GetUserId());
             var fileDtos = this.mapper.Map<IEnumerable<FileDto>>(files);
             return fileDtos;
+        }
+
+        [HttpDelete("{url}")]
+        public void Delete(string url)
+        {
+            string decodedUrl = HttpUtility.UrlDecode(url);
+            this.fileService.DeleteFile(decodedUrl);
         }
     }
 }
