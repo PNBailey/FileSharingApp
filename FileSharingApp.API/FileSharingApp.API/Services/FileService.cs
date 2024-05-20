@@ -1,9 +1,12 @@
-﻿using CloudinaryDotNet;
+﻿using Azure;
+using CloudinaryDotNet;
+using CloudinaryDotNet.Actions;
 using FileSharingApp.API.CustomExceptions;
 using FileSharingApp.API.DAL.Interfaces;
 using FileSharingApp.API.Helpers;
 using FileSharingApp.API.Models.Files;
 using FileSharingApp.API.Services.Interfaces;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 
 namespace FileSharingApp.API.Services
@@ -103,6 +106,35 @@ namespace FileSharingApp.API.Services
         public IEnumerable<BaseFile> GetFolderFiles(int folderId, int userId)
         {
             return fileRepository.GetFolderFiles(folderId, userId);
+        }
+
+        public void DeleteFile(string url)
+        {
+            DeletionResult imageDeletionResult = DeleteImage(url);
+            DeletionResult rawDeletionResult = DeleteRaw(url);
+
+            if (imageDeletionResult.Result == "ok" || rawDeletionResult.Result == "ok")
+            {
+                fileRepository.DeleteFile(url);
+            } 
+            else
+            {
+                throw new InvalidOperationException();
+            }
+        }
+
+        private DeletionResult DeleteImage(string url)
+        {
+            DeletionParams deletionParams = new DeletionParams(url);
+            deletionParams.ResourceType = ResourceType.Image;
+            return Cloudinary.Destroy(deletionParams);
+        }
+
+        private DeletionResult DeleteRaw(string url)
+        {
+            DeletionParams deletionParams = new DeletionParams(url);
+            deletionParams.ResourceType = ResourceType.Raw;
+            return Cloudinary.Destroy(deletionParams);
         }
     }
 }

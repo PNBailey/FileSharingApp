@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
@@ -60,7 +60,19 @@ export class FileComponent {
     isHovered: boolean = false;
     imageHasLoaded = false;
     @Input() file: AppFile;
+    @Output() deleteFileEvent = new EventEmitter<AppFile>();
+    @Output() viewFileEvent = new EventEmitter<AppFile>();
+    @Output() downloadFileEvent = new EventEmitter<AppFile>();
 
-    onButtonClick(event: any) {
+    deleteFile() {
+        this.deleteFileEvent.emit(this.file);
+    }
+
+    viewFile() {
+        this.viewFileEvent.emit(this.file);
+    }
+
+    downloadFile() {
+        this.downloadFileEvent.emit(this.file);
     }
 }

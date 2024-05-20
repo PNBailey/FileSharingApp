@@ -19,14 +19,14 @@
 
 
         <!-- Icon buttons -->
-        <div class="icon-buttons" *ngIf="isHovered" [@iconButtonsAnimation] (click)="onButtonClick($event)">
-            <button mat-icon-button class="m-1" aria-label="Delete">
+        <div class="icon-buttons" *ngIf="isHovered" [@iconButtonsAnimation]>
+            <button mat-icon-button class="m-1" aria-label="Delete" (click)="deleteFile()">
                 <mat-icon color="warn">delete</mat-icon>
             </button>
-            <button mat-icon-button class="m-1" aria-label="View">
+            <button mat-icon-button class="m-1" aria-label="View" (click)="viewFile()">
                 <mat-icon color="primary">visibility</mat-icon>
             </button>
-            <button mat-icon-button class="m-1" aria-label="Download">
+            <button mat-icon-button class="m-1" aria-label="Download" (click)="downloadFile()">
                 <mat-icon color="accent">download</mat-icon>
             </button>
         </div>

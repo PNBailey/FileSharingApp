@@ -57,7 +57,6 @@ export class FileEffects {
         this.actions$.pipe(
             ofType(FilesActions.getAllFiles),
             tap(() => this.loadingService.toggleLoadingObs(LoadingObsName.LOADING_FILES)),
-            // debounceTime(1000),
             switchMap(() => this.fileService.getAllFiles()),
             map((files: AppFile[]) => FilesApiActions.getFilesSuccessful({ files: files })),
             catchError(() => of(FilesApiActions.getFilesUnsuccessful()))
@@ -79,7 +78,6 @@ export class FileEffects {
         this.actions$.pipe(
             ofType(FilesActions.getFolderFiles),
             tap(() => this.loadingService.toggleLoadingObs(LoadingObsName.LOADING_FILES)),
-            // debounceTime(2000),
             switchMap((action) => this.fileService.getFolderFiles(action.folderId)),
             map((files: AppFile[]) => FilesApiActions.getFilesSuccessful({ files: files })),
             catchError(() => of(FilesApiActions.getFilesUnsuccessful())),
@@ -90,6 +88,37 @@ export class FileEffects {
         this.actions$.pipe(
             ofType(FilesApiActions.getFilesSuccessful),
             tap(() => this.loadingService.toggleLoadingObs(LoadingObsName.LOADING_FILES))
+        ), { dispatch: false }
+    );
+
+    deleteFile$ = createEffect(() =>
+        this.actions$.pipe(
+            ofType(FilesActions.deleteFile),
+            switchMap((action) => this.fileService.deleteFile(action.file)),
+            map((file: AppFile) => FilesApiActions.deleteFileSuccessful({ file: file })),
+            catchError((error) => of(FilesApiActions.deleteFileUnsuccessful(error))),
+        )
+    );
+
+    deleteFileSuccessful$ = createEffect(() =>
+        this.actions$.pipe(
+            ofType(FilesApiActions.deleteFileSuccessful),
+            tap(() => {
+                this.messageHandlingService.onDisplayNewMessage({
+                    message: "File deleted"
+                });
+            }),
+        ), { dispatch: false }
+    );
+
+    deleteFileUnsuccessful$ = createEffect(() =>
+        this.actions$.pipe(
+            ofType(FilesApiActions.deleteFileUnsuccessful),
+            tap((error) => {
+                this.messageHandlingService.onDisplayNewMessage({
+                    message: "Unable to delete file. Please try again later"
+                });
+            }),
         ), { dispatch: false }
     );
 

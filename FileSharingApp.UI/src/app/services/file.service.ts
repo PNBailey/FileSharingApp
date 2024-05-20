@@ -2,11 +2,13 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { AppFile } from '../models/app-file';
 import { environment } from 'src/environments/environment';
+import { map, of } from 'rxjs';
 
 @Injectable({
     providedIn: 'root'
 })
 export class FileService {
+
     baseUrl = `${environment.baseUrl}/File`;
 
     constructor(
@@ -26,5 +28,12 @@ export class FileService {
 
     getFolderFiles(folderId: number) {
         return this.http.get<AppFile[]>(`${this.baseUrl}/Folder/${folderId}`);
+    }
+
+    deleteFile(file: AppFile) {
+        const encodedUrl = encodeURIComponent(file.url);
+        return this.http.delete(`${this.baseUrl}/${encodedUrl}`).pipe(
+            map(() => file)
+        );
     }
 }

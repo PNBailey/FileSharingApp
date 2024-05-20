@@ -14,5 +14,6 @@ export const fileReducer = createReducer(
     initialState,
     on(FilesApiActions.uploadFilesSuccessful, (state, payload) => ({ ...state, files: [...state.files, ...payload.files] })),
     on(FilesApiActions.getFilesSuccessful, (state, payload) => ({ ...state, files: payload.files })),
-    on(FilesActions.clearFiles, () => initialState)
+    on(FilesActions.clearFiles, () => initialState),
+    on(FilesApiActions.deleteFileSuccessful, (state, payload) => ({ ...state, files: state.files.filter(f => f.id != payload.file.id) })),
 )
