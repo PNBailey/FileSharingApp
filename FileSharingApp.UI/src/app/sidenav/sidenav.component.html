@@ -8,8 +8,7 @@
             <ng-container *ngIf="(folders$ | async) as folders">
                 <p-tree *ngIf="folders.length > 0" [value]="folders | parentFolderFilter | convertToFolderNodes"
                     [draggableNodes]="true" [droppableNodes]="true" draggableScope="self" droppableScope="self"
-                    (onNodeDrop)="onDrop($event)" selectionMode="single" (onNodeSelect)="folderSelected($event)"
-                    (onDrop)="drop($event)" />
+                    (onNodeDrop)="onDrop($event)" selectionMode="single" (onNodeSelect)="folderSelected($event)" />
             </ng-container>
         </div>
     </mat-sidenav>

@@ -9,5 +9,7 @@
         public string FileTypeName { get; set; } = null!;
 
         public string Url { get; set; } = null!;
+
+        public string DownloadUrl { get; set; } = null!;
     }
 }

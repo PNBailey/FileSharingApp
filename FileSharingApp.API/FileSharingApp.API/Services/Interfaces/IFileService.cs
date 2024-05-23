@@ -1,4 +1,5 @@
 ﻿using FileSharingApp.API.Models.Files;
+using Microsoft.AspNetCore.Mvc;
 
 namespace FileSharingApp.API.Services.Interfaces
 {
@@ -15,5 +16,7 @@ namespace FileSharingApp.API.Services.Interfaces
         IEnumerable<BaseFile> GetFolderFiles(int folderId, int userId);
 
         void DeleteFile(string url);
+
+        string BuildDownloadUrl(string url);
     }
 }
