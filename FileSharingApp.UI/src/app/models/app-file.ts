@@ -6,4 +6,5 @@ export class AppFile {
     url: string;
     lastUpdated: Date;
     fileDate: File;
+    downloadUrl: string;
 }

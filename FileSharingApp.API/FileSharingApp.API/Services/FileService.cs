@@ -5,6 +5,7 @@ using FileSharingApp.API.DAL.Interfaces;
 using FileSharingApp.API.Helpers;
 using FileSharingApp.API.Models.Files;
 using FileSharingApp.API.Services.Interfaces;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 
 namespace FileSharingApp.API.Services
@@ -59,6 +60,7 @@ namespace FileSharingApp.API.Services
                 file.Url = response.PublicId;
             }
             file.Name = Path.GetFileNameWithoutExtension(file.FileData.FileName);
+            file.DownloadUrl = BuildDownloadUrl(file.Url);
             fileRepository.UploadFile(file);
 
             return file;
@@ -133,6 +135,16 @@ namespace FileSharingApp.API.Services
             DeletionParams deletionParams = new DeletionParams(url);
             deletionParams.ResourceType = ResourceType.Raw;
             return Cloudinary.Destroy(deletionParams);
+        }
+
+        public string BuildDownloadUrl(string publicId)
+        {
+            var url = Cloudinary.Api.UrlImgUp
+                    .Secure(true)
+                    .Transform(new Transformation().Flags("attachment"))
+                    .BuildUrl(publicId);
+
+            return url;
         }
     }
 }

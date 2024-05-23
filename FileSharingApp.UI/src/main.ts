@@ -26,7 +26,14 @@ if (environment.production) {
 
 bootstrapApplication(AppComponent, {
     providers: [
-        importProvidersFrom(BrowserModule, AppRoutingModule, FormsModule, ReactiveFormsModule, MatDialogModule, MatSnackBarModule, BrowserAnimationsModule
+        importProvidersFrom(
+            BrowserModule,
+            AppRoutingModule,
+            FormsModule,
+            ReactiveFormsModule,
+            MatDialogModule,
+            MatSnackBarModule,
+            BrowserAnimationsModule
         ),
         { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
         provideAnimations(),

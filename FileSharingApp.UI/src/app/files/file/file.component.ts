@@ -83,6 +83,11 @@ export class FileComponent implements AfterViewInit {
     }
 
     downloadFile() {
-        this.downloadFileEvent.emit(this.file);
+        const link = document.createElement('a');
+        link.href = this.file.downloadUrl;
+        link.setAttribute('download', this.file.name);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
     }
 }
