@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, DestroyRef, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatButtonModule } from '@angular/material/button';
@@ -16,6 +16,8 @@ import { getFolderById } from '../state/folder/folder.selector';
 import { Folder } from '../models/folder';
 import { LoadingObsName, LoadingService } from '../services/loading.service';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { FileViewComponent } from './file-view/file-view.component';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
     selector: 'app-files',
@@ -33,7 +35,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
     styleUrls: ['./files.component.scss']
 })
 export class FilesComponent {
-
+    destroyRef = inject(DestroyRef);
     files$: Observable<AppFile[]> = this.store.select(getFiles);
     folder$: Observable<Folder | null> = this.route.paramMap.pipe(
         map((params) => parseInt(params.get('folderId'))),
@@ -54,7 +56,7 @@ export class FilesComponent {
         private loadingService: LoadingService
     ) { }
 
-    openDialog(folderId: number = null) {
+    openFileUploadDialog(folderId: number = null) {
         this.dialog.open(FileUploadComponent, {
             minWidth: '80vw',
             data: { folderId: folderId }
@@ -65,7 +67,18 @@ export class FilesComponent {
         this.store.dispatch(FilesActions.deleteFile({ file: file }));
     }
 
-    viewFile(file: AppFile) {
+    openFileViewDialog(file: AppFile) {
+        const dialogRef = this.dialog.open(FileViewComponent, {
+            minWidth: '40vw',
+            data: { file: file }
+        });
+        dialogRef.afterClosed()
+            .pipe(takeUntilDestroyed(this.destroyRef))
+            .subscribe((updatedFile: AppFile) => {
+                if (updatedFile) {
+                    this.store.dispatch(FilesActions.updateFile({ file: { ...file, ...updatedFile } }));
+                }
+            })
     }
 
     downloadFile(file: AppFile) {

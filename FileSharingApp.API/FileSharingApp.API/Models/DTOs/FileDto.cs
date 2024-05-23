@@ -1,4 +1,6 @@
-﻿namespace FileSharingApp.API.Models.DTOs
+﻿using FileSharingApp.API.Models.Files;
+
+namespace FileSharingApp.API.Models.DTOs
 {
     public class FileDto
     {
@@ -11,5 +13,10 @@
         public string Url { get; set; } = null!;
 
         public string DownloadUrl { get; set; } = null!;
+
+        public int? FolderId { get; set; }
+
+        public string? Description { get; set; }
+
     }
 }

@@ -126,6 +126,40 @@ export class FileEffects {
         ), { dispatch: false }
     );
 
+    updateFile$ = createEffect(() =>
+        this.actions$.pipe(
+            ofType(FilesActions.updateFile),
+            tap(() => this.loadingService.toggleLoadingObs(LoadingObsName.UPDATING_FILE)),
+            switchMap((action) => this.fileService.updateFile(action.file)),
+            map((file: AppFile) => FilesApiActions.updateFileSuccessful({ file: file })),
+            catchError(() => of(FilesApiActions.updateFileUnsuccessful())),
+        )
+    );
+
+    updateFileSuccessful$ = createEffect(() =>
+        this.actions$.pipe(
+            ofType(FilesApiActions.updateFileSuccessful),
+            tap(() => {
+                this.messageHandlingService.onDisplayNewMessage({
+                    message: "File updated"
+                });
+                this.loadingService.toggleLoadingObs(LoadingObsName.UPDATING_FILE)
+            }),
+        ), { dispatch: false }
+    );
+
+    updateFileUnsuccessful$ = createEffect(() =>
+        this.actions$.pipe(
+            ofType(FilesApiActions.updateFileUnsuccessful),
+            tap(() => {
+                this.messageHandlingService.onDisplayNewMessage({
+                    message: "Unable to update file. Please try again later"
+                });
+                this.loadingService.toggleLoadingObs(LoadingObsName.UPDATING_FILE)
+            }),
+        ), { dispatch: false }
+    );
+
     constructor(
         private actions$: Actions,
         private fileService: FileService,

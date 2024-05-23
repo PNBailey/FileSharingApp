@@ -1,6 +1,4 @@
-﻿using CloudinaryDotNet.Actions;
-using CloudinaryDotNet;
-using FileSharingApp.API.DAL.Interfaces;
+﻿using FileSharingApp.API.DAL.Interfaces;
 using FileSharingApp.API.Data;
 using FileSharingApp.API.Models.Files;
 
@@ -17,7 +15,7 @@ namespace FileSharingApp.API.DAL
 
         public IEnumerable<BaseFile> GetAllFiles(int userId)
         {
-            var files = this.context.Files
+            var files = context.Files
                 .Where(f => f.FileOwner.Id == userId)
                 .ToList();
             return files;
@@ -25,16 +23,18 @@ namespace FileSharingApp.API.DAL
 
         public void UploadFile(BaseFile file)
         {
-            this.context.Files.Add(file);
-            this.context.SaveChanges();
+            context.Files.Add(file);
+            context.SaveChanges();
         }
 
         public IEnumerable<BaseFile> GetFolderFiles(int folderId, int userId)
         {
-            return context.Files.Where(f => f.Folder.Id == folderId && f.FileOwner.Id == userId).ToList();
+            return context.Files
+                .Where(f => f.Folder != null && f.Folder.Id == folderId && f.FileOwner.Id == userId)
+                .ToList();
         }
 
-        public async void DeleteFile(string url)
+        public void DeleteFile(string url)
         {
             var fileToRemove = context.Files.FirstOrDefault(file => file.Url == url);
             if (fileToRemove != null) 
@@ -43,6 +43,17 @@ namespace FileSharingApp.API.DAL
             }
 
             context.SaveChanges();
+        }
+
+        public void Update(BaseFile file)
+        {
+            context.Files.Update(file);
+            context.SaveChanges();
+        }
+
+        public BaseFile Get(int id)
+        {
+            return context.Files.First(f => f.Id == id);
         }
     }
 }

@@ -146,5 +146,15 @@ namespace FileSharingApp.API.Services
 
             return url;
         }
+
+        public void Update(BaseFile file)
+        {
+            fileRepository.Update(file);
+        }
+
+        public BaseFile Get(int id)
+        {
+            return fileRepository.Get(id);
+        }
     }
 }
