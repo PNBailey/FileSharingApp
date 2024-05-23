@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, EventEmitter, Input, Output } from '@angular/core';
+import { AfterViewInit, Component, EventEmitter, Input, Output, Renderer2 } from '@angular/core';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
@@ -66,9 +66,8 @@ export class FileComponent implements AfterViewInit {
     @Input() file: AppFile;
     @Output() deleteFileEvent = new EventEmitter<AppFile>();
     @Output() viewFileEvent = new EventEmitter<AppFile>();
-    @Output() downloadFileEvent = new EventEmitter<AppFile>();
 
-    constructor(private loadingService: LoadingService) { }
+    constructor(private loadingService: LoadingService, private renderer: Renderer2) { }
 
     ngAfterViewInit(): void {
         this.deletingFile$ = this.loadingService.getLoadingObs(this.file.name);
@@ -83,11 +82,13 @@ export class FileComponent implements AfterViewInit {
     }
 
     downloadFile() {
-        const link = document.createElement('a');
-        link.href = this.file.downloadUrl;
-        link.setAttribute('download', this.file.name);
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+        if (this.file && this.file.downloadUrl) {
+            const link = document.createElement('a');
+            link.href = this.file.downloadUrl;
+            link.setAttribute('download', this.file.name);
+            this.renderer.appendChild(document.body, link);
+            link.click();
+            this.renderer.removeChild(document.body, link);
+        }
     }
 }
