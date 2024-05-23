@@ -1,5 +1,6 @@
 ﻿using FileSharingApp.API.Models.Files;
 using Microsoft.AspNetCore.Mvc;
+using NPOI.Util;
 
 namespace FileSharingApp.API.Services.Interfaces
 {
@@ -18,5 +19,9 @@ namespace FileSharingApp.API.Services.Interfaces
         void DeleteFile(string url);
 
         string BuildDownloadUrl(string url);
+
+        void Update(BaseFile file);
+
+        BaseFile Get(int id);
     }
 }

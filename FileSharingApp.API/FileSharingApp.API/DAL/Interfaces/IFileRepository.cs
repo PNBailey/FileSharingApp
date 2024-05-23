@@ -11,5 +11,9 @@ namespace FileSharingApp.API.DAL.Interfaces
         IEnumerable<BaseFile> GetFolderFiles(int folderId, int userId);
 
         void DeleteFile(string url);
+
+        void Update(BaseFile file);
+
+        BaseFile Get(int id);
     }
 }

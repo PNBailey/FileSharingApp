@@ -6,7 +6,8 @@ export enum LoadingObsName {
     CHECKING_USERNAME = 'checkingUsername$',
     UPDATING_PROFILE = 'updatingProfile$',
     CHECKING_FOLDERNAME = 'checkingFolderName$',
-    LOADING_FILES = 'loadingFiles$'
+    LOADING_FILES = 'loadingFiles$',
+    UPDATING_FILE = 'updatingFile$'
 }
 @Injectable({
     providedIn: 'root'

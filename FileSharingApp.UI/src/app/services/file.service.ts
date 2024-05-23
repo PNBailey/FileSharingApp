@@ -36,4 +36,10 @@ export class FileService {
             map(() => file)
         );
     }
+
+    updateFile(file: AppFile) {
+        return this.http.put(`${this.baseUrl}/Update`, file).pipe(
+            map(() => file)
+        );
+    }
 }

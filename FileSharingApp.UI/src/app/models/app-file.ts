@@ -1,3 +1,5 @@
+import { Folder } from "./folder";
+
 export class AppFile {
     id: number;
     name: string;
@@ -5,6 +7,7 @@ export class AppFile {
     fileTypeName: string;
     url: string;
     lastUpdated: Date;
-    fileDate: File;
     downloadUrl: string;
+    folder: Folder;
+    folderId: number;
 }
