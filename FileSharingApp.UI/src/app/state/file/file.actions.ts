@@ -1,16 +1,15 @@
 import { createActionGroup, emptyProps, props } from "@ngrx/store";
 import { AppFile } from "src/app/models/app-file";
+import { FileSearchParams } from "src/app/models/file-search-params";
 
 export const FilesActions = createActionGroup({
     source: 'Files',
     events: {
         'Upload Files': props<{ files: File[], folderId: number | null }>(),
-        'Get All Files': emptyProps(),
         'Clear Files': emptyProps(),
-        'Get Folder Files': props<{ folderId: number }>(),
-        'Get Files': emptyProps(),
+        'Get Files': props<{ searchParams: FileSearchParams }>(),
         'Delete File': props<{ file: AppFile }>(),
-        'Update File': props<{ file: AppFile }>()
+        'Update File': props<{ file: AppFile }>(),
     }
 });
 

@@ -1,7 +1,7 @@
-import { Component, Inject, ViewChild } from '@angular/core';
+import { Component, DestroyRef, ViewChild, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NgxFileDropEntry, NgxFileDropModule } from 'ngx-file-drop';
-import { MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
+import { MatDialogModule } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { MatTable, MatTableModule } from '@angular/material/table';
 import { Store } from '@ngrx/store';
@@ -9,6 +9,9 @@ import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { FilesActions } from 'src/app/state/file/file.actions';
+import { getFileSearchParams } from 'src/app/state/file/file.selector';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { FileSearchParams } from 'src/app/models/file-search-params';
 
 @Component({
     selector: 'app-file-upload',
@@ -30,11 +33,18 @@ export class FileUploadComponent {
     public filesToUpload: File[] = [];
     public columnNames = ['name', 'file type', 'file size', 'last updated', 'delete'];
     @ViewChild(MatTable) table: MatTable<File>;
+    destroyRef = inject(DestroyRef);
+    searchParams: FileSearchParams;
 
     constructor(
-        private store: Store,
-        @Inject(MAT_DIALOG_DATA) public data: { folderId: number | null }
-    ) { }
+        private store: Store
+    ) {
+        this.store.select(getFileSearchParams).pipe(
+            takeUntilDestroyed(this.destroyRef)
+        ).subscribe(searchParams => {
+            this.searchParams = searchParams;
+        });
+    }
 
     public onFileDropped(files: NgxFileDropEntry[]) {
         for (const droppedFile of files) {
@@ -63,6 +73,6 @@ export class FileUploadComponent {
     }
 
     uploadFiles() {
-        this.store.dispatch(FilesActions.uploadFiles({ files: this.filesToUpload, folderId: this.data.folderId }))
+        this.store.dispatch(FilesActions.uploadFiles({ files: this.filesToUpload, folderId: this.searchParams.folder.id }))
     }
 }

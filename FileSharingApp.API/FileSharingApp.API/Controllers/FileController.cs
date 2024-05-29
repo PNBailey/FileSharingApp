@@ -21,18 +21,12 @@ namespace FileSharingApp.API.Controllers
         }
 
         [HttpGet]
-        public IEnumerable<FileDto> Get()
+        public IEnumerable<FileDto> Get([FromQuery] FileSearchParams searchParams)
         {
-            var files = fileService.GetAllFiles(User.GetUserId());
+            var files = fileService.GetFiles(searchParams, User.GetUserId());
             var fileDtos = mapper.Map<IEnumerable<FileDto>>(files);
             return fileDtos;
         }
-
-        //[HttpGet("{id}")]
-        //public string Get(int id)
-        //{
-        //    return "value";
-        //}
 
         [HttpPost("{folderId?}")]
         public async Task<FileDto> Post(int? folderId, [FromForm]IFormFile file)
@@ -45,14 +39,6 @@ namespace FileSharingApp.API.Controllers
             var uploadedfile = await fileService.UploadFile(newFile, User.GetUserId());
             var fileDto = mapper.Map<FileDto>(uploadedfile);
             return fileDto;
-        }
-
-        [HttpGet("Folder/{folderId}")]
-        public IEnumerable<FileDto> GetFolderFiles(int folderId)
-        {
-            var files = fileService.GetFolderFiles(folderId, User.GetUserId());
-            var fileDtos = mapper.Map<IEnumerable<FileDto>>(files);
-            return fileDtos;
         }
 
         [HttpDelete("{url}")]

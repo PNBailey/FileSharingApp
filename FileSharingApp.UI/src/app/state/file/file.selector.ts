@@ -7,3 +7,8 @@ export const getFiles = createSelector(
     filesFeatureSelector,
     (state: FilesState) => state.files
 );
+
+export const getFileSearchParams = createSelector(
+    filesFeatureSelector,
+    (state: FilesState) => state.fileSearchParams
+);

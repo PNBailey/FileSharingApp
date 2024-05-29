@@ -7,7 +7,6 @@ import { MessageHandlingService } from "src/app/services/message-handling.servic
 import { AppFile } from "src/app/models/app-file";
 import { LoadingObsName, LoadingService } from "src/app/services/loading.service";
 
-
 @Injectable()
 export class FileEffects {
 
@@ -53,11 +52,11 @@ export class FileEffects {
         ), { dispatch: false }
     );
 
-    getAllFiles$ = createEffect(() =>
+    getFiles$ = createEffect(() =>
         this.actions$.pipe(
-            ofType(FilesActions.getAllFiles),
+            ofType(FilesActions.getFiles),
             tap(() => this.loadingService.toggleLoadingObs(LoadingObsName.LOADING_FILES)),
-            switchMap(() => this.fileService.getAllFiles()),
+            switchMap((action) => this.fileService.getFiles(action.searchParams)),
             map((files: AppFile[]) => FilesApiActions.getFilesSuccessful({ files: files })),
             catchError(() => of(FilesApiActions.getFilesUnsuccessful()))
         )
@@ -72,16 +71,6 @@ export class FileEffects {
                 });
             }),
         ), { dispatch: false }
-    );
-
-    getFolderFiles$ = createEffect(() =>
-        this.actions$.pipe(
-            ofType(FilesActions.getFolderFiles),
-            tap(() => this.loadingService.toggleLoadingObs(LoadingObsName.LOADING_FILES)),
-            switchMap((action) => this.fileService.getFolderFiles(action.folderId)),
-            map((files: AppFile[]) => FilesApiActions.getFilesSuccessful({ files: files })),
-            catchError(() => of(FilesApiActions.getFilesUnsuccessful())),
-        )
     );
 
     getFilesSuccessful$ = createEffect(() =>

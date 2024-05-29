@@ -53,6 +53,6 @@ export class SidenavComponent {
     }
 
     folderSelected(event: any) {
-        this.folderSelectedEvent.emit(event.node.data.id)
+        this.folderSelectedEvent.emit(event.node.data)
     }
 }
