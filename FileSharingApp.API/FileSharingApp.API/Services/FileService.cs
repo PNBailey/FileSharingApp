@@ -98,14 +98,9 @@ namespace FileSharingApp.API.Services
             }
         }
 
-        public IEnumerable<BaseFile> GetAllFiles(int userId)
+        public IEnumerable<BaseFile> GetFiles(FileSearchParams searchParams, int userId)
         {
-            return fileRepository.GetAllFiles(userId);
-        }
-
-        public IEnumerable<BaseFile> GetFolderFiles(int folderId, int userId)
-        {
-            return fileRepository.GetFolderFiles(folderId, userId);
+            return fileRepository.GetFiles(searchParams, userId);
         }
 
         public void DeleteFile(string url)

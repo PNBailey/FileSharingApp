@@ -1,18 +1,9 @@
 <div class="d-flex justify-content-between align-items-center">
-    <ng-container *ngIf="folder$ | async as folder; else allFiles">
-        <h3 class="p-3">{{ folder.name }}</h3>
-        <button mat-flat-button (click)="openFileUploadDialog(folder.id)" class="me-3" color="primary">
-            <mat-icon fontIcon="add"></mat-icon>
-            Add Files
-        </button>
-    </ng-container>
-    <ng-template #allFiles>
-        <h3 class="p-3">All Files</h3>
-        <button mat-flat-button (click)="openFileUploadDialog()" class="me-3" color="primary">
-            <mat-icon fontIcon="add"></mat-icon>
-            Add Files
-        </button>
-    </ng-template>
+    <app-file-search></app-file-search>
+    <button mat-flat-button (click)=" openFileUploadDialog()" class="me-3" color="primary">
+        <mat-icon fontIcon="add"></mat-icon>
+        Add Files
+    </button>
 </div>
 <mat-divider></mat-divider>
 <mat-spinner class="container my-5 d-flex justify-content-center" matSuffix [diameter]="40"
@@ -20,8 +11,8 @@
 <div class="container px-4 pb-2 d-flex justify-content-start">
     <div class="row">
         <div *ngFor="let file of files$ | async" class="col my-4 app-file-list-item">
-            <app-file [file]="file" (deleteFileEvent)="deleteFile($event)" (viewFileEvent)="openFileViewDialog($event)"
-                (downloadFileEvent)="downloadFile($event)"></app-file>
+            <app-file [file]="file" (deleteFileEvent)="deleteFile($event)"
+                (viewFileEvent)="openFileViewDialog($event)"></app-file>
         </div>
     </div>
 </div>

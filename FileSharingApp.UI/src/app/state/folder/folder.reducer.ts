@@ -15,5 +15,6 @@ export const initialState: FolderState = {
 export const folderReducer = createReducer(
     initialState,
     on(FolderApiActions.getAllFoldersSuccessful, (state, { folders }) => ({ ...state, folders })),
-    on(FolderActions.clearFolders, () => initialState)
+    on(FolderActions.clearFolders, () => initialState),
+    on(FolderActions.folderSelected, (state, { selectedFolder }) => ({ ...state, selectedFolder: selectedFolder }))
 );

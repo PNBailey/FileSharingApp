@@ -13,25 +13,24 @@ namespace FileSharingApp.API.DAL
             this.context = context;
         }
 
-        public IEnumerable<BaseFile> GetAllFiles(int userId)
+        public IEnumerable<BaseFile> GetFiles(FileSearchParams searchParams, int userId)
         {
-            var files = context.Files
-                .Where(f => f.FileOwner.Id == userId)
+            var filteredFiles = context.Files
+                .Where(f =>
+                    f.FileOwner.Id == userId &&
+                    (string.IsNullOrEmpty(searchParams.Name) || f.Name.StartsWith(searchParams.Name)) &&
+                    (string.IsNullOrEmpty(searchParams.Description) || (f.Description != null && f.Description.StartsWith(searchParams.Description))) &&
+                    (!searchParams.FolderId.HasValue || searchParams.FolderId == f.FolderId)
+                )
                 .ToList();
-            return files;
+
+            return filteredFiles;
         }
 
         public void UploadFile(BaseFile file)
         {
             context.Files.Add(file);
             context.SaveChanges();
-        }
-
-        public IEnumerable<BaseFile> GetFolderFiles(int folderId, int userId)
-        {
-            return context.Files
-                .Where(f => f.Folder != null && f.Folder.Id == folderId && f.FileOwner.Id == userId)
-                .ToList();
         }
 
         public void DeleteFile(string url)

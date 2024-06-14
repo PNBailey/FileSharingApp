@@ -1,0 +1,8 @@
+<form [formGroup]="fileSearchForm">
+    <div class="my-3 d-flex">
+        <input pInputText class="me-3" formControlName="name" placeholder="Search name" />
+        <input pInputText class="me-3" formControlName="description" placeholder="Search description" />
+        <p-dropdown [options]="folders$ | async" optionLabel="name" formControlName="folder" [checkmark]="true"
+            [showClear]="true" placeholder="Select a folder" />
+    </div>
+</form>
