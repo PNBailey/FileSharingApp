@@ -72,7 +72,7 @@ export class FileUploadComponent {
         this.table.renderRows();
     }
 
-    uploadFiles() {
-        this.store.dispatch(FilesActions.uploadFiles({ files: this.filesToUpload, folderId: this.searchParams.folder.id }))
+    public uploadFiles() {
+        this.store.dispatch(FilesActions.uploadFiles({ files: this.filesToUpload, folderId: this.searchParams.folder?.id }))
     }
 }

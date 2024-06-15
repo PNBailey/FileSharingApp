@@ -13,74 +13,66 @@
 // Defining custom theme colours
 
 $custom-teal: (
- 50: #dff1ee,
- 100: #b0dcd4,
- 200: #7ec5b8,
- 300: #4cae9c,
- 400: #279d89,
- 500: #068c76,
- 600: #047f6a,
- 700: #03705b ,
- 800: #00604C,
- 900: #004433,
+    50: #dff1ee,
+    100: #b0dcd4,
+    200: #7ec5b8,
+    300: #4cae9c,
+    400: #279d89,
+    500: #068c76,
+    600: #047f6a,
+    700: #03705b,
+    800: #00604C,
+    900: #004433,
 
- // Defining the contrast colours. These are used in the text that is displayed in the foreground
- contrast: (
-   50: rgba(black, 0.87),
-   100: rgba(black, 0.87),
-   200: rgba(black, 0.87),
-   300: rgba(black, 0.87),
-   400: rgba(black, 0.87),
-   500: white,
-   600: white,
-   700: white,
-   800: white,
-   900: white
- )
+    // Defining the contrast colours. These are used in the text that is displayed in the foreground
+    contrast: (50: rgba(black, 0.87),
+        100: rgba(black, 0.87),
+        200: rgba(black, 0.87),
+        300: rgba(black, 0.87),
+        400: rgba(black, 0.87),
+        500: white,
+        600: white,
+        700: white,
+        800: white,
+        900: white)
 );
 
 $custom-blue: (
- 50: #e3f2fd,
- 100: #bbdefb,
- 200: #90caf9,
- 300: #64b5f6,
- 400: #42a5f5,
- 500: #2095f3,
- 600: #1e87e5,
- 700: #1976d2,
- 800: #1564c0,
- 900: #0d46a1,
+    50: #e3f2fd,
+    100: #bbdefb,
+    200: #90caf9,
+    300: #64b5f6,
+    400: #42a5f5,
+    500: #2095f3,
+    600: #1e87e5,
+    700: #1976d2,
+    800: #1564c0,
+    900: #0d46a1,
 
- contrast: (
-   50: rgba(black, 0.87),
-   100: rgba(black, 0.87),
-   200: rgba(black, 0.87),
-   300: rgba(black, 0.87),
-   400: rgba(black, 0.87),
-   500: rgba(black, 0.87),
-   600: rgba(black, 0.87),
-   700: white,
-   800: white,
-   900: white
- )
+    contrast: (50: rgba(black, 0.87),
+        100: rgba(black, 0.87),
+        200: rgba(black, 0.87),
+        300: rgba(black, 0.87),
+        400: rgba(black, 0.87),
+        500: rgba(black, 0.87),
+        600: rgba(black, 0.87),
+        700: white,
+        800: white,
+        900: white)
 );
 
 $custom-primary: mat.define-palette($custom-teal, 600);
 $custom-accent: mat.define-palette($custom-blue, 700);
 $custom-warn: mat.define-palette(mat.$red-palette);
 
-$custom-typography: mat.define-typography-config(
-    $font-family: 'Poppins'
-  );
+$custom-typography: mat.define-typography-config($font-family: 'Poppins'
+    );
 
-$custom-theme: mat.define-light-theme((
-  color: (
-    primary: $custom-primary,
-    accent: $custom-accent,
-    warn: $custom-warn
-  ),
-  typography: $custom-typography,
-));
+$custom-theme: mat.define-light-theme((color: (primary: $custom-primary,
+                accent: $custom-accent,
+                warn: $custom-warn ),
+            typography: $custom-typography,
+        ));
 
 @include mat.core-theme($custom-theme);
 
@@ -103,5 +95,11 @@ $custom-theme: mat.define-light-theme((
 
 /* ANGULAR MATERIAL AUTO DEFINED STYLE */
 
-html, body { height: 100%; }
-body { margin: 0; }
+html,
+body {
+    height: 100%;
+}
+
+body {
+    margin: 0;
+}
