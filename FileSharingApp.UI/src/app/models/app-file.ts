@@ -10,6 +10,4 @@ export class AppFile {
     downloadUrl: string;
     folder: Folder;
     folderId: number;
-    isUnique: boolean;
-    overwriteFile: boolean;
 }
