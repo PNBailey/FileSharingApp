@@ -1,29 +1,12 @@
 <mat-card class="profile-card rounded d-flex justify-content-center" *ngIf="(loggedOnUser$ | async) as user">
     <div class="profile-picture-container" (click)="fileUpload.click()">
-        <input
-          type="file"
-          class="d-none file-input"
-          accept=".png, .jpg"
-          (change)="onFileSelected($event)"
-          #fileUpload>
-        <img
-            class="p-2 rounded profile-picture"
-            mat-card-image
-            src="{{ user.profilePictureUrl || 'https://res.cloudinary.com/filesharingapp/image/upload/v1676505697/Application%20Assets/User_Picture_Icon_l83q5o.png'}}">
+        <input type="file" class="d-none file-input" accept=".png, .jpg" (change)="onFileSelected($event)" #fileUpload>
+        <img class="p-2 rounded profile-picture" mat-card-image
+            src="{{ user.profilePictureUrl || '../../../../../assets/images/Placeholder user image.jpg"
+            alt="Profile Image">
         <div class="d-flex justify-content-end upload-icon-container">
-            <mat-icon
-                aria-hidden="false"
-                aria-label="Upload image icon"
-                fontIcon="upload"
-                class="upload-icon d-flex justify-content-center">
+            <mat-icon fontIcon="upload" class="upload-icon d-flex justify-content-center">
             </mat-icon>
         </div>
     </div>
-    <mat-card-content class="d-flex justify-content-center m-3">
-        <p class="bio">{{user.bio}}</p>
-    </mat-card-content>
-    <mat-card-actions class="m-2 d-flex justify-content-center">
-        <button mat-button>PLACEHOLDER</button>
-        <button mat-button>PLACEHOLDER</button>
-    </mat-card-actions>
 </mat-card>
