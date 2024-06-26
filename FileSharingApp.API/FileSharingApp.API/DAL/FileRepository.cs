@@ -29,8 +29,11 @@ namespace FileSharingApp.API.DAL
 
         public void UploadFile(BaseFile file)
         {
-            context.Files.Add(file);
-            context.SaveChanges();
+            if(!context.Files.Any(f => f.Name == file.Name))
+            {
+                context.Files.Add(file);
+                context.SaveChanges();
+            }
         }
 
         public void DeleteFile(string url)

@@ -46,7 +46,7 @@ export class FileEffects {
             ofType(FilesApiActions.uploadFilesUnsuccessful),
             tap(() => {
                 this.messageHandlingService.onDisplayNewMessage({
-                    message: "An error occured during the upload process. Please try again later"
+                    message: "An error occurred during the upload process. Please try again later"
                 });
             }),
         ), { dispatch: false }
