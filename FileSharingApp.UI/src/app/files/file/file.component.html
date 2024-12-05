@@ -1,4 +1,4 @@
-<mat-card class="file-card" (mouseenter)="isHovered = true" (mouseleave)="isHovered = false" [matTooltip]="file.name"
+<!-- <mat-card class="file-card" (mouseenter)="isHovered = true" (mouseleave)="isHovered = false" [matTooltip]="file.name"
     matTooltipPosition="above">
     <div class="overlay" *ngIf="isHovered || (deletingFile$ | async)" [@overlayAnimation]></div>
     <mat-card-header class="pt-2 file-card-header">
@@ -30,4 +30,24 @@
     </div>
     <mat-card-content class="p-2">
     </mat-card-content>
-</mat-card>
+</mat-card> -->
+
+<div class="overlay" *ngIf="isHovered || (deletingFile$ | async)" [@overlayAnimation]></div>
+<tr (mouseenter)="isHovered = true" (mouseleave)="isHovered = false">
+    <td>{{ file.fileTypeName }}</td>
+    <td>{{ file.name }}</td>
+    <td>{{ file.lastUpdated }}</td>
+    <td>
+        <div class="icon-buttons" *ngIf="isHovered" [@iconButtonsAnimation]>
+            <button mat-icon-button class="m-1" aria-label="Delete" (click)="deleteFile()">
+                <mat-icon color="warn">delete</mat-icon>
+            </button>
+            <button mat-icon-button class="m-1" aria-label="View" (click)="viewFile()">
+                <mat-icon color="primary">visibility</mat-icon>
+            </button>
+            <button mat-icon-button class="m-1" aria-label="Download" (click)="downloadFile()">
+                <mat-icon color="accent">download</mat-icon>
+            </button>
+        </div>
+    </td>
+</tr>
