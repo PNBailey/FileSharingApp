@@ -4,9 +4,11 @@ namespace FileSharingApp.API.DAL.Interfaces
 {
     public interface IFileRepository
     {
-        void UploadFile(BaseFile file);
+        void UploadFile(BaseFile file, int userId);
 
         IEnumerable<BaseFile> GetFiles(FileSearchParams searchParams, int userId);
+
+        IEnumerable<FileType> GetFileTypes(int userId);
 
         void DeleteFile(string url);
 

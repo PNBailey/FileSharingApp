@@ -8,7 +8,7 @@ namespace FileSharingApp.API.Models.DTOs
 
         public string Name { get; set; } = null!;
 
-        public string FileTypeName { get; set; } = null!;
+        public FileType FileType { get; set; } = null!;
 
         public string Url { get; set; } = null!;
 
@@ -17,6 +17,10 @@ namespace FileSharingApp.API.Models.DTOs
         public int? FolderId { get; set; }
 
         public string? Description { get; set; }
+
+        public DateTime LastModified { get; set; }
+
+        public int Size { get; set; }
 
     }
 }

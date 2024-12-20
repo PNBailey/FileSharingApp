@@ -1,6 +1,9 @@
-﻿namespace FileSharingApp.API.Models.Files
+﻿using CloudinaryDotNet;
+using CloudinaryDotNet.Actions;
+
+namespace FileSharingApp.API.Models.Files
 {
-    public class PdfFile : BaseFile
+    public class WordFile : BaseFile
     {
         //public override RawUploadParams GetUploadParams(int userId)
         //{
@@ -13,7 +16,7 @@
         //        UniqueFilename = false,
         //        UseFilename = true,
         //        RawConvert = "aspose",
-        //        Folder = $"{userId}-pdf"
+        //        Folder = $"{userId}-xml"
         //    };
 
         //    return uploadParams;

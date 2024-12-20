@@ -29,3 +29,42 @@ body .p-component {
     font-family: Poppins;
     font-weight: 300;
 }
+
+.pi-file-excel {
+    color: #1d6f42;
+}
+
+.pi-file-word {
+    color: #2b579a;
+}
+
+.pi-images {
+    color: #d24726;
+}
+
+.pi-file-pdf {
+    color: #E53935;
+}
+
+.pi-image {
+    color: rgba(128, 128, 128, 0.779);
+}
+
+.p-datatable-header,
+th {
+    background: none;
+}
+
+.p-selectable-row {
+    border-bottom: 1px solid #e5e7eb;
+    border-top: 1px solid #e5e7eb;
+}
+
+.p-dropdown-items {
+    padding: 0px;
+}
+
+.p-dropdown-item {
+    padding-left: 0px;
+    padding-left: 0px;
+}

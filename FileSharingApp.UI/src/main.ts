@@ -18,7 +18,7 @@ import { FileEffects } from './app/state/file/file.effects';
 import { fileReducer } from './app/state/file/file.reducer';
 import { FolderEffects } from './app/state/folder/folder.effects';
 import { folderReducer } from './app/state/folder/folder.reducer';
-import { provideCloudinaryLoader } from '@angular/common';
+import { DatePipe, provideCloudinaryLoader } from '@angular/common';
 
 if (environment.production) {
     enableProdMode();
@@ -40,7 +40,8 @@ bootstrapApplication(AppComponent, {
         provideHttpClient(withInterceptorsFromDi()),
         provideStore({ account: accountReducer, files: fileReducer, folders: folderReducer }),
         provideEffects(AccountEffects, FileEffects, FolderEffects),
-        provideCloudinaryLoader('https://res.cloudinary.com/filesharingapp/')
+        provideCloudinaryLoader('https://res.cloudinary.com/filesharingapp/'),
+        DatePipe
     ]
 })
     .catch(err => console.error(err));

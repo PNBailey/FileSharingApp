@@ -9,10 +9,14 @@ import { InputTextModule } from 'primeng/inputtext';
 import { DropdownModule } from 'primeng/dropdown';
 import { FloatLabelModule } from 'primeng/floatlabel';
 import { Folder } from 'src/app/models/folder';
-import { Observable, combineLatest, debounceTime, distinctUntilChanged, startWith } from 'rxjs';
+import { Observable, combineLatest, debounceTime, distinctUntilChanged, filter, startWith, tap } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FileSearchParams } from 'src/app/models/file-search-params';
 import { FilesActions } from 'src/app/state/file/file.actions';
+import { getFileSearchParams, getFileTypes } from 'src/app/state/file/file.selector';
+import { FileType } from 'src/app/models/file-type';
+import { MultiSelectModule } from 'primeng/multiselect';
+import { CalendarModule } from 'primeng/calendar';
 
 @Component({
     selector: 'app-file-search',
@@ -26,7 +30,9 @@ import { FilesActions } from 'src/app/state/file/file.actions';
         NgFor,
         InputTextModule,
         DropdownModule,
-        FloatLabelModule
+        FloatLabelModule,
+        MultiSelectModule,
+        CalendarModule
 
     ],
     templateUrl: './file-search.component.html',
@@ -38,24 +44,36 @@ export class FileSearchComponent {
     fileSearchForm: FormGroup;
     destroyRef = inject(DestroyRef);
     nameSearch$: Observable<string>;
-    descriptionSearch$: Observable<string>;
+    fileTypeSearch$: Observable<FileType>;
     folderSearch$: Observable<Folder>;
-    searchParams: FileSearchParams;
+    lastModifiedRangeSearch$: Observable<Date[] | undefined>;
+    fileTypes$: Observable<FileType[]> = this.store.select(getFileTypes);
 
     constructor(private store: Store, private fb: FormBuilder) {
         this.initializeForm();
+        this.clearFiltersWhenFileSearchParamsEmpty();
         this.setSelectedFolder();
         this.modifyNameFormControlSubscription();
-        this.modifyDescriptionFormControlSubscription();
+        this.modifyFileTypeFormControlSubscription();
         this.modifyFolderFormControlSubscription();
+        this.modifyLastModifiedRangeFormControlSubscription();
         this.subscribeToFormChanges();
+        this.store.dispatch(FilesActions.getFileTypes());
+    }
+
+    private clearFiltersWhenFileSearchParamsEmpty() {
+        this.store.select(getFileSearchParams).pipe(
+            filter((fileSearchParams) => !fileSearchParams.name && !fileSearchParams.folder && !fileSearchParams.fileType && !fileSearchParams.lastModifiedRange[0] && !fileSearchParams.lastModifiedRange[1]),
+            tap(() => this.fileSearchForm.reset(null, { emitEvent: false })),
+            takeUntilDestroyed(this.destroyRef)
+        ).subscribe();
     }
 
     private subscribeToFormChanges() {
-        combineLatest([this.nameSearch$, this.descriptionSearch$, this.folderSearch$]).pipe(
+        combineLatest([this.nameSearch$, this.fileTypeSearch$, this.folderSearch$, this.lastModifiedRangeSearch$]).pipe(
             takeUntilDestroyed(this.destroyRef)
-        ).subscribe(([name, description, folder]) => {
-            this.store.dispatch(FilesActions.getFiles({ searchParams: new FileSearchParams(name, description, folder) }));
+        ).subscribe(([name, fileType, folder, lastModifiedRange]) => {
+            this.store.dispatch(FilesActions.searchFiles({ searchParams: new FileSearchParams(name, fileType, folder, lastModifiedRange) }));
         });
     }
 
@@ -65,11 +83,16 @@ export class FileSearchComponent {
         );
     }
 
-    private modifyDescriptionFormControlSubscription() {
-        this.descriptionSearch$ = this.fileSearchForm.controls['description'].valueChanges.pipe(
-            debounceTime(400),
-            distinctUntilChanged(),
+    private modifyFileTypeFormControlSubscription() {
+        this.fileTypeSearch$ = this.fileSearchForm.controls['fileType'].valueChanges.pipe(
             startWith(null)
+        );
+    }
+
+    private modifyLastModifiedRangeFormControlSubscription() {
+        this.lastModifiedRangeSearch$ = this.fileSearchForm.controls['lastModifiedRange'].valueChanges.pipe(
+            filter(lastModifiedRange => lastModifiedRange[0] && lastModifiedRange[1]),
+            startWith([])
         );
     }
 
@@ -92,9 +115,9 @@ export class FileSearchComponent {
     private initializeForm() {
         this.fileSearchForm = this.fb.group({
             "name": [''],
-            "description": [''],
+            "fileType": [null],
             "folder": [null],
+            "lastModifiedRange": [[]]
         });
     }
-
 }

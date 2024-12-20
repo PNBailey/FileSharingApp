@@ -1,4 +1,5 @@
 export class FileType {
+    id: number;
     name: string;
-    fileIconUrl: string;
+    icon: string;
 }

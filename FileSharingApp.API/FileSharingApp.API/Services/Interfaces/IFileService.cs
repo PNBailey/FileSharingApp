@@ -1,18 +1,17 @@
-﻿using FileSharingApp.API.Models.Files;
-using Microsoft.AspNetCore.Mvc;
-using NPOI.Util;
+﻿using FileSharingApp.API.Models.DTOs;
+using FileSharingApp.API.Models.Files;
 
 namespace FileSharingApp.API.Services.Interfaces
 {
     public interface IFileService
     {
-        Task<BaseFile> UploadFile(BaseFile file, int userId);
-
-        object CreateFileType(string contentType);
+        BaseFile UploadFile(BaseFile appFile, int userId);
 
         string GetFileTypeName(string fileExtension);
 
         IEnumerable<BaseFile> GetFiles(FileSearchParams searchParams, int userId);
+
+        IEnumerable<FileType> GetFileTypes(int userId);
 
         void DeleteFile(string url);
 
@@ -21,5 +20,7 @@ namespace FileSharingApp.API.Services.Interfaces
         void Update(BaseFile file);
 
         BaseFile Get(int id);
+
+        BaseFile CreateAppFile(FileUploadDto fileUploadDto);
     }
 }

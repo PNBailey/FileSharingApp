@@ -36,7 +36,7 @@
 <tr (mouseenter)="isHovered = true" (mouseleave)="isHovered = false">
     <td>{{ file.fileTypeName }}</td>
     <td>{{ file.name }}</td>
-    <td>{{ file.lastUpdated }}</td>
+    <td>{{ file.lastModified }}</td>
     <td>
         <div class="icon-buttons" *ngIf="isHovered" [@iconButtonsAnimation]>
             <button mat-icon-button class="m-1" aria-label="Delete" (click)="deleteFile()">

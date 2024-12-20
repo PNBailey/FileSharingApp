@@ -7,8 +7,10 @@ export class AppFile {
     description: string;
     fileTypeName: string;
     fileType: FileType;
+    originalFile: File;
+    size: number;
     url: string;
-    lastUpdated: Date;
+    lastModified: Date;
     downloadUrl: string;
     folder: Folder;
     folderId: number;

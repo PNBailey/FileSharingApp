@@ -66,17 +66,24 @@
 <p-table #dt [value]="files$ | async" [(selection)]="selectedFiles" dataKey="id" [rowHover]="true" [rows]="10"
     [showCurrentPageReport]="true" [rowsPerPageOptions]="[10, 25, 50]" [loading]="loadingFiles$ | async"
     [paginator]="true" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} files" [filterDelay]="0"
-    [globalFilterFields]="['file.fileTypeName', 'file.name']">
+    [globalFilterFields]="['file.fileType.name', 'file.name']">
     <ng-template pTemplate="caption">
-        <div class="flex justify-content-between">
-            <p-button [outlined]="true" icon="pi pi-filter-slash" label="Clear" (onClick)="clear(dt)" />
-            <p-iconField iconPosition="left">
-                <p-inputIcon>
-                    <i class="pi pi-search"></i>
-                </p-inputIcon>
-                <input pInputText type="text" [(ngModel)]="searchValue"
-                    (input)="dt.filterGlobal($event.target.value, 'contains')" placeholder="Keyboard Search" />
-            </p-iconField>
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <button mat-flat-button (click)="clear()" color="accent">
+                    <mat-icon fontIcon="clear_all"></mat-icon>
+                    Clear
+                </button>
+            </div>
+            <div class="d-flex align-items-center">
+                <div>
+                    <app-file-search></app-file-search>
+                </div>
+                <button mat-flat-button (click)="openFileUploadDialog()" color="primary">
+                    <mat-icon fontIcon="add"></mat-icon>
+                    Add File
+                </button>
+            </div>
         </div>
     </ng-template>
     <ng-template pTemplate="header">
@@ -84,44 +91,65 @@
             <th style="width: 4rem">
                 <p-tableHeaderCheckbox />
             </th>
-            <th pSortableColumn="file.type" style="min-width: 14rem">
+            <th pSortableColumn="fileType.name" style="min-width: 14rem">
                 <div class="flex justify-content-between align-items-center">
                     File Type
-                    <p-sortIcon field="file.type" />
-                    <p-columnFilter field="file.type" matchMode="in" display="menu" [showMatchModes]="false"
+                    <p-sortIcon field="fileType.name" />
+                    <!-- <p-columnFilter field="fileType.name" matchMode="in" display="menu" [showMatchModes]="false"
                         [showOperator]="false" [showAddButton]="false" class="ml-auto">
                         <ng-template pTemplate="header">
                             <div class="px-3 pt-3 pb-0">
                                 <span class="font-bold">File Type Picker</span>
                             </div>
                         </ng-template>
-                        <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+                        <ng-template pTemplate="item" let-value let-filter="filterCallback">
                             <p-multiSelect [ngModel]="value" [options]="fileTypes$ | async" placeholder="Any"
-                                (onChange)="filter($event.value)" optionLabel="name">
-                                <ng-template let-fileType pTemplate="item">
+                                (onChange)="filterTable($event.value)" optionLabel="name">
+                                <ng-template let-fileType pTemplate="fileType">
                                     <div class="inline-block vertical-align-middle">
-                                        <img [alt]="fileType.name" src="{{ fileType.fileIconUrl }}" width="24"
-                                            class="vertical-align-middle" />
+                                        <i class="pi {{ fileType.icon }} me-2"></i>
                                         <span class="ml-1 mt-1">{{ fileType.name }}</span>
                                     </div>
                                 </ng-template>
                             </p-multiSelect>
                         </ng-template>
-                    </p-columnFilter>
+                    </p-columnFilter> -->
                 </div>
             </th>
-            <th pSortableColumn="file.name" style="min-width: 14rem">
+            <!-- <th>
+                <p-columnFilter field="fileType.name" matchMode="in" [showMenu]="false">
+                    <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+                        <p-multiSelect [ngModel]="value" [options]="fileTypes$ | async" placeholder="Any"
+                            (onChange)="filter($event.value)" optionLabel="name">
+                            <ng-template let-fileType pTemplate="fileType">
+                                <div class="inline-block vertical-align-middle">
+                                    <i class="pi {{ fileType.icon }} me-2"></i>
+                                    <span class="ml-1 mt-1">{{ fileType.name }}</span>
+                                </div>
+                            </ng-template>
+                        </p-multiSelect>
+                    </ng-template>
+                </p-columnFilter>
+            </th> -->
+            <th pSortableColumn="name" style="min-width: 14rem">
                 <div class="flex justify-content-between align-items-center">
                     File Name
-                    <p-sortIcon field="file.name" />
-                    <p-columnFilter type="text" field="file.name" display="menu" class="ml-auto" />
+                    <p-sortIcon field="name" />
+                    <!-- <p-columnFilter type="text" field="name" display="menu" class="ml-auto" /> -->
                 </div>
             </th>
-            <th pSortableColumn="file.added" style="min-width: 14rem">
+            <th pSortableColumn="lastModified" style="min-width: 14rem">
                 <div class="flex justify-content-between align-items-center">
-                    File Added
-                    <p-sortIcon field="file.added" />
-                    <p-columnFilter type="text" field="file.added" display="menu" class="ml-auto" />
+                    Last Modified
+                    <p-sortIcon field="lastModified" />
+                    <!-- <p-columnFilter type="text" field="lastModified" display="menu" class="ml-auto" /> -->
+                </div>
+            </th>
+            <th pSortableColumn="size" style="min-width: 14rem">
+                <div class="flex justify-content-between align-items-center">
+                    Size
+                    <p-sortIcon field="size" />
+                    <!-- <p-columnFilter type="text" field="size" display="menu" class="ml-auto" /> -->
                 </div>
             </th>
             <th style="width: 5rem"></th>
@@ -132,18 +160,22 @@
             <td>
                 <p-tableCheckbox [value]="file" />
             </td>
-            <td>
+            <td class="d-flex align-items-center">
                 <span class="p-column-title">File Type</span>
-                <img src="https://primefaces.org/cdn/primeng/images/demo/flag/flag_placeholder.png" />
-                <span class="ml-1 vertical-align-middle">{{ file.fileTypeName }}</span>
+                <i class="pi {{ file.fileType.icon }} me-2"></i>
+                <span class="ml-1 vertical-align-middle">{{ file.fileType.name }}</span>
             </td>
             <td>
                 <span class="p-column-title">File Name</span>
-                {{ file.name }}
+                {{ file.name | textLength: 30 }}
             </td>
             <td>
-                <span class="p-column-title">File Added</span>
-                {{ file.added }}
+                <span class="p-column-title">Last Modified</span>
+                {{ file.lastModified | date: 'short' }}
+            </td>
+            <td>
+                <span class="p-column-title">Size</span>
+                {{(file.size / 1000000 | number: '1.1-2') + 'mb'}}
             </td>
         </tr>
     </ng-template>

@@ -5,7 +5,6 @@ using FileSharingApp.API.Models.DTOs;
 using FileSharingApp.API.Models.Files;
 using FileSharingApp.API.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using System.Web;
 
 namespace FileSharingApp.API.Controllers
 {
@@ -21,46 +20,46 @@ namespace FileSharingApp.API.Controllers
         }
 
         [HttpGet]
-        public IEnumerable<FileDto> Get([FromQuery] FileSearchParams searchParams)
+        public IEnumerable<FileDto> Get([FromQuery]FileSearchParams searchParams)
         {
             var files = fileService.GetFiles(searchParams, User.GetUserId());
             var fileDtos = mapper.Map<IEnumerable<FileDto>>(files);
             return fileDtos;
         }
 
-        [HttpPost("{folderId?}")]
-        public async Task<FileDto> Post(int? folderId, [FromForm]IFormFile file)
+        [HttpPost]
+        public void Post([FromForm]FileUploadDto fileUploadDto)
         {
-            var fileExtension = Path.GetExtension(file.FileName);
-            var fileTypeName = fileService.GetFileTypeName(fileExtension);
-            BaseFile newFile = (BaseFile)fileService.CreateFileType(fileTypeName);
-            newFile.FileData = file;
-            newFile.FolderId = folderId;
-            var uploadedfile = await fileService.UploadFile(newFile, User.GetUserId());
-            var fileDto = mapper.Map<FileDto>(uploadedfile);
-            return fileDto;
+            BaseFile appFile = fileService.CreateAppFile(fileUploadDto);
+            fileService.UploadFile(appFile, User.GetUserId());
         }
 
         [HttpDelete("{url}")]
         public void Delete(string url)
         {
-            string decodedUrl = HttpUtility.UrlDecode(url);
-            fileService.DeleteFile(decodedUrl);
+            //string decodedUrl = HttpUtility.UrlDecode(url);
+            //fileService.DeleteFile(decodedUrl);
         }
 
         [HttpPut("Update")]
         public IActionResult Update([FromBody]FileDto file)
         {
-            var existingFile = fileService.Get(file.Id);
+            //var existingFile = fileService.Get(file.Id);
 
-            if (existingFile == null)
-            {
-                return NotFound();
-            }
-            var fileToUpdate = mapper.Map(file, existingFile);
-            fileService.Update(fileToUpdate);
+            //if (existingFile == null)
+            //{
+            //    return NotFound();
+            //}
+            //var fileToUpdate = mapper.Map(file, existingFile);
+            //fileService.Update(fileToUpdate);
 
             return Ok();
+        }
+
+        [HttpGet("FileTypes")]
+        public IEnumerable<FileType> GetFileTypes()
+        {
+            return fileService.GetFileTypes(User.GetUserId());
         }
     }
 }

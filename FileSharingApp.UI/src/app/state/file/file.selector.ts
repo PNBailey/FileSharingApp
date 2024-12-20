@@ -9,6 +9,11 @@ export const getFiles = createSelector(
     (state: FilesState) => state.files.map(file => Object.assign(new AppFile(), file))
 );
 
+export const getFileTypes = createSelector(
+    filesFeatureSelector,
+    (state: FilesState) => state.fileTypes
+);
+
 export const getFileSearchParams = createSelector(
     filesFeatureSelector,
     (state: FilesState) => state.fileSearchParams

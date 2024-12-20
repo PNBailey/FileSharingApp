@@ -1,12 +1,12 @@
 ﻿using CloudinaryDotNet;
 using CloudinaryDotNet.Actions;
-using FileSharingApp.API.CustomExceptions;
 using FileSharingApp.API.DAL.Interfaces;
 using FileSharingApp.API.Helpers;
+using FileSharingApp.API.Models.DTOs;
 using FileSharingApp.API.Models.Files;
 using FileSharingApp.API.Services.Interfaces;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
+using System.Text.Json;
 
 namespace FileSharingApp.API.Services
 {
@@ -14,7 +14,6 @@ namespace FileSharingApp.API.Services
     {
         protected readonly IOptions<CloudinaryConfigOptions> config;
         private readonly IFileRepository fileRepository;
-        private readonly IUserService userService;
 
         protected Cloudinary Cloudinary
         {
@@ -38,56 +37,33 @@ namespace FileSharingApp.API.Services
 
         public FileService(
             IOptions<CloudinaryConfigOptions> config, 
-            IFileRepository fileRepository,
-            IUserService userService)
+            IFileRepository fileRepository)
         {
-            this.userService = userService;
             this.config = config;
             this.fileRepository = fileRepository;
         }
 
-        public async Task<BaseFile> UploadFile(BaseFile file, int userId)
+        public BaseFile UploadFile(BaseFile appFile, int userId)
         {
-            var uploadParams = file.GetUploadParams(userId);
-            var response = await Cloudinary.UploadAsync(uploadParams);
-            if (response.Error != null)
-            {
-                throw new FileUploadException(response.Error.Message);
-            }
-            file.FileOwner = await this.userService.FindByIdAsync(userId);
-            if (response.Url != null)
-            {
-                file.Url = response.PublicId;
-            }
-            file.Name = Path.GetFileNameWithoutExtension(file.FileData.FileName);
-            file.DownloadUrl = BuildDownloadUrl(file.Url);
-            fileRepository.UploadFile(file);
-
-            return file;
-        }
-
-        public object CreateFileType(string fileTypeName)
-        {
-            Type fileType = Type.GetType($"FileSharingApp.API.Models.Files.{fileTypeName}File")!;
-            var newFile = Activator.CreateInstance(fileType);
-            if(newFile == null) throw new ArgumentException("File type is invalid");
-            return newFile;
-
+            fileRepository.UploadFile(appFile, userId);
+            return appFile;
         }
 
         public string GetFileTypeName(string fileExtension)
         {
-            switch(fileExtension)
+            switch(fileExtension.ToLower())
             {
                 case ".doc":
                 case ".docx":
                 case ".docm":
+                    return "Word";
                 case ".xlsx":
                 case ".xlsm":
+                    return "Excel";
                 case ".pptx":
                 case ".pptm":
                 case ".ppt":
-                    return "Xml";
+                    return "PowerPoint";
                 case ".pdf":
                     return "Pdf";
                 case ".png":
@@ -101,6 +77,11 @@ namespace FileSharingApp.API.Services
         public IEnumerable<BaseFile> GetFiles(FileSearchParams searchParams, int userId)
         {
             return fileRepository.GetFiles(searchParams, userId);
+        }
+
+        public IEnumerable<FileType> GetFileTypes(int userId)
+        {
+            return fileRepository.GetFileTypes(userId);
         }
 
         public void DeleteFile(string url)
@@ -134,12 +115,12 @@ namespace FileSharingApp.API.Services
 
         public string BuildDownloadUrl(string publicId)
         {
-            var url = Cloudinary.Api.UrlImgUp
-                    .Secure(true)
-                    .Transform(new Transformation().Flags("attachment"))
-                    .BuildUrl(publicId);
+            //var url = Cloudinary.Api.UrlImgUp
+            //        .Secure(true)
+            //        .Transform(new Transformation().Flags("attachment"))
+            //        .BuildUrl(publicId);
 
-            return url;
+            return "TO DO";
         }
 
         public void Update(BaseFile file)
@@ -150,6 +131,17 @@ namespace FileSharingApp.API.Services
         public BaseFile Get(int id)
         {
             return fileRepository.Get(id);
+        }
+
+        public BaseFile CreateAppFile(FileUploadDto fileUploadDto)
+        {
+            BaseFile appFile = JsonSerializer.Deserialize<BaseFile>(fileUploadDto.FileData)!;
+            appFile.Name = Path.GetFileNameWithoutExtension(appFile.Name);
+            appFile.FileTypeName = GetFileTypeName(Path.GetExtension(fileUploadDto.OriginalFile.FileName));
+            appFile.Url = "TO DO";
+            appFile.DownloadUrl = BuildDownloadUrl(appFile.Url);
+
+            return appFile;
         }
     }
 }

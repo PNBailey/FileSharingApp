@@ -1,11 +1,11 @@
-import { Component, DestroyRef, inject } from '@angular/core';
+import { Component, DestroyRef, ViewChild, inject, viewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { Store } from '@ngrx/store';
 import { FilesActions } from '../state/file/file.actions';
-import { getFiles } from '../state/file/file.selector';
+import { getFileTypes, getFiles } from '../state/file/file.selector';
 import { Observable, map } from 'rxjs';
 import { AppFile } from '../models/app-file';
 import { FileComponent } from './file/file.component';
@@ -25,6 +25,7 @@ import { FormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { FileSearchParams } from '../models/file-search-params';
+import { TextLengthPipe } from '../shared/pipes/text-length-pipe';
 
 @Component({
     selector: 'app-files',
@@ -44,7 +45,8 @@ import { FileSearchParams } from '../models/file-search-params';
         InputIconModule,
         IconFieldModule,
         ButtonModule,
-        InputTextModule
+        InputTextModule,
+        TextLengthPipe
     ],
     templateUrl: './files.component.html',
     styleUrls: ['./files.component.scss']
@@ -53,11 +55,8 @@ export class FilesComponent {
     isHovered: boolean = false;
     destroyRef = inject(DestroyRef);
     searchValue: string;
-    // files: AppFile[] = [];
     selectedFiles: AppFile[] = [];
-    // fileTypes: FileType[] = [];
     files$: Observable<AppFile[]> = this.store.select(getFiles);
-    fileTypes$: Observable<FileType[]> = this.files$.pipe(map(files => files.map(file => file.fileType)));
     loadingFiles$ = this.loadingService.getLoadingObs(LoadingObsName.LOADING_FILES);
     deletingFile$: Observable<boolean>;
 
@@ -66,7 +65,6 @@ export class FilesComponent {
         public dialog: MatDialog,
         private loadingService: LoadingService
     ) {
-        this.store.dispatch(FilesActions.getFiles({ searchParams: new FileSearchParams() }));
     }
 
     openFileUploadDialog() {
@@ -101,7 +99,7 @@ export class FilesComponent {
 
     }
 
-    clear(dataTable: Table) {
-        dataTable.clear();
+    clear() {
+        this.store.dispatch(FilesActions.searchFiles({ searchParams: new FileSearchParams() }));
     }
 }

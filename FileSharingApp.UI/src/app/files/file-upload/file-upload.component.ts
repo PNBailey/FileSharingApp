@@ -12,6 +12,7 @@ import { FilesActions } from 'src/app/state/file/file.actions';
 import { getFileSearchParams } from 'src/app/state/file/file.selector';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FileSearchParams } from 'src/app/models/file-search-params';
+import { AppFile } from 'src/app/models/app-file';
 
 @Component({
     selector: 'app-file-upload',
@@ -73,6 +74,17 @@ export class FileUploadComponent {
     }
 
     public uploadFiles() {
-        this.store.dispatch(FilesActions.uploadFiles({ files: this.filesToUpload, folderId: this.searchParams.folder?.id }))
+        const filesToUploadMapped = this.filesToUpload.map(file => {
+            console.log(file);
+
+            const appFile = new AppFile();
+            appFile.name = file.name;
+            appFile.size = file.size;
+            appFile.lastModified = new Date(file.lastModified);
+            appFile.originalFile = file;
+            appFile.folderId = this.searchParams.folder?.id;
+            return appFile;
+        });
+        this.store.dispatch(FilesActions.uploadFiles({ files: filesToUploadMapped }))
     }
 }
