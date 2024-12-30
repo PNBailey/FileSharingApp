@@ -58,8 +58,8 @@ export class FileEffects {
             ofType(FilesActions.searchFiles),
             tap(() => this.loadingService.toggleLoadingObs(LoadingObsName.LOADING_FILES)),
             switchMap((action) => this.fileService.getFiles(action.searchParams)),
-            map((files: AppFile[]) => FilesApiActions.getFilesSuccessful({ files: files }))
-            // catchError(() => of(FilesApiActions.getFilesUnsuccessful()))
+            map((files: AppFile[]) => FilesApiActions.getFilesSuccessful({ files: files })),
+            catchError(() => of(FilesApiActions.getFilesUnsuccessful()))
         )
     );
 
@@ -138,7 +138,6 @@ export class FileEffects {
                     message: "Unable to delete file. Please try again later"
                 });
                 this.loadingService.toggleLoadingObs(action.file.name)
-
             }),
         ), { dispatch: false }
     );

@@ -78,9 +78,9 @@ namespace FileSharingApp.API.DAL
             }
         }
 
-        public void DeleteFile(string url)
+        public void DeleteFile(string fileName)
         {
-            var fileToRemove = context.Files.FirstOrDefault(file => file.Url == url);
+            var fileToRemove = context.Files.FirstOrDefault(file => file.Name == fileName);
             if (fileToRemove != null) 
             { 
                 context.Files.Remove(fileToRemove);

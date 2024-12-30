@@ -84,33 +84,9 @@ namespace FileSharingApp.API.Services
             return fileRepository.GetFileTypes(userId);
         }
 
-        public void DeleteFile(string url)
+        public void DeleteFile(string fileName)
         {
-            DeletionResult imageDeletionResult = DeleteImage(url);
-            DeletionResult rawDeletionResult = DeleteRaw(url);
-
-            if (imageDeletionResult.Result == "ok" || rawDeletionResult.Result == "ok")
-            {
-                fileRepository.DeleteFile(url);
-            } 
-            else
-            {
-                throw new InvalidOperationException();
-            }
-        }
-
-        private DeletionResult DeleteImage(string url)
-        {
-            DeletionParams deletionParams = new DeletionParams(url);
-            deletionParams.ResourceType = ResourceType.Image;
-            return Cloudinary.Destroy(deletionParams);
-        }
-
-        private DeletionResult DeleteRaw(string url)
-        {
-            DeletionParams deletionParams = new DeletionParams(url);
-            deletionParams.ResourceType = ResourceType.Raw;
-            return Cloudinary.Destroy(deletionParams);
+            fileRepository.DeleteFile(fileName);
         }
 
         public string BuildDownloadUrl(string publicId)

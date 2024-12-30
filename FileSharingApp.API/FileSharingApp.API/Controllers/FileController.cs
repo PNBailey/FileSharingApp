@@ -34,24 +34,23 @@ namespace FileSharingApp.API.Controllers
             fileService.UploadFile(appFile, User.GetUserId());
         }
 
-        [HttpDelete("{url}")]
-        public void Delete(string url)
+        [HttpDelete("{fileName}")]
+        public void Delete(string fileName)
         {
-            //string decodedUrl = HttpUtility.UrlDecode(url);
-            //fileService.DeleteFile(decodedUrl);
+            fileService.DeleteFile(fileName);
         }
 
         [HttpPut("Update")]
         public IActionResult Update([FromBody]FileDto file)
         {
-            //var existingFile = fileService.Get(file.Id);
+            var existingFile = fileService.Get(file.Id);
 
-            //if (existingFile == null)
-            //{
-            //    return NotFound();
-            //}
-            //var fileToUpdate = mapper.Map(file, existingFile);
-            //fileService.Update(fileToUpdate);
+            if (existingFile == null)
+            {
+                return NotFound();
+            }
+            var fileToUpdate = mapper.Map(file, existingFile);
+            fileService.Update(fileToUpdate);
 
             return Ok();
         }

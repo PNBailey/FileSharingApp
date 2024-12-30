@@ -23,13 +23,13 @@ export class LoadingService {
     }
 
     getLoadingObs(loadingObsName: LoadingObsName | string) {
-        this.createLoadingObsIfNotPresent(loadingObsName);
+        if (!this.loadingObservables.has(loadingObsName)) {
+            this.createLoadingObs(loadingObsName);
+        }
         return this.loadingObservables.get(loadingObsName);
     }
 
-    private createLoadingObsIfNotPresent(loadingObsName: string) {
-        if (!this.loadingObservables.has(loadingObsName)) {
-            this.loadingObservables.set(loadingObsName, new BehaviorSubject<boolean>(false));
-        }
+    private createLoadingObs(loadingObsName: string) {
+        this.loadingObservables.set(loadingObsName, new BehaviorSubject<boolean>(false));
     }
 }

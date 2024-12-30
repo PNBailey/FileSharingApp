@@ -10,7 +10,7 @@ namespace FileSharingApp.API.DAL.Interfaces
 
         IEnumerable<FileType> GetFileTypes(int userId);
 
-        void DeleteFile(string url);
+        void DeleteFile(string fileName);
 
         void Update(BaseFile file);
 

@@ -13,7 +13,7 @@ namespace FileSharingApp.API.Services.Interfaces
 
         IEnumerable<FileType> GetFileTypes(int userId);
 
-        void DeleteFile(string url);
+        void DeleteFile(string fileName);
 
         string BuildDownloadUrl(string url);
 

@@ -15,7 +15,7 @@ import { Store } from '@ngrx/store';
 import { Observable, tap } from 'rxjs';
 import { AppFile } from 'src/app/models/app-file';
 import { LoadingObsName, LoadingService } from 'src/app/services/loading.service';
-import { getAllFolders, getFolderById } from 'src/app/state/folder/folder.selector';
+import { getAllFolders } from 'src/app/state/folder/folder.selector';
 
 @Component({
     selector: 'app-file-view',
@@ -59,8 +59,8 @@ export class FileViewComponent {
         @Inject(MAT_DIALOG_DATA) public data: { file: AppFile }
     ) {
         this.appFileForm = this.fb.group({
-            "name": [this.data.file.name, [Validators.required, Validators.maxLength(1000)]],
-            "description": [this.data.file.description, [Validators.maxLength(1000)]],
+            "name": [{ value: this.data.file.name, disabled: true }, [Validators.required, Validators.maxLength(1000)]],
+            "description": [{ value: this.data.file.description, disabled: true }, [Validators.maxLength(1000)]],
             "folderId": [this.data.file.folderId]
         });
     }

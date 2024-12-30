@@ -36,8 +36,7 @@ export class FileService {
     }
 
     deleteFile(file: AppFile) {
-        const encodedUrl = encodeURIComponent(file.url);
-        return this.http.delete(`${this.baseUrl}/${encodedUrl}`).pipe(
+        return this.http.delete(`${this.baseUrl}/${file.name}`).pipe(
             map(() => file)
         );
     }
