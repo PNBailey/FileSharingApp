@@ -12,6 +12,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using NLog;
 using NLog.Web;
+using System.Globalization;
 using System.Text;
 using System.Text.Json.Serialization;
 
@@ -128,6 +129,7 @@ try
     builder.Host.UseNLog();
 
     var app = builder.Build();
+
     app.UseExceptionHandler("/error");
 
     if (app.Environment.IsDevelopment())

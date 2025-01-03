@@ -1,6 +1,7 @@
 ﻿
 using AutoMapper;
 using FileSharingApp.API.ExtensionMethods;
+using FileSharingApp.API.Models;
 using FileSharingApp.API.Models.DTOs;
 using FileSharingApp.API.Models.Files;
 using FileSharingApp.API.Services.Interfaces;
@@ -19,19 +20,27 @@ namespace FileSharingApp.API.Controllers
             this.mapper = mapper;
         }
 
-        [HttpGet]
-        public IEnumerable<FileDto> Get([FromQuery]FileSearchParams searchParams)
+        [HttpPost("GetFiles")]
+        public PaginatedResponse<FileDto> GetFiles([FromBody]FileSearchParams searchParams)
         {
-            var files = fileService.GetFiles(searchParams, User.GetUserId());
-            var fileDtos = mapper.Map<IEnumerable<FileDto>>(files);
-            return fileDtos;
+            PaginatedResponse<BaseFile> baseFilePaginatedResponse = fileService.GetFiles(searchParams, User.GetUserId());
+            PaginatedResponse<FileDto> fileDtoPaginatedResponse = mapper.Map<PaginatedResponse<FileDto>>(baseFilePaginatedResponse);
+            return fileDtoPaginatedResponse;
         }
 
         [HttpPost]
-        public void Post([FromForm]FileUploadDto fileUploadDto)
+        public BaseFile Post([FromForm]FileUploadDto fileUploadDto)
         {
+            if (fileUploadDto.OriginalFile == null || fileUploadDto.OriginalFile.Length == 0)
+            {
+                throw new ArgumentNullException("File is missing or empty.");
+            }
+
             BaseFile appFile = fileService.CreateAppFile(fileUploadDto);
+            appFile.DownloadUrl = fileService.AddFileToCloudStorage(fileUploadDto, appFile.Name);
             fileService.UploadFile(appFile, User.GetUserId());
+
+            return appFile;
         }
 
         [HttpDelete("{fileName}")]
@@ -59,6 +68,15 @@ namespace FileSharingApp.API.Controllers
         public IEnumerable<FileType> GetFileTypes()
         {
             return fileService.GetFileTypes(User.GetUserId());
+        }
+
+        [HttpGet("DownloadFile/{fileName}")]
+        public FileStreamResult DownloadFile(string fileName)
+        {
+            var memoryStream = new MemoryStream();
+            var obj = fileService.DownloadObjectFromCloudStorage(fileName, memoryStream);
+            memoryStream.Seek(0, SeekOrigin.Begin);
+            return File(memoryStream, obj.ContentType);
         }
     }
 }

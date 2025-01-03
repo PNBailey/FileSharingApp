@@ -10,5 +10,6 @@
         </ng-template>
     </p-dropdown>
     <p-calendar formControlName="lastModifiedRange" selectionMode="range" [readonlyInput]="true"
-        placeholder="Search last modified" appendTo="body" dateFormat="dd/mm/yy" />
+        placeholder="Search last modified" appendTo="body" dateFormat="dd/mm/yy"
+        [showClear]="fileSearchForm.controls['lastModifiedRange'].value?.length == 2" />
 </form>

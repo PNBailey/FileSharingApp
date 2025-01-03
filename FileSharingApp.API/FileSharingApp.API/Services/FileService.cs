@@ -1,46 +1,27 @@
-﻿using CloudinaryDotNet;
-using CloudinaryDotNet.Actions;
-using FileSharingApp.API.DAL.Interfaces;
-using FileSharingApp.API.Helpers;
+﻿using FileSharingApp.API.DAL.Interfaces;
+using FileSharingApp.API.Models;
 using FileSharingApp.API.Models.DTOs;
 using FileSharingApp.API.Models.Files;
 using FileSharingApp.API.Services.Interfaces;
-using Microsoft.Extensions.Options;
+using Google.Cloud.Storage.V1;
+using System.IO;
 using System.Text.Json;
 
 namespace FileSharingApp.API.Services
 {
     public class FileService : IFileService
     {
-        protected readonly IOptions<CloudinaryConfigOptions> config;
         private readonly IFileRepository fileRepository;
+        private readonly StorageClient storageClient;
+        private readonly string bucketName;
 
-        protected Cloudinary Cloudinary
+        public FileService( 
+            IFileRepository fileRepository,
+            IConfiguration config)
         {
-            get
-            {
-                return SetupCloudinary(config);
-            }
-        }
-
-        protected virtual Cloudinary SetupCloudinary(IOptions<CloudinaryConfigOptions> config)
-        {
-            Account account = new Account(
-                config.Value.CloudName,
-                config.Value.ApiKey,
-                config.Value.ApiSecret);
-
-            Cloudinary cloudinary = new Cloudinary(account);
-            cloudinary.Api.Secure = true;
-            return cloudinary;
-        }
-
-        public FileService(
-            IOptions<CloudinaryConfigOptions> config, 
-            IFileRepository fileRepository)
-        {
-            this.config = config;
             this.fileRepository = fileRepository;
+            storageClient = StorageClient.Create();
+            bucketName = config["CloudStorageConfig:BucketName"];
         }
 
         public BaseFile UploadFile(BaseFile appFile, int userId)
@@ -74,7 +55,7 @@ namespace FileSharingApp.API.Services
             }
         }
 
-        public IEnumerable<BaseFile> GetFiles(FileSearchParams searchParams, int userId)
+        public PaginatedResponse<BaseFile> GetFiles(FileSearchParams searchParams, int userId)
         {
             return fileRepository.GetFiles(searchParams, userId);
         }
@@ -86,17 +67,8 @@ namespace FileSharingApp.API.Services
 
         public void DeleteFile(string fileName)
         {
+            DeleteFileFromCloudStorage(fileName);
             fileRepository.DeleteFile(fileName);
-        }
-
-        public string BuildDownloadUrl(string publicId)
-        {
-            //var url = Cloudinary.Api.UrlImgUp
-            //        .Secure(true)
-            //        .Transform(new Transformation().Flags("attachment"))
-            //        .BuildUrl(publicId);
-
-            return "TO DO";
         }
 
         public void Update(BaseFile file)
@@ -113,11 +85,33 @@ namespace FileSharingApp.API.Services
         {
             BaseFile appFile = JsonSerializer.Deserialize<BaseFile>(fileUploadDto.FileData)!;
             appFile.Name = Path.GetFileNameWithoutExtension(appFile.Name);
-            appFile.FileTypeName = GetFileTypeName(Path.GetExtension(fileUploadDto.OriginalFile.FileName));
-            appFile.Url = "TO DO";
-            appFile.DownloadUrl = BuildDownloadUrl(appFile.Url);
+            appFile.FileType = fileRepository.GetFileType(GetFileTypeName(Path.GetExtension(fileUploadDto.OriginalFile.FileName)));
 
             return appFile;
+        }
+
+        public string AddFileToCloudStorage(FileUploadDto fileUploadDto, string fileName)
+        {
+            using (var fileStream = fileUploadDto.OriginalFile.OpenReadStream())
+            {
+                var storageObject = storageClient.UploadObject(
+                    bucket: bucketName,
+                    objectName: fileName,
+                    contentType: fileUploadDto.OriginalFile.ContentType,
+                    source: fileStream
+                );
+                return storageObject.MediaLink;
+            }
+        }
+
+        public void DeleteFileFromCloudStorage(string fileName)
+        {
+            storageClient.DeleteObject(bucketName, fileName);
+        }
+
+        public Google.Apis.Storage.v1.Data.Object DownloadObjectFromCloudStorage(string fileName, MemoryStream memoryStream)
+        {
+            return storageClient.DownloadObject(bucketName, fileName, memoryStream);
         }
     }
 }

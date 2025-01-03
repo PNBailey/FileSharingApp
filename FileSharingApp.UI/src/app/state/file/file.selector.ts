@@ -6,7 +6,12 @@ export const filesFeatureSelector = createFeatureSelector<FilesState>('files');
 
 export const getFiles = createSelector(
     filesFeatureSelector,
-    (state: FilesState) => state.files.map(file => Object.assign(new AppFile(), file))
+    (state: FilesState) => state.files?.map(file => Object.assign(new AppFile(), file))
+);
+
+export const getTotalFiles = createSelector(
+    filesFeatureSelector,
+    (state: FilesState) => state.totalFiles
 );
 
 export const getFileTypes = createSelector(
@@ -16,5 +21,5 @@ export const getFileTypes = createSelector(
 
 export const getFileSearchParams = createSelector(
     filesFeatureSelector,
-    (state: FilesState) => state.fileSearchParams
+    (state: FilesState) => state.fileSearch
 );

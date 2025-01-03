@@ -8,8 +8,16 @@
 
         public int? FolderId { get; set; }
 
-        public DateTime? LastModifiedStartDate { get; set; }
+        public string? LastModifiedStartDate { get; set; }
         
-        public DateTime? LastModifiedEndDate { get; set; }
+        public string? LastModifiedEndDate { get; set; }
+        
+        public int PreviousRows { get; set; }
+
+        public int NextRows { get; set; }
+
+        public string? SortField { get; set; }
+
+        public int SortOrder { get; set; }
     }
 }

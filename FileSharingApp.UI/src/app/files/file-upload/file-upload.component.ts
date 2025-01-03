@@ -11,8 +11,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { FilesActions } from 'src/app/state/file/file.actions';
 import { getFileSearchParams } from 'src/app/state/file/file.selector';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { FileSearchParams } from 'src/app/models/file-search-params';
 import { AppFile } from 'src/app/models/app-file';
+import { FileSearch } from 'src/app/models/file-search';
 
 @Component({
     selector: 'app-file-upload',
@@ -35,7 +35,7 @@ export class FileUploadComponent {
     public columnNames = ['name', 'file type', 'file size', 'last updated', 'delete'];
     @ViewChild(MatTable) table: MatTable<File>;
     destroyRef = inject(DestroyRef);
-    searchParams: FileSearchParams;
+    searchParams: FileSearch;
 
     constructor(
         private store: Store
@@ -75,8 +75,6 @@ export class FileUploadComponent {
 
     public uploadFiles() {
         const filesToUploadMapped = this.filesToUpload.map(file => {
-            console.log(file);
-
             const appFile = new AppFile();
             appFile.name = file.name;
             appFile.size = file.size;

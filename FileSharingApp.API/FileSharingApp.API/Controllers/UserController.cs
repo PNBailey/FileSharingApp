@@ -60,6 +60,7 @@ namespace FileSharingApp.API.Controllers
                 //FileData = imageFileData
             };
 
+
             ////var uploadedFile = await fileService.UploadFile(imageFile, User.GetUserId());
             //var user = await userService.FindByIdAsync(User.GetUserId());
             //user.ProfilePictureUrl = uploadedFile.Url.ToString();

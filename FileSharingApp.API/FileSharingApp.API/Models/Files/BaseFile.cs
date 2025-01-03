@@ -14,15 +14,11 @@ namespace FileSharingApp.API.Models.Files
         public string Name { get; set; } = null!;
 
         [Column(TypeName = "varchar(1000)")]
-        public string Url { get; set; } = null!;
-
-        [Column(TypeName = "varchar(1000)")]
         public string DownloadUrl { get; set; } = null!;
 
         public FileType FileType { get; set; } = null!;
 
-        [NotMapped]
-        public string FileTypeName { get; set; } = null!;
+        public int FileTypeId { get; set; }
 
         public Folder? Folder { get; set; }
 

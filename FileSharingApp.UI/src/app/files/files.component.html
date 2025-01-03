@@ -63,15 +63,11 @@
     </p-table>
 </ng-template> -->
 
-<p-table #dt [value]="files$ | async" [(selection)]="selectedFiles" dataKey="id" [rowHover]="true" [rows]="10"
-    [showCurrentPageReport]="true" [rowsPerPageOptions]="[10, 25, 50]" [loading]="loadingFiles$ | async"
-    [paginator]="true" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} files">
+<p-table #dt [value]="files$ | async" dataKey="id" [rowHover]="true" [rows]="10" [rowsPerPageOptions]="[5, 10, 25, 50]"
+    [loading]="loadingFiles$ | async" [paginator]="true" [totalRecords]="totalFiles$ | async" [lazy]="true"
+    (onLazyLoad)="paginateOrSort($event)">
     <ng-template pTemplate="caption">
         <div class="d-flex justify-content-between align-items-center">
-            <button mat-flat-button (click)="clear()" color="accent">
-                <mat-icon fontIcon="clear_all"></mat-icon>
-                Clear
-            </button>
             <app-file-search></app-file-search>
             <button mat-flat-button (click)="openFileUploadDialog()" color="primary">
                 <mat-icon fontIcon="add"></mat-icon>
@@ -125,7 +121,7 @@
             </td>
             <td>
                 <span class="p-column-title">Last Modified</span>
-                {{ file.lastModified | date: 'short' }}
+                {{ file.lastModified | date: 'dd/MM/yyyy, HH:mm' }}
             </td>
             <td>
                 <span class="p-column-title">Size</span>
@@ -137,7 +133,7 @@
                     <button mat-icon-button aria-label="Change File Folder" (click)="openFileViewDialog(file)">
                         <mat-icon color="primary">folder</mat-icon>
                     </button>
-                    <button mat-icon-button aria-label="Download" (click)="downloadFile()">
+                    <button mat-icon-button aria-label="Download" (click)="downloadFile(file)">
                         <mat-icon color="accent">download</mat-icon>
                     </button>
                     <button mat-icon-button aria-label="Delete" (click)="deleteFile(file)">

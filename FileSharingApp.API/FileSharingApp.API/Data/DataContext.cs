@@ -4,6 +4,8 @@ using FileSharingApp.API.Models.Folders;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using System.Reflection.Emit;
 
 namespace FileSharingApp.API.Data
 {
@@ -28,6 +30,8 @@ namespace FileSharingApp.API.Data
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
+            var ukTimeZone = TimeZoneInfo.FindSystemTimeZoneById("GMT Standard Time");
+
             base.OnModelCreating(builder);
 
             builder.Entity<AppUser>()
@@ -70,6 +74,15 @@ namespace FileSharingApp.API.Data
                     new FileType() { Id = 4, Name = "Image", Icon = "pi-image" },
                     new FileType() { Id = 5, Name = "PowerPoint", Icon = "pi-images" }
                 );
+
+            builder.Entity<BaseFile>()
+                .Property(f => f.LastModified)
+                .HasConversion(
+                    new ValueConverter<DateTime, DateTime>(
+                        v => TimeZoneInfo.ConvertTimeToUtc(v, ukTimeZone), // Convert to UTC before saving
+                        v => TimeZoneInfo.ConvertTimeFromUtc(v, ukTimeZone) // Convert from UTC to UK time on retrieval
+                    )
+    );
         }
 
     }

@@ -31,6 +31,9 @@ namespace API.Helpers
             CreateMap<FolderDto, Folder>();
 
             CreateMap<Folder, FolderDto>();
+
+            CreateMap(typeof(PaginatedResponse<>), typeof(PaginatedResponse<>));
+
         }
     }
 }

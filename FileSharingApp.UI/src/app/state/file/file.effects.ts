@@ -7,6 +7,7 @@ import { MessageHandlingService } from "src/app/services/message-handling.servic
 import { AppFile } from "src/app/models/app-file";
 import { LoadingObsName, LoadingService } from "src/app/services/loading.service";
 import { FileType } from "src/app/models/file-type";
+import { PaginatedResponse } from "src/app/models/paginated-response";
 
 @Injectable()
 export class FileEffects {
@@ -15,13 +16,12 @@ export class FileEffects {
         this.actions$.pipe(
             ofType(FilesActions.uploadFiles),
             switchMap((action) => {
-                const files = action.files;
-                const filesObservableArray = files.map(file => {
+                const filesObservableArray = action.files.map(file => {
                     return this.fileService.uploadFile(file);
                 });
                 return forkJoin(filesObservableArray).pipe(
-                    map(() => {
-                        return FilesApiActions.uploadFilesSuccessful({ files: files })
+                    map((uploadedFiles: AppFile[]) => {
+                        return FilesApiActions.uploadFilesSuccessful({ uploadedFiles: uploadedFiles })
                     }),
                     catchError(() => {
                         return of(FilesApiActions.uploadFilesUnsuccessful())
@@ -58,8 +58,8 @@ export class FileEffects {
             ofType(FilesActions.searchFiles),
             tap(() => this.loadingService.toggleLoadingObs(LoadingObsName.LOADING_FILES)),
             switchMap((action) => this.fileService.getFiles(action.searchParams)),
-            map((files: AppFile[]) => FilesApiActions.getFilesSuccessful({ files: files })),
-            catchError(() => of(FilesApiActions.getFilesUnsuccessful()))
+            map((paginatedResponse: PaginatedResponse<AppFile>) => FilesApiActions.getFilesSuccessful({ paginatedResponse: paginatedResponse })),
+            // catchError(() => of(FilesApiActions.getFilesUnsuccessful()))
         )
     );
 
@@ -84,7 +84,6 @@ export class FileEffects {
     getFileTypes$ = createEffect(() =>
         this.actions$.pipe(
             ofType(FilesActions.getFileTypes),
-            tap(() => this.loadingService.toggleLoadingObs(LoadingObsName.LOADING_FILES)),
             switchMap(() => this.fileService.getFileTypes()),
             map((fileTypes: FileType[]) => FilesApiActions.getFileTypesSuccessful({ fileTypes: fileTypes }))
         )
@@ -98,13 +97,6 @@ export class FileEffects {
                     message: "Unable to get files. Please try again later"
                 });
             }),
-        ), { dispatch: false }
-    );
-
-    getFileTypesSuccessful$ = createEffect(() =>
-        this.actions$.pipe(
-            ofType(FilesApiActions.getFileTypesSuccessful),
-            tap(() => this.loadingService.toggleLoadingObs(LoadingObsName.LOADING_FILES))
         ), { dispatch: false }
     );
 

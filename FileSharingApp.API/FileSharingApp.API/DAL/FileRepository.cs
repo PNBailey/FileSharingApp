@@ -1,7 +1,7 @@
 ﻿using FileSharingApp.API.DAL.Interfaces;
 using FileSharingApp.API.Data;
+using FileSharingApp.API.Models;
 using FileSharingApp.API.Models.Files;
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using System.Globalization;
 
@@ -16,58 +16,80 @@ namespace FileSharingApp.API.DAL
             this.context = context;
         }
 
-        public IEnumerable<BaseFile> GetFiles(FileSearchParams searchParams, int userId)
+        public PaginatedResponse<BaseFile> GetFiles(FileSearchParams searchParams, int userId)
         {
-            //DateTime? startDate = null;
-            //DateTime? endDate = null;
+            IQueryable<BaseFile> filteredFiles = GetFilteredFiles(searchParams, userId);
 
-            //if (!string.IsNullOrEmpty(searchParams.LastModifiedRange))
-            //{
-            //    var dateParts = searchParams.LastModifiedRange.Split(',');
-            //    if (dateParts.Length == 2)
-            //    {
-            //        if (DateTime.TryParse(dateParts[0], out var parsedStartDate))
-            //        {
-            //            startDate = parsedStartDate;
-            //        }
+            IOrderedEnumerable<BaseFile> sortedFilteredFiles = SortFiles(filteredFiles, searchParams);
 
-            //        if (DateTime.TryParse(dateParts[1], out var parsedEndDate))
-            //        {
-            //            endDate = parsedEndDate;
-            //        }
-            //    }
-            //}
+            PaginatedResponse<BaseFile> paginatedResponse = new()
+            {
+                TotalRecords = sortedFilteredFiles.Count(),
+                Items = sortedFilteredFiles
+                    .Skip(searchParams.PreviousRows)
+                    .Take(searchParams.NextRows)
+                    .ToList()
+            };
 
-            var filteredFiles = context.Files
-                .Include(f => f.FileType)
+            return paginatedResponse;
+        }
+
+        private IQueryable<BaseFile> GetFilteredFiles(FileSearchParams searchParams, int userId)
+        {
+            if(!string.IsNullOrEmpty(searchParams.LastModifiedStartDate) && !string.IsNullOrEmpty(searchParams.LastModifiedEndDate))
+            {
+                var start = DateTime.Parse(searchParams.LastModifiedStartDate);
+                var end = DateTime.Parse(searchParams.LastModifiedEndDate);
+                var test = context.Files.Select(f => f.LastModified).ToList();
+            }
+            return context.Files
                 .Where(f =>
                     f.FileOwner.Id == userId &&
                     (string.IsNullOrEmpty(searchParams.Name) || f.Name.StartsWith(searchParams.Name)) &&
-                    (!searchParams.FileTypeId.HasValue || searchParams.FileTypeId == f.FileType.Id) &&
+                    (!searchParams.FileTypeId.HasValue || searchParams.FileTypeId == f.FileTypeId) &&
                     (!searchParams.FolderId.HasValue || searchParams.FolderId == f.FolderId) &&
-                    (!searchParams.LastModifiedStartDate.HasValue || f.LastModified >= searchParams.LastModifiedStartDate) &&
-                    (!searchParams.LastModifiedEndDate.HasValue || f.LastModified <= searchParams.LastModifiedEndDate))
-                .ToList();
+                    (string.IsNullOrEmpty(searchParams.LastModifiedStartDate) || f.LastModified >= DateTime.Parse(searchParams.LastModifiedStartDate) &&
+                    (string.IsNullOrEmpty(searchParams.LastModifiedEndDate) || f.LastModified <= SetToEndOfDay(DateTime.Parse(searchParams.LastModifiedEndDate)))))
+                .Include(f => f.FileType);
+        }
 
-            return filteredFiles;
+        private static DateTime SetToEndOfDay(DateTime date)
+        {
+            return date.Date.AddDays(1).AddTicks(-1);
+        }
+
+        private static IOrderedEnumerable<BaseFile> SortFiles(IQueryable<BaseFile> filteredFiles, FileSearchParams searchParams)
+        {
+            Func<BaseFile, object> keySelector = searchParams.SortField switch
+            {
+                "fileType.name" => file => file.FileType.Name,
+                "name" => file => file.Name,
+                "lastModified" => file => file.LastModified,
+                "size" => file => file.Size,
+                _ => file => file.FileType.Name
+            };
+
+            return searchParams.SortOrder == 1
+                ? filteredFiles.OrderBy(keySelector)
+                : filteredFiles.OrderByDescending(keySelector);
         }
 
         public IEnumerable<FileType> GetFileTypes(int userId)
         {
-            var fileTypes = context.Files
-                .Where(file => file.FileOwner.Id == userId)
-                .Select(file => file.FileType)
-                .Distinct()
+            var fileTypes = context.FileTypes
                 .ToList();
 
             return fileTypes;
         }
 
+        public FileType GetFileType(string fileTypeName)
+        {
+            return context.FileTypes.FirstOrDefault(ft => ft.Name == fileTypeName)
+                ?? throw new Exception($"FileType not found for FileTypeName: {fileTypeName}");
+        }
+
         public void UploadFile(BaseFile file, int userId)
         {
-            file.FileType = context.FileTypes.FirstOrDefault(ft => ft.Name == file.FileTypeName)
-                ?? throw new Exception($"FileType not found for FileTypeName: {file.FileTypeName}");
-
             file.FileOwner = context.Users.FirstOrDefault(u => u.Id == userId)
                 ?? throw new Exception($"No user found with id: {userId}");
 
@@ -98,15 +120,6 @@ namespace FileSharingApp.API.DAL
         public BaseFile Get(int id)
         {
             return context.Files.First(f => f.Id == id);
-        }
-
-        private DateTime ParseDate(string dateString)
-        {
-            string format = "ddd MMM dd yyyy"; // Custom format matching the string
-
-            DateTime.TryParseExact(dateString, format, CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime parsedDate);
-
-            return parsedDate;
         }
     }
 }
