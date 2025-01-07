@@ -8,8 +8,7 @@ import { AsyncPipe, NgFor } from '@angular/common';
 import { InputTextModule } from 'primeng/inputtext';
 import { DropdownModule } from 'primeng/dropdown';
 import { FloatLabelModule } from 'primeng/floatlabel';
-import { Folder } from 'src/app/models/folder';
-import { Observable, combineLatest, debounceTime, distinctUntilChanged, filter, skip, startWith, tap, withLatestFrom } from 'rxjs';
+import { Observable, combineLatest, debounceTime, distinctUntilChanged, filter, skip, startWith, withLatestFrom } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FilesActions } from 'src/app/state/file/file.actions';
 import { getFileSearchParams, getFileTypes } from 'src/app/state/file/file.selector';
@@ -43,8 +42,8 @@ export class FileSearchComponent {
     fileSearchForm: FormGroup;
     destroyRef = inject(DestroyRef);
     nameSearch$: Observable<string>;
-    fileTypeSearch$: Observable<FileType>;
-    folderSearch$: Observable<Folder>;
+    fileTypeSearch$: Observable<number>;
+    folderSearch$: Observable<number>;
     lastModifiedRangeSearch$: Observable<Date[] | undefined>;
     fileTypes$: Observable<FileType[]> = this.store.select(getFileTypes);
     existingFileSearchParams$: Observable<FileSearch> = this.store.select(getFileSearchParams);
@@ -66,15 +65,15 @@ export class FileSearchComponent {
             withLatestFrom(this.existingFileSearchParams$),
             skip(1)
         ).subscribe(([newSearchParams, existingSearchParams]) => {
-            const [name, fileType, folder, lastModifiedRange] = newSearchParams;
+            const [name, fileTypeId, folderId, lastModifiedRange] = newSearchParams;
             this.store.dispatch(FilesActions.searchFiles({
                 searchParams: new FileSearch({
                     ...existingSearchParams,
                     name,
-                    fileType,
-                    folder,
-                    lastModifiedStartDate: lastModifiedRange ? lastModifiedRange[0].toLocaleDateString("en-GB") : null,
-                    lastModifiedEndDate: lastModifiedRange ? lastModifiedRange[1].toLocaleDateString("en-GB") : null
+                    fileTypeId,
+                    folderId,
+                    lastModifiedStartDate: lastModifiedRange && lastModifiedRange[0] ? lastModifiedRange[0].toLocaleDateString("en-GB") : null,
+                    lastModifiedEndDate: lastModifiedRange && lastModifiedRange[1] ? lastModifiedRange[1].toLocaleDateString("en-GB") : null
                 })
             }));
         });

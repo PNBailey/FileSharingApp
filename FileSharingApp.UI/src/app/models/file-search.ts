@@ -3,8 +3,8 @@ import { Folder } from "./folder";
 
 interface FileSearchParams {
     name?: string;
-    fileType?: FileType;
-    folder?: Folder;
+    fileTypeId?: number;
+    folderId?: number;
     lastModifiedStartDate?: string;
     lastModifiedEndDate?: string;
     previousRows?: number;
@@ -15,18 +15,18 @@ interface FileSearchParams {
 
 export class FileSearch {
     name: string;
-    fileType: FileType;
-    folder: Folder;
+    fileTypeId: number;
+    folderId: number;
     lastModifiedStartDate: string;
     lastModifiedEndDate: string;
     previousRows: number;
     nextRows: number;
     sortField: string;
     sortOrder: number;
-    constructor({ name = null, fileType = null, folder = null, lastModifiedStartDate = null, lastModifiedEndDate = null, previousRows = 0, nextRows = 10, sortField = "name", sortOrder = 1 }: FileSearchParams) {
+    constructor({ name = null, fileTypeId = null, folderId = null, lastModifiedStartDate = null, lastModifiedEndDate = null, previousRows = 0, nextRows = 10, sortField = "name", sortOrder = 1 }: FileSearchParams) {
         this.name = name;
-        this.fileType = fileType;
-        this.folder = folder;
+        this.fileTypeId = fileTypeId;
+        this.folderId = folderId;
         this.lastModifiedStartDate = lastModifiedStartDate;
         this.lastModifiedEndDate = lastModifiedEndDate;
         this.previousRows = previousRows;

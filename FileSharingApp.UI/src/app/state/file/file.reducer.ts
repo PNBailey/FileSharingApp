@@ -4,17 +4,17 @@ import { AppFile } from "src/app/models/app-file";
 import { FileType } from "src/app/models/file-type";
 import { FileSearch } from "src/app/models/file-search";
 import { PaginatedResponse } from "src/app/models/paginated-response";
+import { filesFeatureSelector } from "./file.selector";
+import { setAlternateWeakRefImpl } from "@angular/core/primitives/signals";
 
 export interface FilesState {
     files: AppFile[];
-    // paginatedResponse: PaginatedResponse<AppFile>;
     fileSearch: FileSearch;
     fileTypes: FileType[];
     totalFiles: number;
 }
 
 export const initialState: FilesState = {
-    // paginatedResponse: null,
     files: [],
     fileSearch: new FileSearch({}),
     fileTypes: [],
@@ -23,7 +23,6 @@ export const initialState: FilesState = {
 
 export const fileReducer = createReducer(
     initialState,
-    // on(FilesApiActions.uploadFilesSuccessful, (state, payload) => ({ ...state, files: [...state.files, ...payload.uploadedFiles.filter(f => !state.files.some(sf => sf.name == f.name))] })),
     on(FilesApiActions.uploadFilesSuccessful, (state, payload) => ({ ...state, files: [...state.files, ...payload.uploadedFiles] })),
     on(FilesActions.searchFiles, (state, payload) => ({ ...state, fileSearch: payload.searchParams })),
     on(FilesApiActions.getFilesSuccessful, (state, payload) => ({ ...state, files: payload.paginatedResponse.items, totalFiles: payload.paginatedResponse.totalRecords })),

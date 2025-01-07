@@ -74,15 +74,6 @@ namespace FileSharingApp.API.Data
                     new FileType() { Id = 4, Name = "Image", Icon = "pi-image" },
                     new FileType() { Id = 5, Name = "PowerPoint", Icon = "pi-images" }
                 );
-
-            builder.Entity<BaseFile>()
-                .Property(f => f.LastModified)
-                .HasConversion(
-                    new ValueConverter<DateTime, DateTime>(
-                        v => TimeZoneInfo.ConvertTimeToUtc(v, ukTimeZone), // Convert to UTC before saving
-                        v => TimeZoneInfo.ConvertTimeFromUtc(v, ukTimeZone) // Convert from UTC to UK time on retrieval
-                    )
-    );
         }
 
     }

@@ -20,14 +20,9 @@ export const FilesApiActions = createActionGroup({
     source: 'Files API',
     events: {
         'Upload Files Successful': props<{ uploadedFiles: AppFile[] }>(),
-        'Upload Files Unsuccessful': emptyProps(),
         'Get Files Successful': props<{ paginatedResponse: PaginatedResponse<AppFile> }>(),
-        'Get Files Unsuccessful': emptyProps(),
         'Delete File Successful': props<{ file: AppFile }>(),
-        'Delete File Unsuccessful': props<{ file: AppFile }>(),
         'Update File Successful': props<{ file: AppFile }>(),
-        'Update File Unsuccessful': emptyProps(),
         'Get File Types Successful': props<{ fileTypes: FileType[] }>(),
-        'Get File Types Unsuccessful': emptyProps()
     }
 });

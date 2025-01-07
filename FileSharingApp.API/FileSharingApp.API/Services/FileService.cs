@@ -51,7 +51,7 @@ namespace FileSharingApp.API.Services
                 case ".jpg":
                     return "Image";
                 default:
-                    throw new ArgumentException("File type is invalid");
+                    throw new ArgumentException("File type not supported");
             }
         }
 

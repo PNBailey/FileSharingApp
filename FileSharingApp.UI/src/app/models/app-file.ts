@@ -13,4 +13,6 @@ export class AppFile {
     folder: Folder;
     folderId: number;
     isHovered = false;
+    isUploading = false;
+    hasUploaded = false;
 }

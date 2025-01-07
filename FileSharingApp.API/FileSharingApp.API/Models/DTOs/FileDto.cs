@@ -10,8 +10,6 @@ namespace FileSharingApp.API.Models.DTOs
 
         public FileType FileType { get; set; } = null!;
 
-        public string Url { get; set; } = null!;
-
         public string DownloadUrl { get; set; } = null!;
 
         public int? FolderId { get; set; }
