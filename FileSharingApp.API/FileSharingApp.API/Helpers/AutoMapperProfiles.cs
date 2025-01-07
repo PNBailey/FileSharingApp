@@ -23,14 +23,17 @@ namespace API.Helpers
                 .ForMember(dest => dest.Password, opt => opt.Ignore());
 
             CreateMap<BaseFile, FileDto>()
-                .ForMember(dest => dest.FileTypeName, opt => opt.MapFrom(bf => bf.GetType().Name));
+                .ForMember(dest => dest.LastModified, opt => opt.MapFrom(src => src.LastModified));
 
             CreateMap<FileDto, BaseFile>()
-               .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
+                .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
 
             CreateMap<FolderDto, Folder>();
 
             CreateMap<Folder, FolderDto>();
+
+            CreateMap(typeof(PaginatedResponse<>), typeof(PaginatedResponse<>));
+
         }
     }
 }

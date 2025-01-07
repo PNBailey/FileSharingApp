@@ -152,10 +152,6 @@ namespace FileSharingApp.API.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("varchar(1000)");
 
-                    b.Property<string>("Discriminator")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("DownloadUrl")
                         .IsRequired()
                         .HasColumnType("varchar(1000)");
@@ -163,26 +159,84 @@ namespace FileSharingApp.API.Migrations
                     b.Property<int>("FileOwnerId")
                         .HasColumnType("int");
 
+                    b.Property<int>("FileTypeId")
+                        .HasColumnType("int");
+
                     b.Property<int?>("FolderId")
                         .HasColumnType("int");
+
+                    b.Property<DateTime>("LastModified")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("varchar(1000)");
 
-                    b.Property<string>("Url")
-                        .IsRequired()
-                        .HasColumnType("varchar(1000)");
+                    b.Property<int>("Size")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
                     b.HasIndex("FileOwnerId");
 
+                    b.HasIndex("FileTypeId");
+
                     b.HasIndex("FolderId");
 
                     b.ToTable("Files");
+                });
 
-                    b.HasDiscriminator<string>("Discriminator").HasValue("BaseFile");
+            modelBuilder.Entity("FileSharingApp.API.Models.Files.FileType", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("Icon")
+                        .IsRequired()
+                        .HasColumnType("varchar(1000)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("varchar(1000)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("FileTypes");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Icon = "pi-file-excel",
+                            Name = "Excel"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Icon = "pi-file-word",
+                            Name = "Word"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Icon = "pi-file-pdf",
+                            Name = "Pdf"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Icon = "pi-image",
+                            Name = "Image"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Icon = "pi-images",
+                            Name = "PowerPoint"
+                        });
                 });
 
             modelBuilder.Entity("FileSharingApp.API.Models.Files.Folder", b =>
@@ -319,27 +373,6 @@ namespace FileSharingApp.API.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("FileSharingApp.API.Models.Files.ImageFile", b =>
-                {
-                    b.HasBaseType("FileSharingApp.API.Models.Files.BaseFile");
-
-                    b.HasDiscriminator().HasValue("ImageFile");
-                });
-
-            modelBuilder.Entity("FileSharingApp.API.Models.Files.PdfFile", b =>
-                {
-                    b.HasBaseType("FileSharingApp.API.Models.Files.BaseFile");
-
-                    b.HasDiscriminator().HasValue("PdfFile");
-                });
-
-            modelBuilder.Entity("FileSharingApp.API.Models.Files.XmlFile", b =>
-                {
-                    b.HasBaseType("FileSharingApp.API.Models.Files.BaseFile");
-
-                    b.HasDiscriminator().HasValue("XmlFile");
-                });
-
             modelBuilder.Entity("FileSharingApp.API.Models.AppUserRole", b =>
                 {
                     b.HasOne("FileSharingApp.API.Models.AppRole", "Role")
@@ -367,11 +400,19 @@ namespace FileSharingApp.API.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("FileSharingApp.API.Models.Files.FileType", "FileType")
+                        .WithMany()
+                        .HasForeignKey("FileTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("FileSharingApp.API.Models.Files.Folder", "Folder")
                         .WithMany("Files")
                         .HasForeignKey("FolderId");
 
                     b.Navigation("FileOwner");
+
+                    b.Navigation("FileType");
 
                     b.Navigation("Folder");
                 });

@@ -1,10 +1,11 @@
 ﻿using FileSharingApp.API.Models;
-using FileSharingApp.API.Models.Enums;
 using FileSharingApp.API.Models.Files;
 using FileSharingApp.API.Models.Folders;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using System.Reflection.Emit;
 
 namespace FileSharingApp.API.Data
 {
@@ -24,13 +25,13 @@ namespace FileSharingApp.API.Data
         }
 
         public DbSet<BaseFile> Files { get; set; }
-        public DbSet<XmlFile> XmlFiles { get; set; }
-        public DbSet<PdfFile> PdfFiles { get; set; }
-        public DbSet<ImageFile> ImageFiles { get; set; }
+        public DbSet<FileType> FileTypes { get; set; }
         public DbSet<Folder> Folders { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
+            var ukTimeZone = TimeZoneInfo.FindSystemTimeZoneById("GMT Standard Time");
+
             base.OnModelCreating(builder);
 
             builder.Entity<AppUser>()
@@ -65,6 +66,14 @@ namespace FileSharingApp.API.Data
                 .WithMany(pf => pf.SubFolders)
                 .HasForeignKey(f => f.ParentFolderId);
 
+            builder.Entity<FileType>()
+                .HasData(
+                    new FileType() { Id = 1, Name = "Excel", Icon = "pi-file-excel" },
+                    new FileType() { Id = 2, Name = "Word", Icon = "pi-file-word" },
+                    new FileType() { Id = 3, Name = "Pdf", Icon = "pi-file-pdf" },
+                    new FileType() { Id = 4, Name = "Image", Icon = "pi-image" },
+                    new FileType() { Id = 5, Name = "PowerPoint", Icon = "pi-images" }
+                );
         }
 
     }

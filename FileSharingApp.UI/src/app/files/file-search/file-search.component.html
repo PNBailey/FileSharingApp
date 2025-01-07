@@ -1,8 +1,15 @@
 <form [formGroup]="fileSearchForm">
-    <div class="my-3 d-flex">
-        <input pInputText class="me-3" formControlName="name" placeholder="Search name" />
-        <input pInputText class="me-3" formControlName="description" placeholder="Search description" />
-        <p-dropdown [options]="folders$ | async" optionLabel="name" formControlName="folder" [checkmark]="true"
-            [showClear]="true" placeholder="Select a folder" />
-    </div>
+    <input pInputText class="me-3" formControlName="name" placeholder="Search name" />
+    <p-dropdown [options]="folders$ | async" optionLabel="name" optionValue="id" formControlName="folder"
+        [checkmark]="true" [showClear]="true" placeholder="Select a folder" class="me-3" />
+    <p-dropdown [options]="fileTypes$ | async" formControlName="fileType" [checkmark]="true" [showClear]="true"
+        placeholder="Select a file type" class="me-3" optionLabel="name" optionValue="id">
+        <ng-template let-fileType pTemplate="fileType">
+            <i class="pi {{ fileType.icon }} me-2"></i>
+            <span>{{ fileType.name }}</span>
+        </ng-template>
+    </p-dropdown>
+    <p-calendar formControlName="lastModifiedRange" selectionMode="range" [readonlyInput]="true"
+        placeholder="Search last modified" appendTo="body" dateFormat="dd/mm/yy"
+        [showClear]="fileSearchForm.controls['lastModifiedRange'].value?.length == 2" />
 </form>

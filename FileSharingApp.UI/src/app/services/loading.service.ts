@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 
 export enum LoadingObsName {
     CHECKING_EMAIL = 'checkingEmail$',
@@ -7,7 +7,8 @@ export enum LoadingObsName {
     UPDATING_PROFILE = 'updatingProfile$',
     CHECKING_FOLDERNAME = 'checkingFolderName$',
     LOADING_FILES = 'loadingFiles$',
-    UPDATING_FILE = 'updatingFile$'
+    UPDATING_FILE = 'updatingFile$',
+    UPLOADING_FILES = 'uploadingFiles$'
 }
 @Injectable({
     providedIn: 'root'
@@ -22,14 +23,14 @@ export class LoadingService {
         loadingObservable.next(!loadingObservable.value);
     }
 
-    getLoadingObs(loadingObsName: LoadingObsName | string) {
-        this.createLoadingObsIfNotPresent(loadingObsName);
+    getLoadingObs(loadingObsName: LoadingObsName | string): BehaviorSubject<boolean> {
+        if (!this.loadingObservables.has(loadingObsName)) {
+            this.createLoadingObs(loadingObsName);
+        }
         return this.loadingObservables.get(loadingObsName);
     }
 
-    private createLoadingObsIfNotPresent(loadingObsName: string) {
-        if (!this.loadingObservables.has(loadingObsName)) {
-            this.loadingObservables.set(loadingObsName, new BehaviorSubject<boolean>(false));
-        }
+    private createLoadingObs(loadingObsName: string) {
+        this.loadingObservables.set(loadingObsName, new BehaviorSubject<boolean>(false));
     }
 }

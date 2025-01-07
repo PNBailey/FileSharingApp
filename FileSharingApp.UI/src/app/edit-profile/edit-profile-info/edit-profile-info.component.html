@@ -8,7 +8,7 @@
                     *ngIf="form.controls['username'].hasError('usernameUniquenessViolated')">
                     Username is <strong>taken</strong>
                 </mat-error>
-                <mat-spinner matSuffix [diameter]="18" *ngIf="checkingUsername$ | async"></mat-spinner>
+                <mat-spinner class="me-3" matSuffix [diameter]="18" *ngIf="checkingUsername$ | async"></mat-spinner>
             </mat-form-field>
         </div>
         <div class="row">

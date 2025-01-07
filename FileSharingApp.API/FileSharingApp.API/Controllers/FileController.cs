@@ -1,11 +1,11 @@
 ﻿
 using AutoMapper;
 using FileSharingApp.API.ExtensionMethods;
+using FileSharingApp.API.Models;
 using FileSharingApp.API.Models.DTOs;
 using FileSharingApp.API.Models.Files;
 using FileSharingApp.API.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using System.Web;
 
 namespace FileSharingApp.API.Controllers
 {
@@ -20,32 +20,33 @@ namespace FileSharingApp.API.Controllers
             this.mapper = mapper;
         }
 
-        [HttpGet]
-        public IEnumerable<FileDto> Get([FromQuery] FileSearchParams searchParams)
+        [HttpPost("GetFiles")]
+        public PaginatedResponse<FileDto> GetFiles([FromBody]FileSearchParams searchParams)
         {
-            var files = fileService.GetFiles(searchParams, User.GetUserId());
-            var fileDtos = mapper.Map<IEnumerable<FileDto>>(files);
-            return fileDtos;
+            PaginatedResponse<BaseFile> baseFilePaginatedResponse = fileService.GetFiles(searchParams, User.GetUserId());
+            PaginatedResponse<FileDto> fileDtoPaginatedResponse = mapper.Map<PaginatedResponse<FileDto>>(baseFilePaginatedResponse);
+            return fileDtoPaginatedResponse;
         }
 
-        [HttpPost("{folderId?}")]
-        public async Task<FileDto> Post(int? folderId, [FromForm]IFormFile file)
+        [HttpPost]
+        public BaseFile Post([FromForm]FileUploadDto fileUploadDto)
         {
-            var fileExtension = Path.GetExtension(file.FileName);
-            var fileTypeName = fileService.GetFileTypeName(fileExtension);
-            BaseFile newFile = (BaseFile)fileService.CreateFileType(fileTypeName);
-            newFile.FileData = file;
-            newFile.FolderId = folderId;
-            var uploadedfile = await fileService.UploadFile(newFile, User.GetUserId());
-            var fileDto = mapper.Map<FileDto>(uploadedfile);
-            return fileDto;
+            if (fileUploadDto.OriginalFile == null || fileUploadDto.OriginalFile.Length == 0)
+            {
+                throw new ArgumentNullException("File is missing or empty.");
+            }
+
+            BaseFile appFile = fileService.CreateAppFile(fileUploadDto);
+            appFile.DownloadUrl = fileService.AddFileToCloudStorage(fileUploadDto, appFile.Name);
+            fileService.UploadFile(appFile, User.GetUserId());
+
+            return appFile;
         }
 
-        [HttpDelete("{url}")]
-        public void Delete(string url)
+        [HttpDelete("{fileName}")]
+        public void Delete(string fileName)
         {
-            string decodedUrl = HttpUtility.UrlDecode(url);
-            fileService.DeleteFile(decodedUrl);
+            fileService.DeleteFile(fileName);
         }
 
         [HttpPut("Update")]
@@ -61,6 +62,21 @@ namespace FileSharingApp.API.Controllers
             fileService.Update(fileToUpdate);
 
             return Ok();
+        }
+
+        [HttpGet("FileTypes")]
+        public IEnumerable<FileType> GetFileTypes()
+        {
+            return fileService.GetFileTypes(User.GetUserId());
+        }
+
+        [HttpGet("DownloadFile/{fileName}")]
+        public FileStreamResult DownloadFile(string fileName)
+        {
+            var memoryStream = new MemoryStream();
+            var obj = fileService.DownloadObjectFromCloudStorage(fileName, memoryStream);
+            memoryStream.Seek(0, SeekOrigin.Begin);
+            return File(memoryStream, obj.ContentType);
         }
     }
 }

@@ -1,9 +1,11 @@
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { AppFile } from '../models/app-file';
 import { environment } from 'src/environments/environment';
 import { map } from 'rxjs';
-import { FileSearchParams } from '../models/file-search-params';
+import { FileType } from '../models/file-type';
+import { FileSearch } from '../models/file-search';
+import { PaginatedResponse } from '../models/paginated-response';
 
 @Injectable({
     providedIn: 'root'
@@ -13,28 +15,18 @@ export class FileService {
     baseUrl = `${environment.baseUrl}/File`;
 
     constructor(
-        private http: HttpClient
+        private http: HttpClient,
     ) { }
 
-    uploadFile(file: File, folderId: number | null) {
+    uploadFile(file: AppFile) {
         const formData = new FormData();
-        formData.append('file', file);
-        const url = folderId ? `${this.baseUrl}/${folderId}` : this.baseUrl
-        return this.http.post<AppFile>(url, formData);
+        formData.append('originalFile', file.originalFile);
+        formData.append('fileData', JSON.stringify(file));
+        return this.http.post<AppFile>(this.baseUrl, formData);
     }
 
-    getFiles(searchParams: FileSearchParams) {
-        let params = new HttpParams();
-        if (searchParams.name) {
-            params = params.set('name', searchParams.name);
-        }
-        if (searchParams.description) {
-            params = params.set('description', searchParams.description);
-        }
-        if (searchParams.folder) {
-            params = params.set('folderId', searchParams.folder.id);
-        }
-        return this.http.get<AppFile[]>(`${this.baseUrl}`, { params: params });
+    getFiles(fileSearch: FileSearch) {
+        return this.http.post<PaginatedResponse<AppFile>>(`${this.baseUrl}/GetFiles`, fileSearch);
     }
 
     getFolderFiles(folderId: number) {
@@ -42,8 +34,7 @@ export class FileService {
     }
 
     deleteFile(file: AppFile) {
-        const encodedUrl = encodeURIComponent(file.url);
-        return this.http.delete(`${this.baseUrl}/${encodedUrl}`).pipe(
+        return this.http.delete(`${this.baseUrl}/${file.name}`).pipe(
             map(() => file)
         );
     }
@@ -52,5 +43,13 @@ export class FileService {
         return this.http.put(`${this.baseUrl}/Update`, file).pipe(
             map(() => file)
         );
+    }
+
+    getFileTypes() {
+        return this.http.get<FileType[]>(`${this.baseUrl}/FileTypes`);
+    }
+
+    downloadFile(fileName: string) {
+        return this.http.get(`${this.baseUrl}/DownloadFile/${fileName}`)
     }
 }

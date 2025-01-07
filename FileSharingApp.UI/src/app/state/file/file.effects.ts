@@ -1,11 +1,13 @@
 import { Injectable } from "@angular/core";
 import { Actions, createEffect, ofType } from "@ngrx/effects";
 import { FilesActions, FilesApiActions } from "./file.actions";
-import { catchError, forkJoin, map, mergeMap, of, switchMap, tap } from "rxjs";
+import { delay, finalize, forkJoin, map, mergeMap, switchMap, tap } from "rxjs";
 import { FileService } from "src/app/services/file.service";
 import { MessageHandlingService } from "src/app/services/message-handling.service";
 import { AppFile } from "src/app/models/app-file";
 import { LoadingObsName, LoadingService } from "src/app/services/loading.service";
+import { FileType } from "src/app/models/file-type";
+import { PaginatedResponse } from "src/app/models/paginated-response";
 
 @Injectable()
 export class FileEffects {
@@ -13,18 +15,12 @@ export class FileEffects {
     uploadFiles$ = createEffect(() =>
         this.actions$.pipe(
             ofType(FilesActions.uploadFiles),
+            tap(() => this.loadingService.toggleLoadingObs(LoadingObsName.UPLOADING_FILES)),
             switchMap((action) => {
-                const files = action.files;
-                const filesObservableArray = files.map(file => {
-                    return this.fileService.uploadFile(file, action.folderId);
-                });
+                const filesObservableArray = action.files.map(file => this.fileService.uploadFile(file));
                 return forkJoin(filesObservableArray).pipe(
-                    map((files) => {
-                        return FilesApiActions.uploadFilesSuccessful({ files: files })
-                    }),
-                    catchError(() => {
-                        return of(FilesApiActions.uploadFilesUnsuccessful())
-                    })
+                    map((uploadedFiles: AppFile[]) => FilesApiActions.uploadFilesSuccessful({ uploadedFiles: uploadedFiles })),
+                    finalize(() => this.loadingService.toggleLoadingObs(LoadingObsName.UPLOADING_FILES))
                 )
             })
         )
@@ -41,43 +37,23 @@ export class FileEffects {
         ), { dispatch: false }
     );
 
-    uploadFilesUnsuccessful$ = createEffect(() =>
-        this.actions$.pipe(
-            ofType(FilesApiActions.uploadFilesUnsuccessful),
-            tap(() => {
-                this.messageHandlingService.onDisplayNewMessage({
-                    message: "An error occurred during the upload process. Please try again later"
-                });
-            }),
-        ), { dispatch: false }
-    );
-
     getFiles$ = createEffect(() =>
         this.actions$.pipe(
-            ofType(FilesActions.getFiles),
+            ofType(FilesActions.searchFiles),
             tap(() => this.loadingService.toggleLoadingObs(LoadingObsName.LOADING_FILES)),
-            switchMap((action) => this.fileService.getFiles(action.searchParams)),
-            map((files: AppFile[]) => FilesApiActions.getFilesSuccessful({ files: files })),
-            catchError(() => of(FilesApiActions.getFilesUnsuccessful()))
+            switchMap((action) => this.fileService.getFiles(action.searchParams).pipe(
+                finalize(() => this.loadingService.toggleLoadingObs(LoadingObsName.LOADING_FILES))
+            )),
+            map((paginatedResponse: PaginatedResponse<AppFile>) => FilesApiActions.getFilesSuccessful({ paginatedResponse: paginatedResponse }))
         )
     );
 
-    getFilesUnsuccessful$ = createEffect(() =>
+    getFileTypes$ = createEffect(() =>
         this.actions$.pipe(
-            ofType(FilesApiActions.getFilesUnsuccessful),
-            tap(() => {
-                this.messageHandlingService.onDisplayNewMessage({
-                    message: "Unable to get files. Please try again later"
-                });
-            }),
-        ), { dispatch: false }
-    );
-
-    getFilesSuccessful$ = createEffect(() =>
-        this.actions$.pipe(
-            ofType(FilesApiActions.getFilesSuccessful),
-            tap(() => this.loadingService.toggleLoadingObs(LoadingObsName.LOADING_FILES))
-        ), { dispatch: false }
+            ofType(FilesActions.getFileTypes),
+            switchMap(() => this.fileService.getFileTypes()),
+            map((fileTypes: FileType[]) => FilesApiActions.getFileTypesSuccessful({ fileTypes: fileTypes }))
+        )
     );
 
     deleteFile$ = createEffect(() =>
@@ -85,8 +61,8 @@ export class FileEffects {
             ofType(FilesActions.deleteFile),
             tap((action) => this.loadingService.toggleLoadingObs(action.file.name)),
             mergeMap((action) => this.fileService.deleteFile(action.file)),
-            map((file: AppFile) => FilesApiActions.deleteFileSuccessful({ file: file })),
-            catchError((action) => of(FilesApiActions.deleteFileUnsuccessful(action))),
+            tap((file: AppFile) => this.loadingService.toggleLoadingObs(file.name)),
+            map((file: AppFile) => FilesApiActions.deleteFileSuccessful({ file: file }))
         )
     );
 
@@ -102,26 +78,14 @@ export class FileEffects {
         ), { dispatch: false }
     );
 
-    deleteFileUnsuccessful$ = createEffect(() =>
-        this.actions$.pipe(
-            ofType(FilesApiActions.deleteFileUnsuccessful),
-            tap((action) => {
-                this.messageHandlingService.onDisplayNewMessage({
-                    message: "Unable to delete file. Please try again later"
-                });
-                this.loadingService.toggleLoadingObs(action.file.name)
-
-            }),
-        ), { dispatch: false }
-    );
-
     updateFile$ = createEffect(() =>
         this.actions$.pipe(
             ofType(FilesActions.updateFile),
             tap(() => this.loadingService.toggleLoadingObs(LoadingObsName.UPDATING_FILE)),
-            switchMap((action) => this.fileService.updateFile(action.file)),
-            map((file: AppFile) => FilesApiActions.updateFileSuccessful({ file: file })),
-            catchError(() => of(FilesApiActions.updateFileUnsuccessful())),
+            switchMap((action) => this.fileService.updateFile(action.file).pipe(
+                finalize(() => this.loadingService.toggleLoadingObs(LoadingObsName.UPDATING_FILE))
+            )),
+            map((file: AppFile) => FilesApiActions.updateFileSuccessful({ file: file }))
         )
     );
 
@@ -132,19 +96,6 @@ export class FileEffects {
                 this.messageHandlingService.onDisplayNewMessage({
                     message: "File updated"
                 });
-                this.loadingService.toggleLoadingObs(LoadingObsName.UPDATING_FILE)
-            }),
-        ), { dispatch: false }
-    );
-
-    updateFileUnsuccessful$ = createEffect(() =>
-        this.actions$.pipe(
-            ofType(FilesApiActions.updateFileUnsuccessful),
-            tap(() => {
-                this.messageHandlingService.onDisplayNewMessage({
-                    message: "Unable to update file. Please try again later"
-                });
-                this.loadingService.toggleLoadingObs(LoadingObsName.UPDATING_FILE)
             }),
         ), { dispatch: false }
     );

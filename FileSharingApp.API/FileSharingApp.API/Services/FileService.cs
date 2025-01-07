@@ -1,145 +1,74 @@
-﻿using CloudinaryDotNet;
-using CloudinaryDotNet.Actions;
-using FileSharingApp.API.CustomExceptions;
-using FileSharingApp.API.DAL.Interfaces;
-using FileSharingApp.API.Helpers;
+﻿using FileSharingApp.API.DAL.Interfaces;
+using FileSharingApp.API.Models;
+using FileSharingApp.API.Models.DTOs;
 using FileSharingApp.API.Models.Files;
 using FileSharingApp.API.Services.Interfaces;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
+using Google.Cloud.Storage.V1;
+using System.IO;
+using System.Text.Json;
 
 namespace FileSharingApp.API.Services
 {
     public class FileService : IFileService
     {
-        protected readonly IOptions<CloudinaryConfigOptions> config;
         private readonly IFileRepository fileRepository;
-        private readonly IUserService userService;
+        private readonly StorageClient storageClient;
+        private readonly string bucketName;
 
-        protected Cloudinary Cloudinary
-        {
-            get
-            {
-                return SetupCloudinary(config);
-            }
-        }
-
-        protected virtual Cloudinary SetupCloudinary(IOptions<CloudinaryConfigOptions> config)
-        {
-            Account account = new Account(
-                config.Value.CloudName,
-                config.Value.ApiKey,
-                config.Value.ApiSecret);
-
-            Cloudinary cloudinary = new Cloudinary(account);
-            cloudinary.Api.Secure = true;
-            return cloudinary;
-        }
-
-        public FileService(
-            IOptions<CloudinaryConfigOptions> config, 
+        public FileService( 
             IFileRepository fileRepository,
-            IUserService userService)
+            IConfiguration config)
         {
-            this.userService = userService;
-            this.config = config;
             this.fileRepository = fileRepository;
+            storageClient = StorageClient.Create();
+            bucketName = config["CloudStorageConfig:BucketName"];
         }
 
-        public async Task<BaseFile> UploadFile(BaseFile file, int userId)
+        public BaseFile UploadFile(BaseFile appFile, int userId)
         {
-            var uploadParams = file.GetUploadParams(userId);
-            var response = await Cloudinary.UploadAsync(uploadParams);
-            if (response.Error != null)
-            {
-                throw new FileUploadException(response.Error.Message);
-            }
-            file.FileOwner = await this.userService.FindByIdAsync(userId);
-            if (response.Url != null)
-            {
-                file.Url = response.PublicId;
-            }
-            file.Name = Path.GetFileNameWithoutExtension(file.FileData.FileName);
-            file.DownloadUrl = BuildDownloadUrl(file.Url);
-            fileRepository.UploadFile(file);
-
-            return file;
-        }
-
-        public object CreateFileType(string fileTypeName)
-        {
-            Type fileType = Type.GetType($"FileSharingApp.API.Models.Files.{fileTypeName}File")!;
-            var newFile = Activator.CreateInstance(fileType);
-            if(newFile == null) throw new ArgumentException("File type is invalid");
-            return newFile;
-
+            fileRepository.UploadFile(appFile, userId);
+            return appFile;
         }
 
         public string GetFileTypeName(string fileExtension)
         {
-            switch(fileExtension)
+            switch(fileExtension.ToLower())
             {
                 case ".doc":
                 case ".docx":
                 case ".docm":
+                    return "Word";
                 case ".xlsx":
                 case ".xlsm":
+                    return "Excel";
                 case ".pptx":
                 case ".pptm":
                 case ".ppt":
-                    return "Xml";
+                    return "PowerPoint";
                 case ".pdf":
                     return "Pdf";
                 case ".png":
                 case ".jpg":
                     return "Image";
                 default:
-                    throw new ArgumentException("File type is invalid");
+                    throw new ArgumentException("File type not supported");
             }
         }
 
-        public IEnumerable<BaseFile> GetFiles(FileSearchParams searchParams, int userId)
+        public PaginatedResponse<BaseFile> GetFiles(FileSearchParams searchParams, int userId)
         {
             return fileRepository.GetFiles(searchParams, userId);
         }
 
-        public void DeleteFile(string url)
+        public IEnumerable<FileType> GetFileTypes(int userId)
         {
-            DeletionResult imageDeletionResult = DeleteImage(url);
-            DeletionResult rawDeletionResult = DeleteRaw(url);
-
-            if (imageDeletionResult.Result == "ok" || rawDeletionResult.Result == "ok")
-            {
-                fileRepository.DeleteFile(url);
-            } 
-            else
-            {
-                throw new InvalidOperationException();
-            }
+            return fileRepository.GetFileTypes(userId);
         }
 
-        private DeletionResult DeleteImage(string url)
+        public void DeleteFile(string fileName)
         {
-            DeletionParams deletionParams = new DeletionParams(url);
-            deletionParams.ResourceType = ResourceType.Image;
-            return Cloudinary.Destroy(deletionParams);
-        }
-
-        private DeletionResult DeleteRaw(string url)
-        {
-            DeletionParams deletionParams = new DeletionParams(url);
-            deletionParams.ResourceType = ResourceType.Raw;
-            return Cloudinary.Destroy(deletionParams);
-        }
-
-        public string BuildDownloadUrl(string publicId)
-        {
-            var url = Cloudinary.Api.UrlImgUp
-                    .Secure(true)
-                    .Transform(new Transformation().Flags("attachment"))
-                    .BuildUrl(publicId);
-
-            return url;
+            DeleteFileFromCloudStorage(fileName);
+            fileRepository.DeleteFile(fileName);
         }
 
         public void Update(BaseFile file)
@@ -150,6 +79,39 @@ namespace FileSharingApp.API.Services
         public BaseFile Get(int id)
         {
             return fileRepository.Get(id);
+        }
+
+        public BaseFile CreateAppFile(FileUploadDto fileUploadDto)
+        {
+            BaseFile appFile = JsonSerializer.Deserialize<BaseFile>(fileUploadDto.FileData)!;
+            appFile.Name = Path.GetFileNameWithoutExtension(appFile.Name);
+            appFile.FileType = fileRepository.GetFileType(GetFileTypeName(Path.GetExtension(fileUploadDto.OriginalFile.FileName)));
+
+            return appFile;
+        }
+
+        public string AddFileToCloudStorage(FileUploadDto fileUploadDto, string fileName)
+        {
+            using (var fileStream = fileUploadDto.OriginalFile.OpenReadStream())
+            {
+                var storageObject = storageClient.UploadObject(
+                    bucket: bucketName,
+                    objectName: fileName,
+                    contentType: fileUploadDto.OriginalFile.ContentType,
+                    source: fileStream
+                );
+                return storageObject.MediaLink;
+            }
+        }
+
+        public void DeleteFileFromCloudStorage(string fileName)
+        {
+            storageClient.DeleteObject(bucketName, fileName);
+        }
+
+        public Google.Apis.Storage.v1.Data.Object DownloadObjectFromCloudStorage(string fileName, MemoryStream memoryStream)
+        {
+            return storageClient.DownloadObject(bucketName, fileName, memoryStream);
         }
     }
 }

@@ -1,34 +1,22 @@
-﻿using CloudinaryDotNet;
-using CloudinaryDotNet.Actions;
-
-namespace FileSharingApp.API.Models.Files
+﻿namespace FileSharingApp.API.Models.Files
 {
     public class PdfFile : BaseFile
     {
-        //public PdfFile()
+        //public override RawUploadParams GetUploadParams(int userId)
         //{
-        //    this.FileType = new FileType()
+        //    var stream = this.FileData.OpenReadStream();
+
+        //    var uploadParams = new RawUploadParams()
         //    {
-        //        Id = FileTypeId.PDF,
-        //        Name = "Pdf"
+        //        File = new FileDescription(this.FileData.FileName, stream),
+        //        Overwrite = true,
+        //        UniqueFilename = false,
+        //        UseFilename = true,
+        //        RawConvert = "aspose",
+        //        Folder = $"{userId}-pdf"
         //    };
+
+        //    return uploadParams;
         //}
-
-        public override RawUploadParams GetUploadParams(int userId)
-        {
-            var stream = this.FileData.OpenReadStream();
-
-            var uploadParams = new RawUploadParams()
-            {
-                File = new FileDescription(this.FileData.FileName, stream),
-                Overwrite = true,
-                UniqueFilename = false,
-                UseFilename = true,
-                RawConvert = "aspose",
-                Folder = $"{userId}-pdf"
-            };
-
-            return uploadParams;
-        }
     }
 }

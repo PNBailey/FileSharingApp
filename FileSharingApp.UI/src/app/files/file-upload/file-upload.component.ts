@@ -1,7 +1,7 @@
 import { Component, DestroyRef, ViewChild, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NgxFileDropEntry, NgxFileDropModule } from 'ngx-file-drop';
-import { MatDialogModule } from '@angular/material/dialog';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { MatTable, MatTableModule } from '@angular/material/table';
 import { Store } from '@ngrx/store';
@@ -11,7 +11,10 @@ import { MatIconModule } from '@angular/material/icon';
 import { FilesActions } from 'src/app/state/file/file.actions';
 import { getFileSearchParams } from 'src/app/state/file/file.selector';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { FileSearchParams } from 'src/app/models/file-search-params';
+import { AppFile } from 'src/app/models/app-file';
+import { FileSearch } from 'src/app/models/file-search';
+import { LoadingObsName, LoadingService } from 'src/app/services/loading.service';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @Component({
     selector: 'app-file-upload',
@@ -24,7 +27,8 @@ import { FileSearchParams } from 'src/app/models/file-search-params';
         MatTableModule,
         MatInputModule,
         MatFormFieldModule,
-        MatIconModule
+        MatIconModule,
+        MatProgressSpinnerModule
     ],
     templateUrl: './file-upload.component.html',
     styleUrls: ['./file-upload.component.scss']
@@ -34,16 +38,28 @@ export class FileUploadComponent {
     public columnNames = ['name', 'file type', 'file size', 'last updated', 'delete'];
     @ViewChild(MatTable) table: MatTable<File>;
     destroyRef = inject(DestroyRef);
-    searchParams: FileSearchParams;
+    searchParams: FileSearch;
+    uploadingFilesSub$ = this.loadingService.getLoadingObs(LoadingObsName.UPLOADING_FILES);
+    uploadingFiles: boolean;
 
     constructor(
-        private store: Store
+        private store: Store,
+        private loadingService: LoadingService,
+        private dialog: MatDialog
     ) {
         this.store.select(getFileSearchParams).pipe(
             takeUntilDestroyed(this.destroyRef)
         ).subscribe(searchParams => {
             this.searchParams = searchParams;
         });
+        this.uploadingFilesSub$.pipe(
+            takeUntilDestroyed(this.destroyRef)
+        ).subscribe((value) => {
+            if (this.uploadingFiles != null && !value) {
+                this.dialog.closeAll();
+            }
+            this.uploadingFiles = value;
+        })
     }
 
     public onFileDropped(files: NgxFileDropEntry[]) {
@@ -63,7 +79,7 @@ export class FileUploadComponent {
         if (!eventTarget.files?.length) {
             return;
         }
-        this.filesToUpload.push(eventTarget.files[0]);
+        this.filesToUpload = Array.from(eventTarget.files);
         this.table.renderRows();
     }
 
@@ -73,6 +89,15 @@ export class FileUploadComponent {
     }
 
     public uploadFiles() {
-        this.store.dispatch(FilesActions.uploadFiles({ files: this.filesToUpload, folderId: this.searchParams.folder?.id }))
+        const filesToUploadMapped = this.filesToUpload.map(file => {
+            const appFile = new AppFile();
+            appFile.name = file.name;
+            appFile.size = file.size;
+            appFile.lastModified = new Date(file.lastModified);
+            appFile.originalFile = file;
+            appFile.folderId = this.searchParams.folderId;
+            return appFile;
+        });
+        this.store.dispatch(FilesActions.uploadFiles({ files: filesToUploadMapped }));
     }
 }

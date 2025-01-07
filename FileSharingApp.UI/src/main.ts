@@ -1,4 +1,4 @@
-import { enableProdMode, importProvidersFrom } from '@angular/core';
+import { ErrorHandler, enableProdMode, importProvidersFrom } from '@angular/core';
 
 import { environment } from './environments/environment';
 import { AppComponent } from './app/app.component';
@@ -18,7 +18,8 @@ import { FileEffects } from './app/state/file/file.effects';
 import { fileReducer } from './app/state/file/file.reducer';
 import { FolderEffects } from './app/state/folder/folder.effects';
 import { folderReducer } from './app/state/folder/folder.reducer';
-import { provideCloudinaryLoader } from '@angular/common';
+import { DatePipe, provideCloudinaryLoader } from '@angular/common';
+import { ErrorHandlingService } from './app/services/error-handling.service';
 
 if (environment.production) {
     enableProdMode();
@@ -35,12 +36,14 @@ bootstrapApplication(AppComponent, {
             MatSnackBarModule,
             BrowserAnimationsModule
         ),
+        { provide: ErrorHandler, useClass: ErrorHandlingService },
         { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
         provideAnimations(),
         provideHttpClient(withInterceptorsFromDi()),
         provideStore({ account: accountReducer, files: fileReducer, folders: folderReducer }),
         provideEffects(AccountEffects, FileEffects, FolderEffects),
-        provideCloudinaryLoader('https://res.cloudinary.com/filesharingapp/')
+        provideCloudinaryLoader('https://res.cloudinary.com/filesharingapp/'),
+        DatePipe
     ]
 })
     .catch(err => console.error(err));

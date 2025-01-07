@@ -1,28 +1,28 @@
 import { createActionGroup, emptyProps, props } from "@ngrx/store";
 import { AppFile } from "src/app/models/app-file";
-import { FileSearchParams } from "src/app/models/file-search-params";
+import { FileSearch } from "src/app/models/file-search";
+import { FileType } from "src/app/models/file-type";
+import { PaginatedResponse } from "src/app/models/paginated-response";
 
 export const FilesActions = createActionGroup({
     source: 'Files',
     events: {
-        'Upload Files': props<{ files: File[], folderId: number | null }>(),
+        'Upload Files': props<{ files: AppFile[] }>(),
         'Clear Files': emptyProps(),
-        'Get Files': props<{ searchParams: FileSearchParams }>(),
+        'Search Files': props<{ searchParams: FileSearch }>(),
         'Delete File': props<{ file: AppFile }>(),
         'Update File': props<{ file: AppFile }>(),
+        'Get File Types': emptyProps()
     }
 });
 
 export const FilesApiActions = createActionGroup({
     source: 'Files API',
     events: {
-        'Upload Files Successful': props<{ files: AppFile[] }>(),
-        'Upload Files Unsuccessful': emptyProps(),
-        'Get Files Successful': props<{ files: AppFile[] }>(),
-        'Get Files Unsuccessful': emptyProps(),
+        'Upload Files Successful': props<{ uploadedFiles: AppFile[] }>(),
+        'Get Files Successful': props<{ paginatedResponse: PaginatedResponse<AppFile> }>(),
         'Delete File Successful': props<{ file: AppFile }>(),
-        'Delete File Unsuccessful': props<{ file: AppFile }>(),
         'Update File Successful': props<{ file: AppFile }>(),
-        'Update File Unsuccessful': emptyProps()
+        'Get File Types Successful': props<{ fileTypes: FileType[] }>(),
     }
 });

@@ -1,25 +1,31 @@
-﻿using FileSharingApp.API.Models.Files;
-using Microsoft.AspNetCore.Mvc;
-using NPOI.Util;
+﻿using FileSharingApp.API.Models;
+using FileSharingApp.API.Models.DTOs;
+using FileSharingApp.API.Models.Files;
 
 namespace FileSharingApp.API.Services.Interfaces
 {
     public interface IFileService
     {
-        Task<BaseFile> UploadFile(BaseFile file, int userId);
-
-        object CreateFileType(string contentType);
+        BaseFile UploadFile(BaseFile appFile, int userId);
 
         string GetFileTypeName(string fileExtension);
 
-        IEnumerable<BaseFile> GetFiles(FileSearchParams searchParams, int userId);
+        PaginatedResponse<BaseFile> GetFiles(FileSearchParams searchParams, int userId);
 
-        void DeleteFile(string url);
+        IEnumerable<FileType> GetFileTypes(int userId);
 
-        string BuildDownloadUrl(string url);
+        void DeleteFile(string fileName);
 
         void Update(BaseFile file);
 
         BaseFile Get(int id);
+
+        BaseFile CreateAppFile(FileUploadDto fileUploadDto);
+
+        string AddFileToCloudStorage(FileUploadDto fileUploadDto, string fileName);
+
+        Google.Apis.Storage.v1.Data.Object DownloadObjectFromCloudStorage(string fileName, MemoryStream memoryStream);
+
+        void DeleteFileFromCloudStorage(string fileName);
     }
 }

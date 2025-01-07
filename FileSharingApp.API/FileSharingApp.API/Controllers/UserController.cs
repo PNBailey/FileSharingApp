@@ -57,15 +57,16 @@ namespace FileSharingApp.API.Controllers
         {
             var imageFile = new ImageFile()
             {
-                FileData = imageFileData
+                //FileData = imageFileData
             };
 
-            var uploadedFile = await fileService.UploadFile(imageFile, User.GetUserId());
-            var user = await userService.FindByIdAsync(User.GetUserId());
-            user.ProfilePictureUrl = uploadedFile.Url.ToString();
-            await userService.UpdateUser(user);
-            var fileDto = mapper.Map<FileDto>(uploadedFile);
-            return fileDto;
+
+            ////var uploadedFile = await fileService.UploadFile(imageFile, User.GetUserId());
+            //var user = await userService.FindByIdAsync(User.GetUserId());
+            //user.ProfilePictureUrl = uploadedFile.Url.ToString();
+            //await userService.UpdateUser(user);
+            //var fileDto = mapper.Map<FileDto>(uploadedFile);
+            return new FileDto();
         }
     }
 }
