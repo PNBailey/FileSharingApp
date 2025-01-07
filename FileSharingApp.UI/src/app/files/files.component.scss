@@ -1,11 +1,20 @@
-// .app-file-list-item {
-//     min-width: 210px;
-//     max-width: 210px;
-//     max-height: 175px;
-//     border: 3px;
-// }
+.table-container {
+    position: relative;
+}
 
-:host ::ng-deep .row-hovered {
-    background-color: rgba(0, 0, 0, 0.15) !important;
-    cursor: grab;
+.spinner-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10;
+}
+
+.table-container.loading p-table {
+    opacity: 0.5;
 }
