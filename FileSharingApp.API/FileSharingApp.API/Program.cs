@@ -6,6 +6,7 @@ using FileSharingApp.API.Helpers;
 using FileSharingApp.API.Models;
 using FileSharingApp.API.Services;
 using FileSharingApp.API.Services.Interfaces;
+using Google.Cloud.SecretManager.V1;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -15,6 +16,7 @@ using NLog.Web;
 using System.Globalization;
 using System.Text;
 using System.Text.Json.Serialization;
+using static Org.BouncyCastle.Math.EC.ECCurve;
 
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 var builder = WebApplication.CreateBuilder(args);
@@ -27,7 +29,6 @@ logger.Debug("init main");
 try
 {
     builder.Services.AddHttpContextAccessor();
-
 
     builder.Services.Configure<CloudinaryConfigOptions>(
         configuration.GetSection(CloudinaryConfigOptions.CloudinaryConfig));
@@ -43,6 +44,15 @@ try
                     .AllowCredentials();
             });
     });
+
+    // Replace JWT Secret
+    AccessSecretVersionRequest request = new()
+    {
+        SecretVersionName = SecretVersionName.FromProjectSecretSecretVersion(configuration.GetValue<string>("GCP:ProjectId"), configuration.GetValue<string>("SecretManager:JWTSecretName"), "latest")
+    };
+    var secretResponse = SecretService.GetSecret(request);
+    var jwtSecret = secretResponse.Payload.Data.ToStringUtf8();
+    builder.Configuration["JWT:Secret"] = jwtSecret;
 
     // Adding Authentication
     builder.Services.AddAuthentication(options =>
@@ -119,17 +129,17 @@ try
     builder.Services.AddScoped<IFileService, FileService>();
     builder.Services.AddScoped<IValidationService, ValidationService>();
     builder.Services.AddScoped<IFolderService, FolderService>();
+    
 
-    //Adding Repositories
+    // Adding Repositories
     builder.Services.AddScoped<IFileRepository, FileRepository>();
     builder.Services.AddScoped<IFolderRepository, FolderRepository>();
 
     // NLog: Setup NLog for Dependency injection
-    builder.Logging.ClearProviders(); 
+    builder.Logging.ClearProviders();
     builder.Host.UseNLog();
 
     var app = builder.Build();
-
     app.UseExceptionHandler("/error");
 
     if (app.Environment.IsDevelopment())
