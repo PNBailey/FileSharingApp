@@ -12,8 +12,3 @@ export const getFolderById = (folderId: number) => createSelector(
     foldersFeatureSelector,
     (state: FolderState) => state.folders.find(f => f.id == folderId)
 );
-
-export const getSelectedFolder = createSelector(
-    foldersFeatureSelector,
-    (state: FolderState) => state.selectedFolder
-);

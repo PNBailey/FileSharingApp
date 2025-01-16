@@ -4,17 +4,16 @@ import { FolderActions, FolderApiActions } from "./folder.actions";
 
 export interface FolderState {
     folders: Folder[];
-    selectedFolder: Folder
+    selectedFolderId: number
 }
 
 export const initialState: FolderState = {
     folders: [],
-    selectedFolder: null
+    selectedFolderId: null
 }
 
 export const folderReducer = createReducer(
     initialState,
     on(FolderApiActions.getAllFoldersSuccessful, (state, { folders }) => ({ ...state, folders })),
-    on(FolderActions.clearFolders, () => initialState),
-    on(FolderActions.folderSelected, (state, { selectedFolder }) => ({ ...state, selectedFolder: selectedFolder }))
+    on(FolderActions.clearFolders, () => initialState)
 );

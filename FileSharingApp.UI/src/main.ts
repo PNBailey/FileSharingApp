@@ -20,10 +20,19 @@ import { FolderEffects } from './app/state/folder/folder.effects';
 import { folderReducer } from './app/state/folder/folder.reducer';
 import { DatePipe, provideCloudinaryLoader } from '@angular/common';
 import { ErrorHandlingService } from './app/services/error-handling.service';
+import { provideRouter } from '@angular/router';
+import { HomeComponent } from './app/home/home.component';
+import { FilesComponent } from './app/files/files.component';
 
 if (environment.production) {
     enableProdMode();
 }
+
+const routes = [
+    { path: '', component: HomeComponent },
+    { path: 'files', component: FilesComponent },
+    { path: 'files/:folderId', component: FilesComponent },
+];
 
 bootstrapApplication(AppComponent, {
     providers: [
@@ -38,6 +47,7 @@ bootstrapApplication(AppComponent, {
         ),
         { provide: ErrorHandler, useClass: ErrorHandlingService },
         { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
+        provideRouter(routes),
         provideAnimations(),
         provideHttpClient(withInterceptorsFromDi()),
         provideStore({ account: accountReducer, files: fileReducer, folders: folderReducer }),

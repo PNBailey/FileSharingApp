@@ -8,8 +8,7 @@ export const FolderActions = createActionGroup({
         'Get All Folders': emptyProps(),
         'Clear Folders': emptyProps(),
         'Change Folder Parent': props<{ folderId: number, parentFolderId: number }>(),
-        'Get Folder By Id': props<{ selectedFolderId: number }>(),
-        'Folder Selected': props<{ selectedFolder: Folder }>()
+        'Get Folder By Id': props<{ selectedFolderId: number }>()
     }
 });
 

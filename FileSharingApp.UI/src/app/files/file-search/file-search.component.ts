@@ -1,6 +1,6 @@
 import { Component, DestroyRef, inject } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { getAllFolders, getSelectedFolder } from 'src/app/state/folder/folder.selector';
+import { getAllFolders } from 'src/app/state/folder/folder.selector';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
@@ -8,7 +8,7 @@ import { AsyncPipe, NgFor } from '@angular/common';
 import { InputTextModule } from 'primeng/inputtext';
 import { DropdownModule } from 'primeng/dropdown';
 import { FloatLabelModule } from 'primeng/floatlabel';
-import { Observable, combineLatest, debounceTime, distinctUntilChanged, filter, skip, startWith, withLatestFrom } from 'rxjs';
+import { Observable, combineLatest, debounceTime, distinctUntilChanged, filter, skip, startWith, tap, withLatestFrom } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FilesActions } from 'src/app/state/file/file.actions';
 import { getFileSearchParams, getFileTypes } from 'src/app/state/file/file.selector';
@@ -16,6 +16,8 @@ import { FileType } from 'src/app/models/file-type';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { CalendarModule } from 'primeng/calendar';
 import { FileSearch } from 'src/app/models/file-search';
+import { FolderActions } from 'src/app/state/folder/folder.actions';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
     selector: 'app-file-search',
@@ -43,35 +45,32 @@ export class FileSearchComponent {
     destroyRef = inject(DestroyRef);
     nameSearch$: Observable<string>;
     fileTypeSearch$: Observable<number>;
-    folderSearch$: Observable<number>;
     lastModifiedRangeSearch$: Observable<Date[] | undefined>;
     fileTypes$: Observable<FileType[]> = this.store.select(getFileTypes);
     existingFileSearchParams$: Observable<FileSearch> = this.store.select(getFileSearchParams);
 
-    constructor(private store: Store, private fb: FormBuilder) {
+    constructor(private store: Store, private fb: FormBuilder, private router: ActivatedRoute) {
         this.initializeForm();
-        this.setSelectedFolder();
         this.modifyNameFormControlSubscription();
         this.modifyFileTypeFormControlSubscription();
-        this.modifyFolderFormControlSubscription();
         this.modifyLastModifiedRangeFormControlSubscription();
         this.subscribeToFormChanges();
+        this.subscribeToRouteChanges();
         this.store.dispatch(FilesActions.getFileTypes());
     }
 
     private subscribeToFormChanges() {
-        combineLatest([this.nameSearch$, this.fileTypeSearch$, this.folderSearch$, this.lastModifiedRangeSearch$]).pipe(
+        combineLatest([this.nameSearch$, this.fileTypeSearch$, this.lastModifiedRangeSearch$]).pipe(
             takeUntilDestroyed(this.destroyRef),
             withLatestFrom(this.existingFileSearchParams$),
             skip(1)
         ).subscribe(([newSearchParams, existingSearchParams]) => {
-            const [name, fileTypeId, folderId, lastModifiedRange] = newSearchParams;
+            const [name, fileTypeId, lastModifiedRange] = newSearchParams;
             this.store.dispatch(FilesActions.searchFiles({
                 searchParams: new FileSearch({
                     ...existingSearchParams,
                     name,
                     fileTypeId,
-                    folderId,
                     lastModifiedStartDate: lastModifiedRange && lastModifiedRange[0] ? lastModifiedRange[0].toLocaleDateString("en-GB") : null,
                     lastModifiedEndDate: lastModifiedRange && lastModifiedRange[1] ? lastModifiedRange[1].toLocaleDateString("en-GB") : null
                 })
@@ -79,14 +78,21 @@ export class FileSearchComponent {
         });
     }
 
-    private modifyFolderFormControlSubscription() {
-        this.folderSearch$ = this.fileSearchForm.controls['folder'].valueChanges.pipe(
-            startWith(null)
-        );
+    private subscribeToRouteChanges() {
+        this.router.paramMap.pipe(
+            takeUntilDestroyed(this.destroyRef)
+        ).subscribe((params) => {
+            this.fileSearchForm.reset(null, { emitEvent: false });
+            this.store.dispatch(FilesActions.searchFiles({
+                searchParams: new FileSearch({
+                    folderId: parseInt(params.get('folderId'))
+                })
+            }))
+        })
     }
 
     private modifyFileTypeFormControlSubscription() {
-        this.fileTypeSearch$ = this.fileSearchForm.controls['fileType'].valueChanges.pipe(
+        this.fileTypeSearch$ = this.fileSearchForm.controls['fileTypeId'].valueChanges.pipe(
             startWith(null)
         );
     }
@@ -106,19 +112,10 @@ export class FileSearchComponent {
         );
     }
 
-    private setSelectedFolder() {
-        this.store.select(getSelectedFolder).pipe(
-            takeUntilDestroyed(this.destroyRef)
-        ).subscribe(selectedFolder => {
-            this.fileSearchForm.controls['folder'].setValue(selectedFolder);
-        });
-    }
-
     private initializeForm() {
         this.fileSearchForm = this.fb.group({
             "name": [''],
-            "fileType": [null],
-            "folder": [null],
+            "fileTypeId": [null],
             "lastModifiedRange": [[]]
         });
     }
