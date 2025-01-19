@@ -103,7 +103,6 @@ export class AppComponent implements OnInit {
     }
 
     folderSelected(selectedFolder: Folder) {
-        this.store.dispatch(FolderActions.folderSelected({ selectedFolder: selectedFolder }));
-        this.router.navigateByUrl('/files');
+        this.router.navigateByUrl(`/files/${selectedFolder.id}`);
     }
 }
