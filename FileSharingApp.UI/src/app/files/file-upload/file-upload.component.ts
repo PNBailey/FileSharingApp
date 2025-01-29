@@ -13,8 +13,9 @@ import { getFileSearchParams } from 'src/app/state/file/file.selector';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AppFile } from 'src/app/models/app-file';
 import { FileSearch } from 'src/app/models/file-search';
-import { LoadingObsName, LoadingService } from 'src/app/services/loading.service';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { getLoadingBool } from 'src/app/state/loading/loading.selector';
+import { LoadingBoolName } from 'src/app/state/loading/loading.reducer';
 
 @Component({
     selector: 'app-file-upload',
@@ -39,12 +40,11 @@ export class FileUploadComponent {
     @ViewChild(MatTable) table: MatTable<File>;
     destroyRef = inject(DestroyRef);
     searchParams: FileSearch;
-    uploadingFilesSub$ = this.loadingService.getLoadingObs(LoadingObsName.UPLOADING_FILES);
+    uploadingFilesSub$ = this.store.select(getLoadingBool(LoadingBoolName.UPLOADING_FILES));
     uploadingFiles: boolean;
 
     constructor(
         private store: Store,
-        private loadingService: LoadingService,
         private dialog: MatDialog
     ) {
         this.store.select(getFileSearchParams).pipe(

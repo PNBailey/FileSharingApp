@@ -23,6 +23,7 @@ import { ErrorHandlingService } from './app/services/error-handling.service';
 import { provideRouter } from '@angular/router';
 import { HomeComponent } from './app/home/home.component';
 import { FilesComponent } from './app/files/files.component';
+import { loadingReducer } from './app/state/loading/loading.reducer';
 
 if (environment.production) {
     enableProdMode();
@@ -50,7 +51,7 @@ bootstrapApplication(AppComponent, {
         provideRouter(routes),
         provideAnimations(),
         provideHttpClient(withInterceptorsFromDi()),
-        provideStore({ account: accountReducer, files: fileReducer, folders: folderReducer }),
+        provideStore({ account: accountReducer, files: fileReducer, folders: folderReducer, loading: loadingReducer }),
         provideEffects(AccountEffects, FileEffects, FolderEffects),
         provideCloudinaryLoader('https://res.cloudinary.com/filesharingapp/'),
         DatePipe

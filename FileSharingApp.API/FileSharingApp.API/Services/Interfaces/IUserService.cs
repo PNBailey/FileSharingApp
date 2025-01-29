@@ -20,7 +20,7 @@ namespace FileSharingApp.API.Services.Interfaces
 
         Task<AppUser> FindByNameAsync(string username);
 
-        Task<IdentityResult> UpdateUser(AppUser updatedUser);
+        Task<AppUser> UpdateUser(AppUser updatedUser);
 
         Task<AppUser> FindByIdAsync(int userId);
 

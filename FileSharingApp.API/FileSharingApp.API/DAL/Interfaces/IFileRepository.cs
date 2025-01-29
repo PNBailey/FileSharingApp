@@ -5,7 +5,7 @@ namespace FileSharingApp.API.DAL.Interfaces
 {
     public interface IFileRepository
     {
-        void UploadFile(BaseFile file, int userId);
+        void SaveFile(BaseFile file, int userId);
 
         PaginatedResponse<BaseFile> GetFiles(FileSearchParams searchParams, int userId);
 

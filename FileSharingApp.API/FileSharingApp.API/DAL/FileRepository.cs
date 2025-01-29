@@ -3,7 +3,6 @@ using FileSharingApp.API.Data;
 using FileSharingApp.API.Models;
 using FileSharingApp.API.Models.Files;
 using Microsoft.EntityFrameworkCore;
-using System.Globalization;
 
 namespace FileSharingApp.API.DAL
 {
@@ -36,12 +35,6 @@ namespace FileSharingApp.API.DAL
 
         private IQueryable<BaseFile> GetFilteredFiles(FileSearchParams searchParams, int userId)
         {
-            if(!string.IsNullOrEmpty(searchParams.LastModifiedStartDate) && !string.IsNullOrEmpty(searchParams.LastModifiedEndDate))
-            {
-                var start = DateTime.Parse(searchParams.LastModifiedStartDate);
-                var end = DateTime.Parse(searchParams.LastModifiedEndDate);
-                var test = context.Files.Select(f => f.LastModified).ToList();
-            }
             return context.Files
                 .Where(f =>
                     f.FileOwner.Id == userId &&
@@ -88,7 +81,7 @@ namespace FileSharingApp.API.DAL
                 ?? throw new Exception($"FileType not found for FileTypeName: {fileTypeName}");
         }
 
-        public void UploadFile(BaseFile file, int userId)
+        public void SaveFile(BaseFile file, int userId)
         {
             file.FileOwner = context.Users.FirstOrDefault(u => u.Id == userId)
                 ?? throw new Exception($"No user found with id: {userId}");

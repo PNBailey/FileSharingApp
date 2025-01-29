@@ -1,13 +1,15 @@
 import { Injectable } from "@angular/core";
 import { Actions, createEffect, ofType } from "@ngrx/effects";
 import { FilesActions, FilesApiActions } from "./file.actions";
-import { delay, finalize, forkJoin, map, mergeMap, switchMap, tap } from "rxjs";
+import { finalize, forkJoin, map, mergeMap, switchMap, tap } from "rxjs";
 import { FileService } from "src/app/services/file.service";
 import { MessageHandlingService } from "src/app/services/message-handling.service";
 import { AppFile } from "src/app/models/app-file";
-import { LoadingObsName, LoadingService } from "src/app/services/loading.service";
 import { FileType } from "src/app/models/file-type";
 import { PaginatedResponse } from "src/app/models/paginated-response";
+import { Store } from "@ngrx/store";
+import { LoadingBoolName } from "../loading/loading.reducer";
+import { LoadingActions } from "../loading/loading.actions";
 
 @Injectable()
 export class FileEffects {
@@ -15,12 +17,16 @@ export class FileEffects {
     uploadFiles$ = createEffect(() =>
         this.actions$.pipe(
             ofType(FilesActions.uploadFiles),
-            tap(() => this.loadingService.toggleLoadingObs(LoadingObsName.UPLOADING_FILES)),
             switchMap((action) => {
-                const filesObservableArray = action.files.map(file => this.fileService.uploadFile(file));
-                return forkJoin(filesObservableArray).pipe(
-                    map((uploadedFiles: AppFile[]) => FilesApiActions.uploadFilesSuccessful({ uploadedFiles: uploadedFiles })),
-                    finalize(() => this.loadingService.toggleLoadingObs(LoadingObsName.UPLOADING_FILES))
+                this.store.dispatch(LoadingActions.toggleLoading({ loadingBoolName: LoadingBoolName.UPLOADING_FILES }));
+                const uploadRequests = action.files.map(file => this.fileService.uploadFile(file));
+                return forkJoin(uploadRequests).pipe(
+                    map((uploadedFiles: AppFile[]) =>
+                        FilesApiActions.uploadFilesSuccessful({ uploadedFiles: uploadedFiles })
+                    ),
+                    finalize(() =>
+                        this.store.dispatch(LoadingActions.toggleLoading({ loadingBoolName: LoadingBoolName.UPLOADING_FILES }))
+                    )
                 )
             })
         )
@@ -40,10 +46,12 @@ export class FileEffects {
     getFiles$ = createEffect(() =>
         this.actions$.pipe(
             ofType(FilesActions.searchFiles),
-            tap(() => this.loadingService.toggleLoadingObs(LoadingObsName.LOADING_FILES)),
-            switchMap((action) => this.fileService.getFiles(action.searchParams).pipe(
-                finalize(() => this.loadingService.toggleLoadingObs(LoadingObsName.LOADING_FILES))
-            )),
+            switchMap((action) => {
+                this.store.dispatch(LoadingActions.toggleLoading({ loadingBoolName: LoadingBoolName.LOADING_FILES }))
+                return this.fileService.getFiles(action.searchParams).pipe(
+                    finalize(() => this.store.dispatch(LoadingActions.toggleLoading({ loadingBoolName: LoadingBoolName.LOADING_FILES })))
+                )
+            }),
             map((paginatedResponse: PaginatedResponse<AppFile>) => FilesApiActions.getFilesSuccessful({ paginatedResponse: paginatedResponse }))
         )
     );
@@ -59,9 +67,11 @@ export class FileEffects {
     deleteFile$ = createEffect(() =>
         this.actions$.pipe(
             ofType(FilesActions.deleteFile),
-            tap((action) => this.loadingService.toggleLoadingObs(action.file.name)),
-            mergeMap((action) => this.fileService.deleteFile(action.file)),
-            tap((file: AppFile) => this.loadingService.toggleLoadingObs(file.name)),
+            mergeMap((action) => {
+                this.store.dispatch(LoadingActions.toggleLoading({ loadingBoolName: action.file.name }))
+                return this.fileService.deleteFile(action.file);
+            }),
+            tap((file: AppFile) => this.store.dispatch(LoadingActions.toggleLoading({ loadingBoolName: file.name }))),
             map((file: AppFile) => FilesApiActions.deleteFileSuccessful({ file: file }))
         )
     );
@@ -73,7 +83,7 @@ export class FileEffects {
                 this.messageHandlingService.onDisplayNewMessage({
                     message: "File deleted"
                 });
-                this.loadingService.toggleLoadingObs(action.file.name)
+                this.store.dispatch(LoadingActions.toggleLoading({ loadingBoolName: action.file.name }))
             }),
         ), { dispatch: false }
     );
@@ -81,10 +91,12 @@ export class FileEffects {
     updateFile$ = createEffect(() =>
         this.actions$.pipe(
             ofType(FilesActions.updateFile),
-            tap(() => this.loadingService.toggleLoadingObs(LoadingObsName.UPDATING_FILE)),
-            switchMap((action) => this.fileService.updateFile(action.file).pipe(
-                finalize(() => this.loadingService.toggleLoadingObs(LoadingObsName.UPDATING_FILE))
-            )),
+            switchMap((action) => {
+                this.store.dispatch(LoadingActions.toggleLoading({ loadingBoolName: LoadingBoolName.UPDATING_FILE }))
+                return this.fileService.updateFile(action.file).pipe(
+                    finalize(() => this.store.dispatch(LoadingActions.toggleLoading({ loadingBoolName: LoadingBoolName.UPDATING_FILE })))
+                )
+            }),
             map((file: AppFile) => FilesApiActions.updateFileSuccessful({ file: file }))
         )
     );
@@ -104,6 +116,6 @@ export class FileEffects {
         private actions$: Actions,
         private fileService: FileService,
         private messageHandlingService: MessageHandlingService,
-        private loadingService: LoadingService
+        private store: Store
     ) { }
 }

@@ -10,8 +10,10 @@ import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/materia
 import { MatButtonModule } from '@angular/material/button';
 import { Observable } from 'rxjs';
 import { ValidationService } from 'src/app/services/validation.service';
-import { LoadingObsName, LoadingService } from 'src/app/services/loading.service';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { Store } from '@ngrx/store';
+import { getLoadingBool } from 'src/app/state/loading/loading.selector';
+import { LoadingBoolName } from 'src/app/state/loading/loading.reducer';
 
 @Component({
     selector: 'app-new-folder-dialog',
@@ -34,12 +36,12 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 export class NewFolderDialogComponent {
 
     form: FormGroup;
-    checkingFolderName$ = this.loadingService.getLoadingObs(LoadingObsName.CHECKING_FOLDERNAME);
+    checkingFolderName$ = this.store.select(getLoadingBool(LoadingBoolName.CHECKING_FOLDERNAME));
 
     constructor(
         private fb: FormBuilder,
         private validationService: ValidationService,
-        private loadingService: LoadingService,
+        private store: Store,
         public dialogRef: MatDialogRef<NewFolderDialogComponent>,
         @Inject(MAT_DIALOG_DATA) public data: { folders: Observable<Folder[]> }
     ) {
