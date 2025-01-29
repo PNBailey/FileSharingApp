@@ -13,7 +13,6 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { MatButtonModule } from '@angular/material/button';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { LoadingService } from 'src/app/services/loading.service';
 import { Observable } from 'rxjs';
 
 @Component({
@@ -67,10 +66,9 @@ export class FileComponent implements AfterViewInit {
     @Output() deleteFileEvent = new EventEmitter<AppFile>();
     @Output() viewFileEvent = new EventEmitter<AppFile>();
 
-    constructor(private loadingService: LoadingService, private renderer: Renderer2) { }
+    constructor(private renderer: Renderer2) { }
 
     ngAfterViewInit(): void {
-        this.deletingFile$ = this.loadingService.getLoadingObs(this.file.name);
     }
 
     deleteFile() {

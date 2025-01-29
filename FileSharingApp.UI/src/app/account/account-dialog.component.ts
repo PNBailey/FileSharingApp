@@ -1,7 +1,6 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
 import { UntypedFormGroup, FormsModule, ReactiveFormsModule, FormControl, Validators, FormBuilder } from '@angular/forms';
 import { combineLatest, map, Observable, scan, startWith, Subject, tap, withLatestFrom } from 'rxjs';
-import { LoadingObsName, LoadingService } from '../services/loading.service';
 import { MatButtonModule } from '@angular/material/button';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
@@ -13,9 +12,11 @@ import { RegisterUser } from '../models/register-user';
 import { LoginUser } from '../models/login-user';
 import { ValidationService } from '../services/validation.service';
 import { Store } from '@ngrx/store';
-import { AccountDialogActions } from '../state/account/account.actions';
 import { AccountState } from '../state/account/account.reducer';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { getLoadingBool } from '../state/loading/loading.selector';
+import { LoadingBoolName } from '../state/loading/loading.reducer';
+import { AccountActions } from '../state/account/account.actions';
 
 export interface Action {
     type: string,
@@ -49,7 +50,6 @@ export class AccountDialogComponent {
     destroyRef = inject(DestroyRef);
 
     constructor(
-        private loadingService: LoadingService,
         private validationService: ValidationService,
         private fb: FormBuilder,
         private store: Store<{ account: AccountState }>
@@ -57,7 +57,7 @@ export class AccountDialogComponent {
         this.accountAccessFormSubmitted.pipe(
             withLatestFrom(this.loginRegisterUrl$),
             tap(([formValue, loginRegisterUrl]) => {
-                this.store.dispatch(AccountDialogActions.loginOrRegister({
+                this.store.dispatch(AccountActions.loginOrRegister({
                     user: formValue,
                     url: loginRegisterUrl
                 }))
@@ -66,8 +66,8 @@ export class AccountDialogComponent {
         ).subscribe();
     }
 
-    checkingUsername$ = this.loadingService.getLoadingObs(LoadingObsName.CHECKING_USERNAME);
-    checkingEmail$ = this.loadingService.getLoadingObs(LoadingObsName.CHECKING_EMAIL);
+    checkingUsername$ = this.store.select(getLoadingBool(LoadingBoolName.CHECKING_USERNAME));
+    checkingEmail$ = this.store.select(getLoadingBool(LoadingBoolName.CHECKING_EMAIL));
 
     private accountAccessFormSubmitted: Subject<RegisterUser | LoginUser> = new Subject();
     private userIsRegisteringToggle = new Subject<void>();

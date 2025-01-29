@@ -6,7 +6,7 @@ namespace FileSharingApp.API.Services.Interfaces
 {
     public interface IFileService
     {
-        BaseFile UploadFile(BaseFile appFile, int userId);
+        BaseFile SaveFile(BaseFile appFile, int userId);
 
         string GetFileTypeName(string fileExtension);
 
@@ -22,10 +22,12 @@ namespace FileSharingApp.API.Services.Interfaces
 
         BaseFile CreateAppFile(FileUploadDto fileUploadDto);
 
-        string AddFileToCloudStorage(FileUploadDto fileUploadDto, string fileName);
+        Google.Apis.Storage.v1.Data.Object AddFileToCloudStorage(IFormFile file);
 
         Google.Apis.Storage.v1.Data.Object DownloadObjectFromCloudStorage(string fileName, MemoryStream memoryStream);
 
         void DeleteFileFromCloudStorage(string fileName);
+
+        void MakeFilePublic(Google.Apis.Storage.v1.Data.Object storageObject);
     }
 }

@@ -24,9 +24,9 @@ namespace FileSharingApp.API.Services
             bucketName = config["CloudStorageConfig:BucketName"];
         }
 
-        public BaseFile UploadFile(BaseFile appFile, int userId)
+        public BaseFile SaveFile(BaseFile appFile, int userId)
         {
-            fileRepository.UploadFile(appFile, userId);
+            fileRepository.SaveFile(appFile, userId);
             return appFile;
         }
 
@@ -90,17 +90,17 @@ namespace FileSharingApp.API.Services
             return appFile;
         }
 
-        public string AddFileToCloudStorage(FileUploadDto fileUploadDto, string fileName)
+        public Google.Apis.Storage.v1.Data.Object AddFileToCloudStorage(IFormFile file)
         {
-            using (var fileStream = fileUploadDto.OriginalFile.OpenReadStream())
+            using (var fileStream = file.OpenReadStream())
             {
                 var storageObject = storageClient.UploadObject(
                     bucket: bucketName,
-                    objectName: fileName,
-                    contentType: fileUploadDto.OriginalFile.ContentType,
+                    objectName: Path.GetFileNameWithoutExtension(file.FileName),
+                    contentType: file.ContentType,
                     source: fileStream
                 );
-                return storageObject.MediaLink;
+                return storageObject;
             }
         }
 
@@ -112,6 +112,11 @@ namespace FileSharingApp.API.Services
         public Google.Apis.Storage.v1.Data.Object DownloadObjectFromCloudStorage(string fileName, MemoryStream memoryStream)
         {
             return storageClient.DownloadObject(bucketName, fileName, memoryStream);
+        }
+
+        public void MakeFilePublic(Google.Apis.Storage.v1.Data.Object storageObject)
+        {
+            storageClient.UpdateObject(storageObject, new UpdateObjectOptions { PredefinedAcl = PredefinedObjectAcl.PublicRead });
         }
     }
 }

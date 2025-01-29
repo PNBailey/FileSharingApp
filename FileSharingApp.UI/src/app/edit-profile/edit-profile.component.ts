@@ -1,11 +1,8 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { Observable, tap, withLatestFrom } from 'rxjs';
-import { IdentityResult } from '../models/identity-result';
+import { Observable } from 'rxjs';
 import { SnackbarAction, SnackbarClassType, SnackbarDuration } from '../models/snackbar-item';
 import { User } from '../models/user';
-import { LoadingObsName, LoadingService } from '../services/loading.service';
 import { MessageHandlingService } from '../services/message-handling.service';
-import { UserService } from '../services/user.service';
 import { EditProfileInfoComponent } from './edit-profile-info/edit-profile-info.component';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTabsModule } from '@angular/material/tabs';
@@ -15,10 +12,12 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { NgIf, AsyncPipe } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
-import { AccountState } from '../state/account/account.reducer';
 import { Store } from '@ngrx/store';
 import { AccountActions } from '../state/account/account.actions';
-import { ImageUploadResult } from '../models/image-upload-result';
+import { getLoggedOnUser } from '../state/account/account.selectors';
+import { getLoadingBool } from '../state/loading/loading.selector';
+import { LoadingBoolName } from '../state/loading/loading.reducer';
+import { AppFile } from '../models/app-file';
 
 @Component({
     selector: 'app-edit-profile',
@@ -30,19 +29,14 @@ import { ImageUploadResult } from '../models/image-upload-result';
 })
 
 export class EditProfileComponent {
-  
-    loggedOnUser$: Observable<User | null>;
-    updatingProfile$: Observable<boolean> | undefined
-      
+
+    loggedOnUser$: Observable<User | null> = this.store.select(getLoggedOnUser);
+    updatingProfile$: Observable<boolean> | undefined = this.store.select(getLoadingBool(LoadingBoolName.UPDATING_PROFILE));
+
     constructor(
-    private messageHandlingService: MessageHandlingService,
-    private userService: UserService,
-    private loadingService: LoadingService,
-    private accountStore: Store<{ account: AccountState }>
-    ) {
-        this.loggedOnUser$ = this.accountStore.select(state => state.account.loggedOnUser);
-        this.updatingProfile$ = this.loadingService.getLoadingObs(LoadingObsName.UPDATING_PROFILE);
-    }
+        private messageHandlingService: MessageHandlingService,
+        private store: Store
+    ) { }
 
     displayIncorrectFileTypeMessage() {
         this.messageHandlingService.onDisplayNewMessage({
@@ -53,43 +47,11 @@ export class EditProfileComponent {
         });
     }
 
-    uploadProfilePicture(file: File) {  
-        this.userService.uploadProfilePicture(file).pipe(
-            withLatestFrom(this.loggedOnUser$),
-            tap(([imageUploadResult, loggedOnUser]) => {
-                if(loggedOnUser && imageUploadResult.error == null) {
-                    const updatedUser = this.updateUsersProfilePictureUrl(loggedOnUser, imageUploadResult);
-                    this.displayUserUpdatedMessage();
-                    this.accountStore.dispatch(AccountActions.setLoggedOnUser({user: updatedUser}))
-                }
-            })
-        ).subscribe();
-    }
-  
-    private updateUsersProfilePictureUrl(loggedOnUser: User, imageUploadResult: ImageUploadResult): User {
-        let updatedUser = new User();
-        updatedUser = { ...loggedOnUser };
-        updatedUser.profilePictureUrl = imageUploadResult.url;
-        return updatedUser;
+    uploadProfilePicture(file: File) {
+        this.store.dispatch(AccountActions.uploadProfilePicture({ file: file }));
     }
 
     infoUpdated(updatedUser: User) {
-        this.userService.updateUserInfo(updatedUser).pipe(
-            tap((res: IdentityResult) => {
-                if(res.succeeded) {
-                    this.accountStore.dispatch(AccountActions.setLoggedOnUser({user: updatedUser}))
-                    this.displayUserUpdatedMessage();
-                }
-            })  
-        ).subscribe();    
-    }
-
-    private displayUserUpdatedMessage() {
-        this.messageHandlingService.onDisplayNewMessage({
-            message: "Successfully Updated",
-            action: SnackbarAction.Close,
-            classType: SnackbarClassType.Success,
-            duration: SnackbarDuration.Medium
-        });
+        this.store.dispatch(AccountActions.updateUserInfo({ updatedUser: updatedUser }));
     }
 }

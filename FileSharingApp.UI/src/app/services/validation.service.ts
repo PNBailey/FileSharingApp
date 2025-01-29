@@ -1,8 +1,10 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { AbstractControl, AsyncValidatorFn, ValidationErrors } from '@angular/forms';
-import { debounceTime, distinctUntilChanged, first, map, Observable, switchMap, tap, withLatestFrom } from 'rxjs';
-import { LoadingObsName, LoadingService } from 'src/app/services/loading.service';
+import { Store } from '@ngrx/store';
+import { debounceTime, distinctUntilChanged, finalize, first, map, Observable, switchMap, tap, withLatestFrom } from 'rxjs';
+import { LoadingActions } from '../state/loading/loading.actions';
+import { LoadingBoolName } from '../state/loading/loading.reducer';
 
 @Injectable({
     providedIn: 'root'
@@ -12,40 +14,44 @@ export class ValidationService {
     baseUrl = "https://localhost:7249/api";
 
     constructor(
-        private loadingService: LoadingService,
+        private store: Store,
         private http: HttpClient
     ) { }
 
     uniqueUsernameValidatorFn(mustBeUnique: boolean, originalUsername: string | null = null): AsyncValidatorFn {
-        return (control: AbstractControl): Observable<ValidationErrors | { string: boolean } | null> =>
-            control.valueChanges
-                .pipe(
-                    debounceTime(400),
-                    tap(() => this.loadingService.toggleLoadingObs(LoadingObsName.CHECKING_USERNAME)),
-                    distinctUntilChanged(),
-                    switchMap((controlValue) => this.checkUsernameUnique(controlValue)),
-                    withLatestFrom(control.valueChanges),
-                    map(
-                        ([usernameIsUnique, controlValue]) => (
-                            (usernameIsUnique && mustBeUnique) ||
-                                (!usernameIsUnique && !mustBeUnique) ||
-                                (!usernameIsUnique && mustBeUnique && controlValue == originalUsername)
-                                ? null : { 'usernameUniquenessViolated': true })
-                    ),
-                    tap(() => this.loadingService.toggleLoadingObs(LoadingObsName.CHECKING_USERNAME)),
-                    first()
-                );
+        return (control: AbstractControl): Observable<ValidationErrors | null> => {
+            return control.valueChanges.pipe(
+                debounceTime(400),
+                distinctUntilChanged(),
+                tap(() => this.store.dispatch(LoadingActions.toggleLoading({ loadingBoolName: LoadingBoolName.CHECKING_USERNAME }))),
+                switchMap((controlValue) => this.checkUsernameUnique(controlValue)),
+                withLatestFrom(control.valueChanges),
+                map(([usernameIsUnique, controlValue]) => {
+                    const isOriginalUsername =
+                        !usernameIsUnique && mustBeUnique && controlValue === originalUsername;
+
+                    const isValid =
+                        (usernameIsUnique && mustBeUnique) ||
+                        (!usernameIsUnique && !mustBeUnique) ||
+                        isOriginalUsername;
+
+                    return isValid ? null : { usernameUniquenessViolated: true };
+                }),
+                tap(() => this.store.dispatch(LoadingActions.toggleLoading({ loadingBoolName: LoadingBoolName.CHECKING_USERNAME }))),
+                first()
+            );
+        };
     }
 
     uniqueEmailValidatorFn(): AsyncValidatorFn {
         return (control: AbstractControl): Observable<ValidationErrors | { string: boolean } | null> => control.valueChanges
             .pipe(
                 debounceTime(400),
-                tap(() => this.loadingService.toggleLoadingObs(LoadingObsName.CHECKING_EMAIL)),
+                tap(() => this.store.dispatch(LoadingActions.toggleLoading({ loadingBoolName: LoadingBoolName.CHECKING_EMAIL }))),
                 distinctUntilChanged(),
                 switchMap(value => this.checkEmailUnique(value)),
                 map((usernameIsUnique: boolean) => (usernameIsUnique ? null : { 'emailUniquenessViolated': true })),
-                tap(() => this.loadingService.toggleLoadingObs(LoadingObsName.CHECKING_EMAIL)),
+                tap(() => this.store.dispatch(LoadingActions.toggleLoading({ loadingBoolName: LoadingBoolName.CHECKING_EMAIL }))),
                 first()
             );
     }
@@ -54,11 +60,11 @@ export class ValidationService {
         return (control: AbstractControl): Observable<ValidationErrors | { string: boolean } | null> => control.valueChanges
             .pipe(
                 debounceTime(400),
-                tap(() => this.loadingService.toggleLoadingObs(LoadingObsName.CHECKING_FOLDERNAME)),
+                tap(() => this.store.dispatch(LoadingActions.toggleLoading({ loadingBoolName: LoadingBoolName.CHECKING_FOLDERNAME }))),
                 distinctUntilChanged(),
                 switchMap(value => this.checkFolderNameUnique(value)),
                 map((folderIsNotUnique: boolean) => (folderIsNotUnique ? { 'folderUniquenessViolated': true } : null)),
-                tap(() => this.loadingService.toggleLoadingObs(LoadingObsName.CHECKING_FOLDERNAME)),
+                tap(() => this.store.dispatch(LoadingActions.toggleLoading({ loadingBoolName: LoadingBoolName.CHECKING_FOLDERNAME }))),
                 first()
             );
     }

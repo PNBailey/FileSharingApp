@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
 import { Observable } from 'rxjs';
 import { User } from 'src/app/models/user';
 import { MatButtonModule } from '@angular/material/button';
@@ -20,9 +20,13 @@ export enum ValidFileTypes {
     imports: [NgIf, MatCardModule, MatIconModule, MatButtonModule, AsyncPipe]
 })
 
-export class EditProfileCardComponent {
+export class EditProfileCardComponent implements AfterViewInit {
 
     @Input() loggedOnUser$: Observable<null | User>;
+
+    ngAfterViewInit(): void {
+        this.loggedOnUser$.subscribe(u => console.log(u));
+    }
 
     @Output() incorrectFileTypeSelected: EventEmitter<void> = new EventEmitter();
     @Output() newImageSelected: EventEmitter<File> = new EventEmitter<File>();

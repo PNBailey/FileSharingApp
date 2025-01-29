@@ -41,9 +41,9 @@ namespace FileSharingApp.API.Controllers
         }
 
         [HttpPut("Update")]
-        public async Task<IdentityResult> Update([FromBody] AppUser updatedUser)
+        public async Task<AppUser> Update([FromBody] AppUser updatedUser)
         {
-            return await this.userService.UpdateUser(updatedUser);
+            return await userService.UpdateUser(updatedUser);
         }
 
         [HttpDelete("{id}")]
@@ -53,20 +53,14 @@ namespace FileSharingApp.API.Controllers
         }
 
         [HttpPost("Upload-Profile-Picture")]
-        public async Task<FileDto> UploadProfilePicture([FromForm]IFormFile imageFileData)
+        public async Task<IActionResult> UploadProfilePicture([FromForm]IFormFile imageFileData)
         {
-            var imageFile = new ImageFile()
-            {
-                //FileData = imageFileData
-            };
-
-
-            ////var uploadedFile = await fileService.UploadFile(imageFile, User.GetUserId());
-            //var user = await userService.FindByIdAsync(User.GetUserId());
-            //user.ProfilePictureUrl = uploadedFile.Url.ToString();
-            //await userService.UpdateUser(user);
-            //var fileDto = mapper.Map<FileDto>(uploadedFile);
-            return new FileDto();
+            var storageObject = fileService.AddFileToCloudStorage(imageFileData);
+            fileService.MakeFilePublic(storageObject);
+            var user = await userService.FindByIdAsync(User.GetUserId());
+            user.ProfilePictureUrl = storageObject.SelfLink;
+            await userService.UpdateUser(user);
+            return Ok(new { user.ProfilePictureUrl });
         }
     }
 }

@@ -10,7 +10,6 @@ import { AppFile } from '../models/app-file';
 import { FileComponent } from './file/file.component';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { FileUploadComponent } from './file-upload/file-upload.component';
-import { LoadingObsName, LoadingService } from '../services/loading.service';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { FileViewComponent } from './file-view/file-view.component';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -27,6 +26,8 @@ import { environment } from 'src/environments/environment';
 import { FileSearch } from '../models/file-search';
 import { getFileSearchParams, getFiles, getTotalFiles } from '../state/file/file.selector';
 import { LazyLoadEvent } from 'primeng/api';
+import { getLoadingBool } from '../state/loading/loading.selector';
+import { LoadingBoolName } from '../state/loading/loading.reducer';
 
 @Component({
     selector: 'app-files',
@@ -56,14 +57,14 @@ export class FilesComponent {
     destroyRef = inject(DestroyRef);
     files$: Observable<AppFile[]> = this.store.select(getFiles);
     totalFiles$: Observable<number> = this.store.select(getTotalFiles);
-    loadingFiles$ = this.loadingService.getLoadingObs(LoadingObsName.LOADING_FILES);
+    // loadingFiles$ = this.loadingService.getLoadingObs(LoadingObsName.LOADING_FILES);
+    loadingFiles$ = this.store.select(getLoadingBool(LoadingBoolName.LOADING_FILES));
     deletingFile$: Observable<boolean>;
     existingFileSearchParams: FileSearch;
 
     constructor(
         private store: Store,
         public dialog: MatDialog,
-        private loadingService: LoadingService,
         private renderer: Renderer2
     ) {
         this.store.select(getFileSearchParams)
@@ -99,7 +100,6 @@ export class FilesComponent {
     }
 
     deleteFile(file: AppFile) {
-        this.deletingFile$ = this.loadingService.getLoadingObs(file.name);
         this.store.dispatch(FilesActions.deleteFile({ file: file }));
     }
 

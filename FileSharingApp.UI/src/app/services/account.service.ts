@@ -4,7 +4,6 @@ import { MatDialog } from '@angular/material/dialog';
 import { LoginUser } from '../models/login-user';
 import { RegisterUser } from '../models/register-user';
 import { User } from '../models/user';
-import { LoadingService } from './loading.service';
 
 @Injectable({
     providedIn: 'root'
@@ -13,9 +12,8 @@ import { LoadingService } from './loading.service';
 export class AccountService {
 
     constructor(
-    private http: HttpClient, 
-    public dialog: MatDialog,
-    public loadingService: LoadingService
+        private http: HttpClient,
+        public dialog: MatDialog
     ) { }
 
     private baseUrl = "https://localhost:7249/api/Account";

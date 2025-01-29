@@ -4,7 +4,7 @@ import { ToolbarComponent } from './toolbar/toolbar.component';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { AccountDialogComponent } from './account/account-dialog.component';
 import { Store } from '@ngrx/store';
-import { AccountActions, AccountAppCompActions } from './state/account/account.actions';
+import { AccountActions } from './state/account/account.actions';
 import { Observable, filter, of, switchMap, tap } from 'rxjs';
 import { User } from './models/user';
 import { AsyncPipe, NgIf } from '@angular/common';
@@ -67,7 +67,7 @@ export class AppComponent implements OnInit {
     }
 
     logoutUser() {
-        this.store.dispatch(AccountAppCompActions.logout());
+        this.store.dispatch(AccountActions.logout());
         this.store.dispatch(FilesActions.clearFiles());
         this.store.dispatch(FolderActions.clearFolders());
         this.router.navigateByUrl('/home');

@@ -14,8 +14,9 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { Store } from '@ngrx/store';
 import { Observable, tap } from 'rxjs';
 import { AppFile } from 'src/app/models/app-file';
-import { LoadingObsName, LoadingService } from 'src/app/services/loading.service';
 import { getAllFolders } from 'src/app/state/folder/folder.selector';
+import { LoadingBoolName } from 'src/app/state/loading/loading.reducer';
+import { getLoadingBool } from 'src/app/state/loading/loading.selector';
 
 @Component({
     selector: 'app-file-view',
@@ -43,7 +44,7 @@ export class FileViewComponent {
 
     appFileForm: FormGroup;
     folders$: Observable<any> = this.store.select(getAllFolders);
-    updatingFile$ = this.loadingService.getLoadingObs(LoadingObsName.UPDATING_FILE).pipe(
+    updatingFile$ = this.store.select(getLoadingBool(LoadingBoolName.UPDATING_FILE)).pipe(
         tap((isUpdating) => {
             if (!isUpdating && this.appFileForm.dirty) {
                 this.dialogRef.close(null);
@@ -55,7 +56,6 @@ export class FileViewComponent {
         private fb: FormBuilder,
         private store: Store,
         public dialogRef: MatDialogRef<FileViewComponent>,
-        private loadingService: LoadingService,
         @Inject(MAT_DIALOG_DATA) public data: { file: AppFile }
     ) {
         this.appFileForm = this.fb.group({

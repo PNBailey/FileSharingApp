@@ -43,9 +43,7 @@ namespace FileSharingApp.API.Services
 
         public async Task<IdentityResult> AttemptToCreateUser(AppUser newUser, string password)
         {
-
             logger.Info($"Attempting to create user. Username: {newUser.UserName}. Email: {newUser.Email}");
-
             return await userManager.CreateAsync(newUser, password);
         }
 
@@ -104,7 +102,7 @@ namespace FileSharingApp.API.Services
             }
         }
 
-        public async Task<IdentityResult> UpdateUser(AppUser updatedUser)
+        public async Task<AppUser> UpdateUser(AppUser updatedUser)
         {
             var existingUser = await userManager.FindByIdAsync(updatedUser.Id.ToString());
             if(existingUser != null)
@@ -119,7 +117,9 @@ namespace FileSharingApp.API.Services
                 throw new UserNotFoundException("Unable to update user as user not found");
             }
 
-            return await userManager.UpdateAsync(existingUser);
+            await userManager.UpdateAsync(existingUser);
+
+            return existingUser;
         }
 
         public async Task<SignInResult> SignIn(AppUser user, string password)

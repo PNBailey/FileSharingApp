@@ -37,8 +37,8 @@ namespace FileSharingApp.API.Controllers
             }
 
             BaseFile appFile = fileService.CreateAppFile(fileUploadDto);
-            appFile.DownloadUrl = fileService.AddFileToCloudStorage(fileUploadDto, appFile.Name);
-            fileService.UploadFile(appFile, User.GetUserId());
+            appFile.DownloadUrl = fileService.AddFileToCloudStorage(fileUploadDto.OriginalFile).MediaLink;
+            fileService.SaveFile(appFile, User.GetUserId());
 
             return appFile;
         }
