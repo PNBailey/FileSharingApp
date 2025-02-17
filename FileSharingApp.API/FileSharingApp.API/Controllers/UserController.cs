@@ -1,12 +1,9 @@
 ﻿using AutoMapper;
-using CloudinaryDotNet.Actions;
 using FileSharingApp.API.ExtensionMethods;
 using FileSharingApp.API.Models;
 using FileSharingApp.API.Models.DTOs;
-using FileSharingApp.API.Models.Files;
 using FileSharingApp.API.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FileSharingApp.API.Controllers
@@ -16,7 +13,6 @@ namespace FileSharingApp.API.Controllers
     {
         private readonly IUserService userService;
         private readonly IFileService fileService;
-        private readonly IMapper mapper;
 
         public UserController(
             IUserService userService, 
@@ -25,7 +21,6 @@ namespace FileSharingApp.API.Controllers
         {
             this.userService = userService;
             this.fileService = fileService;
-            this.mapper = mapper;
         }
 
         [HttpGet]
@@ -56,11 +51,12 @@ namespace FileSharingApp.API.Controllers
         public async Task<IActionResult> UploadProfilePicture([FromForm]IFormFile imageFileData)
         {
             var storageObject = fileService.AddFileToCloudStorage(imageFileData);
-            fileService.MakeFilePublic(storageObject);
+            var signedUrl = fileService.GetSignedUrl(storageObject.Name);
             var user = await userService.FindByIdAsync(User.GetUserId());
-            user.ProfilePictureUrl = storageObject.SelfLink;
+            user.ProfilePictureUrl = signedUrl;
+            user.ProfilePictureName = storageObject.Name;
             await userService.UpdateUser(user);
-            return Ok(new { user.ProfilePictureUrl });
+            return Ok(new { signedUrl });
         }
     }
 }

@@ -13,10 +13,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using NLog;
 using NLog.Web;
-using System.Globalization;
 using System.Text;
 using System.Text.Json.Serialization;
-using static Org.BouncyCastle.Math.EC.ECCurve;
 
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 var builder = WebApplication.CreateBuilder(args);
@@ -44,6 +42,10 @@ try
                     .AllowCredentials();
             });
     });
+
+    //Set GCP creds
+    var credentialPath = configuration["GCP:ApplicationCredentials"];
+    Environment.SetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS", credentialPath);
 
     // Replace JWT Secret
     AccessSecretVersionRequest request = new()
@@ -73,7 +75,9 @@ try
             ValidateAudience = true,
             ValidAudience = configuration["JWT:ValidAudience"],
             ValidIssuer = configuration["JWT:ValidIssuer"],
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JWT:Secret"]))
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JWT:Secret"])),
+            ValidateLifetime = true,
+            ClockSkew = TimeSpan.Zero
         };
     });
 

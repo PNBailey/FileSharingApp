@@ -29,5 +29,7 @@ namespace FileSharingApp.API.Services.Interfaces
         void DeleteFileFromCloudStorage(string fileName);
 
         void MakeFilePublic(Google.Apis.Storage.v1.Data.Object storageObject);
+
+        string GetSignedUrl(string objectName);
     }
 }

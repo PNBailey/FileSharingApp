@@ -2,7 +2,8 @@
     <div class="profile-picture-container" (click)="fileUpload.click()">
         <input type="file" class="d-none file-input" accept=".png, .jpg" (change)="onFileSelected($event)" #fileUpload>
         <img class="p-2 rounded profile-picture" mat-card-image
-            src="https://storage.googleapis.com/file-sharing-app/The%20Plastic%20Coast%20Logo" alt="Profile Image">
+            src="{{ user.profilePictureUrl || '../../../../../assets/images/Placeholder user image.jpg' }}"
+            alt="Profile Image">
         <div class="d-flex justify-content-end upload-icon-container">
             <mat-icon fontIcon="upload" class="upload-icon d-flex justify-content-center">
             </mat-icon>

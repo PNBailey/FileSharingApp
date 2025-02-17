@@ -3,8 +3,8 @@ using FileSharingApp.API.Models;
 using FileSharingApp.API.Models.DTOs;
 using FileSharingApp.API.Models.Files;
 using FileSharingApp.API.Services.Interfaces;
+using Google.Apis.Auth.OAuth2;
 using Google.Cloud.Storage.V1;
-using System.IO;
 using System.Text.Json;
 
 namespace FileSharingApp.API.Services
@@ -117,6 +117,18 @@ namespace FileSharingApp.API.Services
         public void MakeFilePublic(Google.Apis.Storage.v1.Data.Object storageObject)
         {
             storageClient.UpdateObject(storageObject, new UpdateObjectOptions { PredefinedAcl = PredefinedObjectAcl.PublicRead });
+        }
+
+        public string GetSignedUrl(string objectName)
+        {
+            UrlSigner signer = UrlSigner.FromCredential(GoogleCredential.GetApplicationDefault());
+            string signedUrl = signer.Sign(
+                bucketName,
+                objectName,
+                TimeSpan.FromDays(7),
+                HttpMethod.Get
+            );
+            return signedUrl;
         }
     }
 }

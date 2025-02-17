@@ -4,7 +4,6 @@ import { environment } from './environments/environment';
 import { AppComponent } from './app/app.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserAnimationsModule, provideAnimations } from '@angular/platform-browser/animations';
-import { AppRoutingModule } from './app/app-routing.module';
 import { BrowserModule, bootstrapApplication } from '@angular/platform-browser';
 import { JwtInterceptor } from './app/shared/interceptors/jwt.interceptor';
 import { HTTP_INTERCEPTORS, withInterceptorsFromDi, provideHttpClient } from '@angular/common/http';
@@ -18,28 +17,31 @@ import { FileEffects } from './app/state/file/file.effects';
 import { fileReducer } from './app/state/file/file.reducer';
 import { FolderEffects } from './app/state/folder/folder.effects';
 import { folderReducer } from './app/state/folder/folder.reducer';
-import { DatePipe, provideCloudinaryLoader } from '@angular/common';
+import { DatePipe } from '@angular/common';
 import { ErrorHandlingService } from './app/services/error-handling.service';
-import { provideRouter } from '@angular/router';
+import { Routes, provideRouter } from '@angular/router';
 import { HomeComponent } from './app/home/home.component';
 import { FilesComponent } from './app/files/files.component';
 import { loadingReducer } from './app/state/loading/loading.reducer';
+import { EditProfileComponent } from './app/edit-profile/edit-profile.component';
 
 if (environment.production) {
     enableProdMode();
 }
 
-const routes = [
+const routes: Routes = [
     { path: '', component: HomeComponent },
+    { path: 'home', component: HomeComponent },
+    { path: 'edit-profile', component: EditProfileComponent },
     { path: 'files', component: FilesComponent },
     { path: 'files/:folderId', component: FilesComponent },
+    { path: '**', component: HomeComponent }
 ];
 
 bootstrapApplication(AppComponent, {
     providers: [
         importProvidersFrom(
             BrowserModule,
-            AppRoutingModule,
             FormsModule,
             ReactiveFormsModule,
             MatDialogModule,
@@ -53,7 +55,6 @@ bootstrapApplication(AppComponent, {
         provideHttpClient(withInterceptorsFromDi()),
         provideStore({ account: accountReducer, files: fileReducer, folders: folderReducer, loading: loadingReducer }),
         provideEffects(AccountEffects, FileEffects, FolderEffects),
-        provideCloudinaryLoader('https://res.cloudinary.com/filesharingapp/'),
         DatePipe
     ]
 })
