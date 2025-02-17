@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import { Actions, createEffect, ofType } from '@ngrx/effects';
-import { catchError, exhaustMap, map, of, switchMap, tap, withLatestFrom } from "rxjs";
+import { catchError, exhaustMap, map, mergeMap, of, switchMap, tap, withLatestFrom } from "rxjs";
 import { AccountService } from "src/app/services/account.service";
 import { AccountApiActions, AccountActions } from "./account.actions";
 import { MatDialog } from "@angular/material/dialog";
@@ -13,6 +13,8 @@ import { UserService } from "src/app/services/user.service";
 import { User } from "src/app/models/user";
 import { LoadingBoolName } from "../loading/loading.reducer";
 import { LoadingActions } from "../loading/loading.actions";
+import { FilesActions } from "../file/file.actions";
+import { FolderActions } from "../folder/folder.actions";
 
 @Injectable()
 export class AccountEffects {
@@ -52,7 +54,12 @@ export class AccountEffects {
     logout$ = createEffect(() =>
         this.actions$.pipe(
             ofType(AccountActions.logout),
-            map(() => AccountActions.setLoggedOnUser({ user: null }))
+            mergeMap(() => [
+                FilesActions.clearFiles(),
+                FolderActions.clearFolders(),
+                AccountActions.setLoggedOnUser({ user: null })
+            ]),
+            tap(() => this.router.navigateByUrl('/home'))
         )
     );
 
@@ -62,14 +69,14 @@ export class AccountEffects {
             switchMap((action) => {
                 this.store.dispatch(LoadingActions.toggleLoading({ loadingBoolName: LoadingBoolName.UPDATING_PROFILE }));
                 return this.userService.uploadProfilePicture(action.file).pipe(
-                    map((response: { imageUrl: string }) => response.imageUrl)
+                    map((response: { signedUrl: string }) => response.signedUrl)
                 );
             }),
             withLatestFrom(this.store.select(getLoggedOnUser)),
-            map(([imageUrl, loggedOnUser]) => {
+            map(([signedUrl, loggedOnUser]) => {
                 const updatedUser: User = {
                     ...loggedOnUser,
-                    profilePictureUrl: imageUrl
+                    profilePictureUrl: signedUrl
                 };
                 return AccountApiActions.uploadProfilePictureSuccessful({ updatedUser: updatedUser });
             })

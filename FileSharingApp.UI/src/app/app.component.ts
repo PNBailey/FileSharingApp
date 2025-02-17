@@ -68,9 +68,6 @@ export class AppComponent implements OnInit {
 
     logoutUser() {
         this.store.dispatch(AccountActions.logout());
-        this.store.dispatch(FilesActions.clearFiles());
-        this.store.dispatch(FolderActions.clearFolders());
-        this.router.navigateByUrl('/home');
     }
 
     openAccountDialog(): void {

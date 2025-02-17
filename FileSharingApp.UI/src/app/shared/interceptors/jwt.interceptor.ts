@@ -5,32 +5,49 @@ import {
     HttpEvent,
     HttpInterceptor
 } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { take, tap } from 'rxjs/operators';
+import { EMPTY, Observable } from 'rxjs';
+import { switchMap, take } from 'rxjs/operators';
 import { Store } from '@ngrx/store';
 import { AccountState } from 'src/app/state/account/account.reducer';
 import { getLoggedOnUser } from 'src/app/state/account/account.selectors';
+import { tokenHasExpired } from '../helpers/jwt-helpers';
+import { AccountActions } from 'src/app/state/account/account.actions';
+import { MessageHandlingService } from 'src/app/services/message-handling.service';
+import { SnackbarAction, SnackbarClassType, SnackbarDuration } from 'src/app/models/snackbar-item';
 
 @Injectable()
 export class JwtInterceptor implements HttpInterceptor {
 
-    constructor(private accountStore: Store<{account: AccountState}>) {}
-    newRequest: HttpRequest<unknown>;
+    constructor(
+        private accountStore: Store<{ account: AccountState }>,
+        private messageHandlingService: MessageHandlingService
+    ) { }
 
     intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
-        this.newRequest = request;
-        this.accountStore.select(getLoggedOnUser).pipe(
+        return this.accountStore.select(getLoggedOnUser).pipe(
             take(1),
-            tap(currentUser => {         
-                if (currentUser) {          
-                    this.newRequest = request.clone({
-                        setHeaders: {
-                            Authorization: `Bearer ${currentUser.token}`
-                        }
-                    })
+            switchMap(user => {
+                if (!user) {
+                    return next.handle(request);
                 }
-            }) 
-        ).subscribe();
-        return next.handle(this.newRequest);
+
+                if (tokenHasExpired(user.token)) {
+                    this.accountStore.dispatch(AccountActions.logout());
+                    this.messageHandlingService.onDisplayNewMessage({
+                        message: "Session expired",
+                        action: SnackbarAction.Close,
+                        classType: SnackbarClassType.Info,
+                        duration: SnackbarDuration.Medium
+                    });
+                    return EMPTY;
+                }
+
+                const authRequest = request.clone({
+                    setHeaders: { Authorization: `Bearer ${user.token}` }
+                });
+
+                return next.handle(authRequest);
+            })
+        );
     }
 }

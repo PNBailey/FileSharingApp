@@ -57,7 +57,6 @@ export class FilesComponent {
     destroyRef = inject(DestroyRef);
     files$: Observable<AppFile[]> = this.store.select(getFiles);
     totalFiles$: Observable<number> = this.store.select(getTotalFiles);
-    // loadingFiles$ = this.loadingService.getLoadingObs(LoadingObsName.LOADING_FILES);
     loadingFiles$ = this.store.select(getLoadingBool(LoadingBoolName.LOADING_FILES));
     deletingFile$: Observable<boolean>;
     existingFileSearchParams: FileSearch;

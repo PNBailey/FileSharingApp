@@ -10,6 +10,7 @@ import { PaginatedResponse } from "src/app/models/paginated-response";
 import { Store } from "@ngrx/store";
 import { LoadingBoolName } from "../loading/loading.reducer";
 import { LoadingActions } from "../loading/loading.actions";
+import { Router } from "@angular/router";
 
 @Injectable()
 export class FileEffects {
@@ -116,6 +117,7 @@ export class FileEffects {
         private actions$: Actions,
         private fileService: FileService,
         private messageHandlingService: MessageHandlingService,
-        private store: Store
+        private store: Store,
+        private router: Router
     ) { }
 }

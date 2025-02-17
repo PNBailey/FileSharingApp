@@ -16,7 +16,7 @@ export class UserService {
     uploadProfilePicture(file: File) {
         const formData = new FormData();
         formData.append('imageFileData', file);
-        return this.http.post<{ imageUrl: string }>(`${this.baseUrl}Upload-Profile-Picture`, formData);
+        return this.http.post<{ signedUrl: string }>(`${this.baseUrl}Upload-Profile-Picture`, formData);
     }
 
     updateUserInfo(updatedUser: User) {

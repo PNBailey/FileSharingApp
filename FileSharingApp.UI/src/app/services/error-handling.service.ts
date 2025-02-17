@@ -1,8 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { HttpClient } from '@angular/common/http';
-import { ErrorHandler, Injectable } from '@angular/core';
+import { ErrorHandler, Injectable, NgZone } from '@angular/core';
 import { SnackbarAction, SnackbarClassType, SnackbarDuration } from '../models/snackbar-item';
 import { MessageHandlingService } from './message-handling.service';
+import { Router } from '@angular/router';
 
 
 export enum Exception {
@@ -33,11 +34,14 @@ export class ErrorHandlingService implements ErrorHandler {
     message = "";
     baseUrl = "https://localhost:7249/api/Errors";
 
-    constructor(private messageHandlingService: MessageHandlingService, private http: HttpClient) { }
+    constructor(
+        private messageHandlingService: MessageHandlingService,
+        private http: HttpClient,
+        private ngZone: NgZone,
+        private router: Router
+    ) { }
 
     handleError(error: any) {
-        console.log(error);
-
         this.error = error;
         this.setDefaultErrorMessage();
         this.setCustomErrorMessage();
@@ -99,6 +103,9 @@ export class ErrorHandlingService implements ErrorHandler {
     }
 
     private displayErrorToUser() {
+        if (this.message != "Session Expired") {
+
+        }
         this.messageHandlingService.onDisplayNewMessage({
             message: this.message,
             action: SnackbarAction.Close,

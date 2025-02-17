@@ -11,6 +11,8 @@ namespace FileSharingApp.API.Models
 
         public string? ProfilePictureUrl { get; set; }
 
+        public string? ProfilePictureName { get; set; }
+
         public ICollection<UserFolder>? Folders { get; set; }
 
     }
