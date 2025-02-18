@@ -82,12 +82,14 @@ export class FileSearchComponent {
         this.router.paramMap.pipe(
             takeUntilDestroyed(this.destroyRef)
         ).subscribe((params) => {
-            this.fileSearchForm.reset(null, { emitEvent: false });
-            this.store.dispatch(FilesActions.searchFiles({
-                searchParams: new FileSearch({
-                    folderId: parseInt(params.get('folderId'))
-                })
-            }))
+            if (params.get('folderId')) {
+                this.fileSearchForm.reset(null, { emitEvent: false });
+                this.store.dispatch(FilesActions.searchFiles({
+                    searchParams: new FileSearch({
+                        folderId: parseInt(params.get('folderId'))
+                    })
+                }))
+            }
         })
     }
 

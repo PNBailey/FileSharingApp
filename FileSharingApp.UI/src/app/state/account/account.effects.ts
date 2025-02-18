@@ -59,7 +59,10 @@ export class AccountEffects {
                 FolderActions.clearFolders(),
                 AccountActions.setLoggedOnUser({ user: null })
             ]),
-            tap(() => this.router.navigateByUrl('/home'))
+            tap(() => {
+                localStorage.removeItem('user');
+                this.router.navigateByUrl('/home');
+            })
         )
     );
 

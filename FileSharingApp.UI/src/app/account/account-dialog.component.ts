@@ -139,7 +139,7 @@ export class AccountDialogComponent {
     private buildLoginForm(userIsRegistering: boolean) {
         return this.fb.group({
             'username': ['', [Validators.required], [this.validationService.uniqueUsernameValidatorFn(userIsRegistering)]],
-            'password': ['', [Validators.required, Validators.pattern("^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$")]]
+            'password': ['', [Validators.required]]
         });
     }
 

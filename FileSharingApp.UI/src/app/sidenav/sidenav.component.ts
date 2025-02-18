@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, EventEmitter, Input, Output } from '@angular/core';
+import { AfterViewInit, Component, DestroyRef, EventEmitter, Input, Output, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { RouterOutlet } from '@angular/router';
@@ -12,8 +12,8 @@ import { User } from '../models/user';
 import { TreeModule } from 'primeng/tree';
 import { TreeDragDropService } from 'primeng/api';
 import { ParentFolderFilterPipe } from '../shared/pipes/parent-folder-filter-pipe';
-import { ConvertToFolderNodesPipe } from '../shared/pipes/convert-to-folder-nodes-pipe';
 import { tokenHasExpired } from '../shared/helpers/jwt-helpers';
+import { FolderNode } from '../models/folder-node';
 
 @Component({
     selector: 'app-sidenav',
@@ -27,8 +27,7 @@ import { tokenHasExpired } from '../shared/helpers/jwt-helpers';
         MatIconModule,
         TextLengthPipe,
         TreeModule,
-        ParentFolderFilterPipe,
-        ConvertToFolderNodesPipe
+        ParentFolderFilterPipe
     ],
     templateUrl: './sidenav.component.html',
     styleUrls: ['./sidenav.component.scss'],
@@ -43,11 +42,16 @@ export class SidenavComponent implements AfterViewInit {
     @Input() folders$: Observable<Folder[]>;
     @Input() loggedOnUser$: Observable<User | null>;
     hasValidToken$: Observable<boolean>;
+    destroyRef = inject(DestroyRef);
+    nodes$: Observable<FolderNode[]>;
 
     ngAfterViewInit(): void {
         this.hasValidToken$ = this.loggedOnUser$.pipe(
             filter(user => !!user),
             map(user => !tokenHasExpired(user.token))
+        );
+        this.nodes$ = this.folders$.pipe(
+            map(folders => folders.map((folder: Folder) => new FolderNode(folder)))
         );
     }
 

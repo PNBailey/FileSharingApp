@@ -1,5 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { Folder } from 'src/app/models/folder';
+import { FolderNode } from 'src/app/models/folder-node';
 
 @Pipe({
     name: 'parentFolderFilter',
@@ -8,7 +8,7 @@ import { Folder } from 'src/app/models/folder';
 
 export class ParentFolderFilterPipe implements PipeTransform {
 
-    transform(folders: Folder[]) {
-        return folders.filter(f => !f.parentFolderId);
+    transform(folderNodes: FolderNode[]) {
+        return folderNodes.filter(fn => !fn.data.parentFolderId);
     }
 }
