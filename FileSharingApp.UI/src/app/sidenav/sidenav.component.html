@@ -1,14 +1,14 @@
 <mat-sidenav-container class="sidenav-container">
-    <mat-sidenav [opened]="(loggedOnUser$ | async) && (hasValidToken$ | async)" mode="side">
+    <mat-sidenav *ngIf="(loggedOnUser$ | async) as loggedOnUser" [opened]="loggedOnUser" mode="side">
         <div class="sidenav-content">
             <button class="mx-3 my-3 folders-btn" mat-flat-button (click)="createNewFolder()">
                 <mat-icon fontIcon="add"></mat-icon>
                 Add New Folder
             </button>
-            <ng-container *ngIf="(folders$ | async) as folders">
-                <p-tree *ngIf="folders.length > 0" [value]="folders | parentFolderFilter | convertToFolderNodes"
-                    [draggableNodes]="true" [droppableNodes]="true" draggableScope="self" droppableScope="self"
-                    (onNodeDrop)="onDrop($event)" selectionMode="single" (onNodeSelect)="folderSelected($event)" />
+            <ng-container *ngIf="(nodes$ | async) as nodes">
+                <p-tree *ngIf="nodes.length > 0" [value]="nodes | parentFolderFilter" [draggableNodes]="true"
+                    [droppableNodes]="true" draggableScope="self" droppableScope="self" (onNodeDrop)="onDrop($event)"
+                    selectionMode="single" (onNodeSelect)="folderSelected($event)" />
             </ng-container>
         </div>
     </mat-sidenav>
