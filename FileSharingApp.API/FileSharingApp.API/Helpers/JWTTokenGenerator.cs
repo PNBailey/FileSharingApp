@@ -25,7 +25,7 @@ namespace FileSharingApp.API.Helpers
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(await GetUserClaims(user)),
-                Expires = DateTime.Now.AddMinutes(1),
+                Expires = DateTime.Now.AddDays(7),
                 SigningCredentials = CreateSigningCredentials(),
                 Audience = _configuration["JWT:ValidAudience"],
                 Issuer = _configuration["JWT:ValidIssuer"]

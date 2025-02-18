@@ -1,6 +1,7 @@
-﻿using FileSharingApp.API.Models.Folders;
+﻿using FileSharingApp.API.Models.Files;
+using FileSharingApp.API.Models.Folders;
 
-namespace FileSharingApp.API.Models.Files
+namespace FileSharingApp.API.Models.Folders
 {
     public class Folder
     {

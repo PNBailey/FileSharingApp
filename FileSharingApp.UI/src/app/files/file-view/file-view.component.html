@@ -32,7 +32,6 @@
             <mat-form-field>
                 <mat-label>Folder</mat-label>
                 <mat-select formControlName="folderId">
-                    <mat-option>None</mat-option>
                     <mat-option *ngFor="let folder of folders$ | async" [value]="folder.id">{{folder.name}}</mat-option>
                 </mat-select>
             </mat-form-field>

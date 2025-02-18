@@ -32,7 +32,11 @@ export const fileReducer = createReducer(
     on(FilesApiActions.updateFileSuccessful,
         (state, payload) => ({
             ...state,
-            files: state.files.map(file => file.id === payload.file.id ? payload.file : file)
+            files: state.files.map(file => {
+                console.log(payload.file.id, file.id);
+
+                return file.id === payload.file.id ? payload.file : file
+            })
         })
-    )
+    ) // Update to update file
 )

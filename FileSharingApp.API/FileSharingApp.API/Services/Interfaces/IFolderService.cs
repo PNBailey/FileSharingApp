@@ -1,4 +1,4 @@
-﻿using FileSharingApp.API.Models.Files;
+﻿using FileSharingApp.API.Models.Folders;
 
 namespace FileSharingApp.API.Services.Interfaces
 {
@@ -13,5 +13,7 @@ namespace FileSharingApp.API.Services.Interfaces
         void ChangeFolderParent(int id, int parentFolderId);
 
         Folder Get(int id);
+
+        Folder GetTopLevelFolder(int userId);
     }
 }
