@@ -1,5 +1,5 @@
 ﻿using FileSharingApp.API.DAL.Interfaces;
-using FileSharingApp.API.Models.Files;
+using FileSharingApp.API.Models.Folders;
 using FileSharingApp.API.Services.Interfaces;
 
 namespace FileSharingApp.API.Services
@@ -35,7 +35,12 @@ namespace FileSharingApp.API.Services
 
         public Folder Get(int id)
         {
-            return this.folderRepository.Get(id);
+            return folderRepository.Get(id);
+        }
+
+        public Folder GetTopLevelFolder(int userId)
+        {
+            return folderRepository.GetTopLevelFolder(userId);
         }
     }
 }

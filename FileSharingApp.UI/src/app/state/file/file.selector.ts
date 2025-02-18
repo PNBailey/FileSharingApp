@@ -6,7 +6,7 @@ export const filesFeatureSelector = createFeatureSelector<FilesState>('files');
 
 export const getFiles = createSelector(
     filesFeatureSelector,
-    (state: FilesState) => state.files?.map(file => Object.assign(new AppFile(), file))
+    (state: FilesState) => state.files
 );
 
 export const getTotalFiles = createSelector(

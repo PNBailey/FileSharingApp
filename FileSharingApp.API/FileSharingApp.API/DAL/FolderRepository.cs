@@ -1,6 +1,6 @@
 ﻿using FileSharingApp.API.DAL.Interfaces;
 using FileSharingApp.API.Data;
-using FileSharingApp.API.Models.Files;
+using FileSharingApp.API.Models.Folders;
 using Microsoft.EntityFrameworkCore;
 
 namespace FileSharingApp.API.DAL
@@ -65,6 +65,15 @@ namespace FileSharingApp.API.DAL
         public Folder Get(int id)
         {
             return context.Folders.First(f => f.Id == id);
+        }
+
+        public Folder GetTopLevelFolder(int userId)
+        {
+            var folder = context.Folders
+                .OrderBy(f => f.Id)
+                .Include(f => f.FolderOwner)
+                .First(f => f.FolderOwner.Id == userId);
+            return folder;
         }
     }
 }

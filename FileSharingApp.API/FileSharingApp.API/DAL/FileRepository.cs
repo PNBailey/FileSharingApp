@@ -38,9 +38,9 @@ namespace FileSharingApp.API.DAL
             return context.Files
                 .Where(f =>
                     f.FileOwner.Id == userId &&
+                    searchParams.FolderId == f.FolderId &&
                     (string.IsNullOrEmpty(searchParams.Name) || f.Name.StartsWith(searchParams.Name)) &&
                     (!searchParams.FileTypeId.HasValue || searchParams.FileTypeId == f.FileTypeId) &&
-                    (!searchParams.FolderId.HasValue || searchParams.FolderId == f.FolderId) &&
                     (string.IsNullOrEmpty(searchParams.LastModifiedStartDate) || f.LastModified >= DateTime.Parse(searchParams.LastModifiedStartDate) &&
                     (string.IsNullOrEmpty(searchParams.LastModifiedEndDate) || f.LastModified <= SetToEndOfDay(DateTime.Parse(searchParams.LastModifiedEndDate)))))
                 .Include(f => f.FileType);

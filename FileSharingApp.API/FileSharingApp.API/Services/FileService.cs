@@ -5,6 +5,7 @@ using FileSharingApp.API.Models.Files;
 using FileSharingApp.API.Services.Interfaces;
 using Google.Apis.Auth.OAuth2;
 using Google.Cloud.Storage.V1;
+using Microsoft.AspNet.Identity;
 using System.Text.Json;
 
 namespace FileSharingApp.API.Services
@@ -12,14 +13,17 @@ namespace FileSharingApp.API.Services
     public class FileService : IFileService
     {
         private readonly IFileRepository fileRepository;
+        private readonly IFolderService folderService;
         private readonly StorageClient storageClient;
         private readonly string bucketName;
 
         public FileService( 
             IFileRepository fileRepository,
-            IConfiguration config)
+            IConfiguration config,
+            IFolderService folderService)
         {
             this.fileRepository = fileRepository;
+            this.folderService = folderService;
             storageClient = StorageClient.Create();
             bucketName = config["CloudStorageConfig:BucketName"];
         }
@@ -57,6 +61,10 @@ namespace FileSharingApp.API.Services
 
         public PaginatedResponse<BaseFile> GetFiles(FileSearchParams searchParams, int userId)
         {
+            if(searchParams.FolderId == null)
+            {
+                searchParams.FolderId = folderService.GetTopLevelFolder(userId).Id;
+            }
             return fileRepository.GetFiles(searchParams, userId);
         }
 

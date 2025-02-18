@@ -2,6 +2,7 @@
 using FileSharingApp.API.Models;
 using FileSharingApp.API.Models.DTOs;
 using FileSharingApp.API.Models.Files;
+using FileSharingApp.API.Models.Folders;
 
 namespace API.Helpers
 {

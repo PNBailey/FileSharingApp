@@ -7,6 +7,7 @@ using FileSharingApp.API.Services.Interfaces;
 using NLog;
 using FileSharingApp.API.CustomExceptions;
 using System.ComponentModel.DataAnnotations;
+using FileSharingApp.API.Models.Folders;
 
 namespace FileSharingApp.API.Controllers
 {
@@ -18,17 +19,20 @@ namespace FileSharingApp.API.Controllers
         private readonly IUserService userService;
         private readonly IFileService fileService;
         private readonly IValidationService validationService;
+        private readonly IFolderService folderService;
 
         public AccountController(
             IMapper mapper, 
             IUserService userService,
             IFileService fileService,
-            IValidationService validationService)
+            IValidationService validationService,
+            IFolderService folderService)
         {
             this.mapper = mapper;
             this.userService= userService;
             this.fileService = fileService;
             this.validationService = validationService;
+            this.folderService = folderService;
         }
 
         [AllowAnonymous]
@@ -76,6 +80,15 @@ namespace FileSharingApp.API.Controllers
             }
             else
             {
+                var savedUser = await userService.FindByNameAsync(newUser.UserName);
+                folderService.CreateFolder(new Folder
+                { 
+                    Name = "My Drive",
+                    FolderOwner = savedUser
+                },
+                    savedUser.Id
+                );
+
                 return Ok(await userService.HandleSuccessfulUserCreation(newUser));
             }
         }

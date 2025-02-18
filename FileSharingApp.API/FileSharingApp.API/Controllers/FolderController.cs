@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using FileSharingApp.API.ExtensionMethods;
 using FileSharingApp.API.Models.DTOs;
-using FileSharingApp.API.Models.Files;
+using FileSharingApp.API.Models.Folders;
 using FileSharingApp.API.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -12,16 +12,13 @@ namespace FileSharingApp.API.Controllers
     {
         private readonly IFolderService folderService;
         private readonly IMapper mapper;
-        private readonly IUserService userService;
 
         public FolderController(
             IFolderService folderService, 
-            IMapper mapper,
-            IUserService userService)
+            IMapper mapper)
         {
             this.folderService = folderService;
             this.mapper = mapper;
-            this.userService = userService;
         }
 
         [HttpGet]
@@ -33,13 +30,17 @@ namespace FileSharingApp.API.Controllers
         [HttpGet("{id}")]
         public Folder Get(int id)
         {
-            return this.folderService.Get(id);
+            return folderService.Get(id);
         }
 
         [HttpPost]
         public Folder Post([FromBody] FolderDto folderDto)
         {
             var folder = mapper.Map<Folder>(folderDto);
+            if(folder.ParentFolderId == null)
+            {
+                folder.ParentFolderId = folderService.GetTopLevelFolder(User.GetUserId()).Id;
+            }
             folderService.CreateFolder(folder, User.GetUserId());
             return folder;
         }
@@ -47,7 +48,7 @@ namespace FileSharingApp.API.Controllers
         [HttpPost("ChangeFolderParent/{id}/{parentFolderId}")]
         public void ChangeFolderParent(int id, int parentFolderId)
         {
-            this.folderService.ChangeFolderParent(id, parentFolderId);
+            folderService.ChangeFolderParent(id, parentFolderId);
         }
 
         [HttpDelete("{id}")]
@@ -58,7 +59,7 @@ namespace FileSharingApp.API.Controllers
 
         [AllowAnonymous]
         [HttpGet("CheckFolderName")]
-        public Boolean CheckFolderName([FromQuery] string folderName)
+        public bool CheckFolderName([FromQuery] string folderName)
         {
             return folderService.CheckFolderName(folderName, User.GetUserId());
         }

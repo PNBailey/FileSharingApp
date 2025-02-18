@@ -4,6 +4,7 @@ using FileSharingApp.API.ExtensionMethods;
 using FileSharingApp.API.Models;
 using FileSharingApp.API.Models.DTOs;
 using FileSharingApp.API.Models.Files;
+using FileSharingApp.API.Services;
 using FileSharingApp.API.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,11 +14,16 @@ namespace FileSharingApp.API.Controllers
     {
         private readonly IFileService fileService;
         private readonly IMapper mapper;
+        private readonly IFolderService folderService;
 
-        public FileController(IFileService fileService, IMapper mapper)
+        public FileController(
+            IFileService fileService, 
+            IMapper mapper,
+            IFolderService folderService)
         {
             this.fileService = fileService;
             this.mapper = mapper;
+            this.folderService = folderService;
         }
 
         [HttpPost("GetFiles")]
@@ -37,6 +43,7 @@ namespace FileSharingApp.API.Controllers
             }
 
             BaseFile appFile = fileService.CreateAppFile(fileUploadDto);
+            appFile.FolderId = folderService.GetTopLevelFolder(User.GetUserId()).Id;
             appFile.DownloadUrl = fileService.AddFileToCloudStorage(fileUploadDto.OriginalFile).MediaLink;
             fileService.SaveFile(appFile, User.GetUserId());
 

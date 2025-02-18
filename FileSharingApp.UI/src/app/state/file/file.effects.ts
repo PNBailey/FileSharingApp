@@ -1,7 +1,7 @@
 import { Injectable } from "@angular/core";
 import { Actions, createEffect, ofType } from "@ngrx/effects";
 import { FilesActions, FilesApiActions } from "./file.actions";
-import { finalize, forkJoin, map, mergeMap, switchMap, tap } from "rxjs";
+import { filter, finalize, forkJoin, map, mergeMap, switchMap, tap, withLatestFrom } from "rxjs";
 import { FileService } from "src/app/services/file.service";
 import { MessageHandlingService } from "src/app/services/message-handling.service";
 import { AppFile } from "src/app/models/app-file";
@@ -10,7 +10,7 @@ import { PaginatedResponse } from "src/app/models/paginated-response";
 import { Store } from "@ngrx/store";
 import { LoadingBoolName } from "../loading/loading.reducer";
 import { LoadingActions } from "../loading/loading.actions";
-import { Router } from "@angular/router";
+import { getFileSearchParams } from "./file.selector";
 
 @Injectable()
 export class FileEffects {
@@ -105,12 +105,14 @@ export class FileEffects {
     updateFileSuccessful$ = createEffect(() =>
         this.actions$.pipe(
             ofType(FilesApiActions.updateFileSuccessful),
+            withLatestFrom(this.store.select(getFileSearchParams)),
             tap(() => {
                 this.messageHandlingService.onDisplayNewMessage({
                     message: "File updated"
                 });
             }),
-        ), { dispatch: false }
+            map(([action, existingSearchParams]) => FilesActions.searchFiles({ searchParams: existingSearchParams }))
+        )
     );
 
     constructor(
@@ -118,6 +120,5 @@ export class FileEffects {
         private fileService: FileService,
         private messageHandlingService: MessageHandlingService,
         private store: Store,
-        private router: Router
     ) { }
 }

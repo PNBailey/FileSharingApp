@@ -5,7 +5,7 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { AccountDialogComponent } from './account/account-dialog.component';
 import { Store } from '@ngrx/store';
 import { AccountActions } from './state/account/account.actions';
-import { Observable, filter, of, switchMap, tap } from 'rxjs';
+import { Observable, filter, map, of, switchMap, tap } from 'rxjs';
 import { User } from './models/user';
 import { AsyncPipe, NgIf } from '@angular/common';
 import { getLoggedOnUser } from './state/account/account.selectors';
@@ -16,6 +16,7 @@ import { FolderActions } from './state/folder/folder.actions';
 import { Folder } from './models/folder';
 import { getAllFolders } from './state/folder/folder.selector';
 import { FilesActions } from './state/file/file.actions';
+import { tokenHasExpired } from './shared/helpers/jwt-helpers';
 
 @Component({
     selector: 'app-root',

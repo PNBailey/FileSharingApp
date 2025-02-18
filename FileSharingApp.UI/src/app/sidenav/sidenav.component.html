@@ -1,5 +1,5 @@
 <mat-sidenav-container class="sidenav-container">
-    <mat-sidenav *ngIf="(loggedOnUser$ | async) as loggedOnUser" [opened]="loggedOnUser" mode="side">
+    <mat-sidenav [opened]="(loggedOnUser$ | async) && (hasValidToken$ | async)" mode="side">
         <div class="sidenav-content">
             <button class="mx-3 my-3 folders-btn" mat-flat-button (click)="createNewFolder()">
                 <mat-icon fontIcon="add"></mat-icon>
