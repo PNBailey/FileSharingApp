@@ -6,11 +6,13 @@ namespace FileSharingApp.API.DAL.Interfaces
     {
         void CreateFolder(Folder folder, int userId);
 
+        void UpdateFolder(Folder folder);
+
         IEnumerable<Folder> GetFolderList(int userId);
 
-        Folder GetFolder(int folerId);
+        Folder GetFolder(int folderId);
 
-        void DeleteFolder(int folderId);
+        void DeleteFolder(int id);
 
         Boolean CheckFolderName(string folderName, int userId);
 

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, tap } from 'rxjs';
+import { Observable, of, tap } from 'rxjs';
 import { Folder } from '../models/folder';
 import { environment } from 'src/environments/environment';
 
@@ -15,6 +15,10 @@ export class FolderService {
 
     createFolder(folder: Folder): Observable<Folder> {
         return this.http.post<Folder>(this.baseUrl, folder);
+    }
+
+    updateFolder(folder: Folder): Observable<Folder> {
+        return this.http.put<Folder>(this.baseUrl, folder);
     }
 
     getFolder(folderId: number): Observable<any> {

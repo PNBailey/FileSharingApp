@@ -14,9 +14,10 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { Store } from '@ngrx/store';
 import { getLoadingBool } from 'src/app/state/loading/loading.selector';
 import { LoadingBoolName } from 'src/app/state/loading/loading.reducer';
+import { FolderActions } from 'src/app/state/folder/folder.actions';
 
 @Component({
-    selector: 'app-new-folder-dialog',
+    selector: 'app-folder-dialog',
     standalone: true,
     imports: [
         CommonModule,
@@ -30,10 +31,10 @@ import { LoadingBoolName } from 'src/app/state/loading/loading.reducer';
         MatButtonModule,
         MatProgressSpinnerModule
     ],
-    templateUrl: './new-folder-dialog.component.html',
-    styleUrls: ['./new-folder-dialog.component.css']
+    templateUrl: './folder-dialog.component.html',
+    styleUrls: ['./folder-dialog.component.scss']
 })
-export class NewFolderDialogComponent {
+export class FolderDialogComponent {
 
     form: FormGroup;
     checkingFolderName$ = this.store.select(getLoadingBool(LoadingBoolName.CHECKING_FOLDERNAME));
@@ -42,17 +43,17 @@ export class NewFolderDialogComponent {
         private fb: FormBuilder,
         private validationService: ValidationService,
         private store: Store,
-        public dialogRef: MatDialogRef<NewFolderDialogComponent>,
-        @Inject(MAT_DIALOG_DATA) public data: { folders: Observable<Folder[]> }
+        public dialogRef: MatDialogRef<FolderDialogComponent>,
+        @Inject(MAT_DIALOG_DATA) public data: { folders: Observable<Folder[]>, folderToUpdate: Folder }
     ) {
         this.buildForm();
     }
 
     buildForm() {
         this.form = this.fb.group({
-            'name': this.fb.control('', Validators.required, this.validationService.uniqueFolderValidatorFn()),
-            'description': this.fb.control('', Validators.required),
-            'parentFolderId': this.fb.control(null)
+            'name': this.fb.control(this.data.folderToUpdate?.name, Validators.required, this.validationService.uniqueFolderValidatorFn()),
+            'description': this.fb.control(this.data.folderToUpdate?.description),
+            'parentFolderId': this.fb.control(this.data.folderToUpdate?.parentFolderId)
         })
     }
 
@@ -61,6 +62,15 @@ export class NewFolderDialogComponent {
     }
 
     confirm() {
-        this.dialogRef.close(this.form.value);
+        const folderToUpdate = {
+            ...this.data.folderToUpdate,
+            ...this.form.value
+        }
+        this.dialogRef.close(folderToUpdate);
+    }
+
+    delete() {
+        this.store.dispatch(FolderActions.deleteFolder({ folderId: this.data.folderToUpdate.id }));
+        this.dialogRef.close(null);
     }
 }

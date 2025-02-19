@@ -42,5 +42,15 @@ namespace FileSharingApp.API.Services
         {
             return folderRepository.GetTopLevelFolder(userId);
         }
+
+        public void UpdateFolder(Folder folder)
+        {
+            folderRepository.UpdateFolder(folder);
+        }
+
+        public void DeleteFolder(int id)
+        {
+            folderRepository.DeleteFolder(id);
+        }
     }
 }

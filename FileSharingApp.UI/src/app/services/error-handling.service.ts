@@ -37,8 +37,6 @@ export class ErrorHandlingService implements ErrorHandler {
     constructor(
         private messageHandlingService: MessageHandlingService,
         private http: HttpClient,
-        private ngZone: NgZone,
-        private router: Router
     ) { }
 
     handleError(error: any) {
@@ -47,6 +45,7 @@ export class ErrorHandlingService implements ErrorHandler {
         this.setCustomErrorMessage();
         this.logError();
         this.displayErrorToUser();
+        console.error("Logged Error:", this.error.message, this.error);
     }
 
     private setDefaultErrorMessage() {

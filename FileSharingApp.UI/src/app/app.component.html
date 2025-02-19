@@ -1,5 +1,6 @@
 <app-toolbar data-cy="toolbar" [loggedOnUser$]="loggedOnUser$" (logoutUser)="logoutUser()"
     (openAccountDialog)="openAccountDialog()" (routeToEditProfile)="routeToEditProfile()">
 </app-toolbar>
-<app-sidenav (createNewFolderEvent)="openNewFolderDialog()" (changeFolderParentEvent)="changeFolderParent($event)"
-    (folderSelectedEvent)="folderSelected($event)" [loggedOnUser$]="loggedOnUser$" [folders$]="folders$"></app-sidenav>
+<app-sidenav (createNewFolderEvent)="openFolderDialog()" (editFolderEvent)="openFolderDialog($event)"
+    (changeFolderParentEvent)="changeFolderParent($event)" (folderSelectedEvent)="folderSelected($event)"
+    [loggedOnUser$]="loggedOnUser$" [folders$]="folders$"></app-sidenav>

@@ -45,6 +45,18 @@ namespace FileSharingApp.API.Controllers
             return folder;
         }
 
+        [HttpPut]
+        public Folder Put([FromBody] FolderDto folderDto)
+        {
+            var folder = mapper.Map<Folder>(folderDto);
+            if (folder.ParentFolderId == null)
+            {
+                folder.ParentFolderId = folderService.GetTopLevelFolder(User.GetUserId()).Id;
+            }
+            folderService.UpdateFolder(folder);
+            return folder;
+        }
+
         [HttpPost("ChangeFolderParent/{id}/{parentFolderId}")]
         public void ChangeFolderParent(int id, int parentFolderId)
         {
@@ -54,7 +66,7 @@ namespace FileSharingApp.API.Controllers
         [HttpDelete("{id}")]
         public void Delete(int id)
         {
-            throw new NotImplementedException();
+            folderService.DeleteFolder(id);
         }
 
         [AllowAnonymous]

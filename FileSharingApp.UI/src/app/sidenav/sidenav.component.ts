@@ -10,10 +10,12 @@ import { Folder } from '../models/folder';
 import { TextLengthPipe } from '../shared/pipes/text-length-pipe';
 import { User } from '../models/user';
 import { TreeModule } from 'primeng/tree';
-import { TreeDragDropService } from 'primeng/api';
+import { MenuItem, TreeDragDropService } from 'primeng/api';
 import { ParentFolderFilterPipe } from '../shared/pipes/parent-folder-filter-pipe';
 import { tokenHasExpired } from '../shared/helpers/jwt-helpers';
 import { FolderNode } from '../models/folder-node';
+import { MenuModule } from 'primeng/menu';
+import { ButtonModule } from 'primeng/button';
 
 @Component({
     selector: 'app-sidenav',
@@ -27,7 +29,9 @@ import { FolderNode } from '../models/folder-node';
         MatIconModule,
         TextLengthPipe,
         TreeModule,
-        ParentFolderFilterPipe
+        ParentFolderFilterPipe,
+        MenuModule,
+        ButtonModule
     ],
     templateUrl: './sidenav.component.html',
     styleUrls: ['./sidenav.component.scss'],
@@ -37,6 +41,7 @@ import { FolderNode } from '../models/folder-node';
 export class SidenavComponent implements AfterViewInit {
 
     @Output() createNewFolderEvent = new EventEmitter();
+    @Output() editFolderEvent = new EventEmitter<Folder>();
     @Output() changeFolderParentEvent = new EventEmitter<{ folderId: number, parentFolderId: number }>();
     @Output() folderSelectedEvent = new EventEmitter<Folder>();
     @Input() folders$: Observable<Folder[]>;
@@ -65,5 +70,10 @@ export class SidenavComponent implements AfterViewInit {
 
     folderSelected(event: any) {
         this.folderSelectedEvent.emit(event.node.data)
+    }
+
+    modifyFolder(folder: Folder, event: Event) {
+        event.stopPropagation();
+        this.editFolderEvent.emit(folder);
     }
 }
