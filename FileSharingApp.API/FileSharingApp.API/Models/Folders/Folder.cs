@@ -9,7 +9,7 @@ namespace FileSharingApp.API.Models.Folders
 
         public string Name { get; set; } = string.Empty;
 
-        public string Description { get; set; } = string.Empty;
+        public string? Description { get; set; }
 
         public AppUser FolderOwner { get; set; } = null!;
 

@@ -36,3 +36,35 @@
         color: #04a78bd5;
     }
 }
+
+.tree-node {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+}
+
+.info-btn {
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+}
+
+.tree-node:hover .info-btn {
+    opacity: 1;
+}
+
+:host {
+    ::ng-deep .p-treenode-children {
+        padding-left: 0.4rem;
+        padding-top: 0rem;
+        padding-bottom: 0rem;
+    }
+}
+
+:host {
+    ::ng-deep .p-treenode-content {
+        padding-top: 0rem;
+        padding-bottom: 0rem;
+        height: 35px;
+    }
+}

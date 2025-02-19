@@ -2,6 +2,7 @@
 using FileSharingApp.API.Data;
 using FileSharingApp.API.Models.Folders;
 using Microsoft.EntityFrameworkCore;
+using NPOI.HPSF;
 
 namespace FileSharingApp.API.DAL
 {
@@ -21,12 +22,17 @@ namespace FileSharingApp.API.DAL
             context.SaveChanges();
         }
 
-        public void DeleteFolder(int folderId)
+        public void DeleteFolder(int id)
         {
-            throw new NotImplementedException();
+            var folderToRemove = context.Folders.FirstOrDefault(folder => folder.Id == id);
+            if (folderToRemove != null)
+            {
+                context.Folders.Remove(folderToRemove);
+            }
+            context.SaveChanges();
         }
 
-        public Folder GetFolder(int folerId)
+        public Folder GetFolder(int folderId)
         {
             throw new NotImplementedException();
         }
@@ -74,6 +80,12 @@ namespace FileSharingApp.API.DAL
                 .Include(f => f.FolderOwner)
                 .First(f => f.FolderOwner.Id == userId);
             return folder;
+        }
+
+        public void UpdateFolder(Folder folder)
+        {
+            context.Update(folder);
+            context.SaveChanges();
         }
     }
 }

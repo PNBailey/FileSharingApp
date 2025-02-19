@@ -5,18 +5,16 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { AccountDialogComponent } from './account/account-dialog.component';
 import { Store } from '@ngrx/store';
 import { AccountActions } from './state/account/account.actions';
-import { Observable, filter, map, of, switchMap, tap } from 'rxjs';
+import { Observable, filter, of, switchMap, tap } from 'rxjs';
 import { User } from './models/user';
 import { AsyncPipe, NgIf } from '@angular/common';
 import { getLoggedOnUser } from './state/account/account.selectors';
 import { SidenavComponent } from './sidenav/sidenav.component';
-import { NewFolderDialogComponent } from './sidenav/new-folder-dialog/new-folder-dialog.component';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FolderActions } from './state/folder/folder.actions';
 import { Folder } from './models/folder';
 import { getAllFolders } from './state/folder/folder.selector';
-import { FilesActions } from './state/file/file.actions';
-import { tokenHasExpired } from './shared/helpers/jwt-helpers';
+import { FolderDialogComponent } from './sidenav/folder-dialog/folder-dialog.component';
 
 @Component({
     selector: 'app-root',
@@ -80,17 +78,24 @@ export class AppComponent implements OnInit {
         });
     }
 
-    openNewFolderDialog() {
-        const dialogRef = this.dialog.open(NewFolderDialogComponent, {
+    openFolderDialog(folderToUpdate: Folder = null) {
+        const dialogRef = this.dialog.open(FolderDialogComponent, {
             width: '500px',
-            data: { folders: this.folders$ }
+            data: {
+                folders: this.folders$,
+                folderToUpdate: folderToUpdate
+            }
         });
 
         dialogRef.afterClosed()
             .pipe(takeUntilDestroyed(this.destroyRef))
             .subscribe((folder: Folder) => {
                 if (folder) {
-                    this.store.dispatch(FolderActions.addNewFolder({ folder: folder }));
+                    if (!folderToUpdate) {
+                        this.store.dispatch(FolderActions.addNewFolder({ folder: folder }));
+                    } else {
+                        this.store.dispatch(FolderActions.editFolder({ folder: folder }));
+                    }
                 }
             })
     }

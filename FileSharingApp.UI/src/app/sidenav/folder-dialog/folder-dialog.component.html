@@ -1,4 +1,4 @@
-<h2 mat-dialog-title>New Folder</h2>
+<h2 mat-dialog-title>{{data.folderToUpdate ? 'Edit Folder' : 'New Folder'}}</h2>
 <mat-dialog-content>
     <div class="container mt-5 mb-2">
         <form [formGroup]="form" class="row d-flex justify-content-center">
@@ -24,8 +24,9 @@
         </form>
     </div>
 </mat-dialog-content>
-<mat-dialog-actions align="end" class="mb-2">
-    <button mat-flat-button color="warn" (click)="cancel()">Cancel</button>
-    <button mat-flat-button cdkFocusInitial color="primary" class="mx-3" (click)="confirm()">Submit
+<mat-dialog-actions class="mb-2 d-flex justify-content-end gap-1">
+    <button mat-flat-button color="warn" (click)="delete()">Delete</button>
+    <button mat-flat-button color="accent" (click)="cancel()">Cancel</button>
+    <button mat-flat-button cdkFocusInitial color="primary" class="me-2" (click)="confirm()">Submit
     </button>
 </mat-dialog-actions>

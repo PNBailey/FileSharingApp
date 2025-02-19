@@ -6,9 +6,21 @@
                 Add New Folder
             </button>
             <ng-container *ngIf="(nodes$ | async) as nodes">
-                <p-tree *ngIf="nodes.length > 0" [value]="nodes | parentFolderFilter" [draggableNodes]="true"
-                    [droppableNodes]="true" draggableScope="self" droppableScope="self" (onNodeDrop)="onDrop($event)"
-                    selectionMode="single" (onNodeSelect)="folderSelected($event)" />
+                <p-tree [value]="nodes | parentFolderFilter" [draggableNodes]="true" [droppableNodes]="true"
+                    draggableScope="self" droppableScope="self" (onNodeDrop)="onDrop($event)" selectionMode="single"
+                    (onNodeSelect)="folderSelected($event)">
+                    <ng-template let-node pTemplate="default">
+                        <div class="tree-node">
+                            <div class="d-flex align-items-center">
+                                <p class="mb-0">{{ node.label }}</p>
+                                <button *ngIf="node.parent" class="info-btn" mat-icon-button aria-label="Delete"
+                                    (click)="modifyFolder(node.data, $event)">
+                                    <mat-icon color="primary">info</mat-icon>
+                                </button>
+                            </div>
+                        </div>
+                    </ng-template>
+                </p-tree>
             </ng-container>
         </div>
     </mat-sidenav>
