@@ -13,6 +13,7 @@ namespace FileSharingApp.API.Controllers
     {
         private readonly IUserService userService;
         private readonly IFileService fileService;
+        private readonly IMapper mapper;
 
         public UserController(
             IUserService userService, 
@@ -21,6 +22,7 @@ namespace FileSharingApp.API.Controllers
         {
             this.userService = userService;
             this.fileService = fileService;
+            this.mapper = mapper;
         }
 
         [HttpGet]
@@ -36,9 +38,11 @@ namespace FileSharingApp.API.Controllers
         }
 
         [HttpPut("Update")]
-        public async Task<AppUser> Update([FromBody] AppUser updatedUser)
+        public async Task<UserDto> Update([FromBody] AppUser updatedUser)
         {
-            return await userService.UpdateUser(updatedUser);
+            var user = await userService.UpdateUser(updatedUser);
+            var userDto = mapper.Map<UserDto>(user);
+            return userDto;
         }
 
         [HttpDelete("{id}")]
