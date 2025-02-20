@@ -60,7 +60,6 @@ export class AccountEffects {
                 AccountActions.setLoggedOnUser({ user: null })
             ]),
             tap(() => {
-                localStorage.removeItem('user');
                 this.router.navigateByUrl('/home');
             })
         )
@@ -108,9 +107,16 @@ export class AccountEffects {
         this.actions$.pipe(
             ofType(AccountActions.updateUserInfo),
             switchMap((action) => this.userService.updateUserInfo(action.updatedUser)),
-            map((updatedUser) => {
+            withLatestFrom(this.store.select(getLoggedOnUser)),
+            map(([updatedUser, existingLoggedOnUser]) => {
                 this.store.dispatch(LoadingActions.toggleLoading({ loadingBoolName: LoadingBoolName.UPDATING_PROFILE }));
-                return AccountApiActions.updateUserInfoSuccessful({ updatedUser: updatedUser })
+                return AccountApiActions.updateUserInfoSuccessful({
+                    updatedUser: {
+                        ...existingLoggedOnUser,
+                        ...updatedUser,
+                        token: existingLoggedOnUser.token
+                    }
+                });
             })
         )
     )
