@@ -1,6 +1,7 @@
 ﻿using FileSharingApp.API.DAL.Interfaces;
 using FileSharingApp.API.Data;
 using FileSharingApp.API.Models;
+using FileSharingApp.API.Models.DTOs;
 using FileSharingApp.API.Models.Files;
 using Microsoft.EntityFrameworkCore;
 
@@ -86,21 +87,38 @@ namespace FileSharingApp.API.DAL
             file.FileOwner = context.Users.FirstOrDefault(u => u.Id == userId)
                 ?? throw new Exception($"No user found with id: {userId}");
 
-            if (!context.Files.Any(f => f.Name == file.Name))
+            if (!FileAlreadyExists(file, userId))
             {
                 context.Files.Add(file);
                 context.SaveChanges();
+            } 
+            else
+            {
+                throw new Exception($"File already exists");
             }
         }
 
-        public void DeleteFile(string fileName)
+        public bool FileAlreadyExists(BaseFile file, int userId)
         {
-            var fileToRemove = context.Files.FirstOrDefault(file => file.Name == fileName);
-            if (fileToRemove != null) 
-            { 
-                context.Files.Remove(fileToRemove);
-            }
+            return CheckFileExists(file.Name, userId, file.FolderId);
+        }
 
+        public bool FileAlreadyExists(FileDto file, int userId)
+        {
+            return CheckFileExists(file.Name, userId, file.FolderId);
+        }
+
+        private bool CheckFileExists(string name, int userId, int? folderId)
+        {
+            return context.Files.Any(f => f.Name == name && f.FileOwner.Id == userId && f.FolderId == folderId);
+        }
+
+        public void DeleteFile(BaseFile fileToDelete)
+        {
+            if (fileToDelete != null) 
+            { 
+                context.Files.Remove(fileToDelete);
+            }
             context.SaveChanges();
         }
 
@@ -112,7 +130,8 @@ namespace FileSharingApp.API.DAL
 
         public BaseFile Get(int id)
         {
-            return context.Files.First(f => f.Id == id);
+            return context.Files.FirstOrDefault(f => f.Id == id)
+                ?? throw new Exception($"File not found");
         }
     }
 }

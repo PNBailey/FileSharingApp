@@ -16,6 +16,7 @@ import { FileSearch } from 'src/app/models/file-search';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { getLoadingBool } from 'src/app/state/loading/loading.selector';
 import { LoadingBoolName } from 'src/app/state/loading/loading.reducer';
+import { take } from 'rxjs';
 
 @Component({
     selector: 'app-file-upload',
@@ -39,7 +40,6 @@ export class FileUploadComponent {
     public columnNames = ['name', 'file type', 'file size', 'last updated', 'delete'];
     @ViewChild(MatTable) table: MatTable<File>;
     destroyRef = inject(DestroyRef);
-    searchParams: FileSearch;
     uploadingFilesSub$ = this.store.select(getLoadingBool(LoadingBoolName.UPLOADING_FILES));
     uploadingFiles: boolean;
 
@@ -47,11 +47,6 @@ export class FileUploadComponent {
         private store: Store,
         private dialog: MatDialog
     ) {
-        this.store.select(getFileSearchParams).pipe(
-            takeUntilDestroyed(this.destroyRef)
-        ).subscribe(searchParams => {
-            this.searchParams = searchParams;
-        });
         this.uploadingFilesSub$.pipe(
             takeUntilDestroyed(this.destroyRef)
         ).subscribe((value) => {
@@ -89,15 +84,19 @@ export class FileUploadComponent {
     }
 
     public uploadFiles() {
-        const filesToUploadMapped = this.filesToUpload.map(file => {
-            const appFile = new AppFile();
-            appFile.name = file.name;
-            appFile.size = file.size;
-            appFile.lastModified = new Date(file.lastModified);
-            appFile.originalFile = file;
-            appFile.folderId = this.searchParams.folderId;
-            return appFile;
+        this.store.select(getFileSearchParams).pipe(
+            take(1)
+        ).subscribe(searchParams => {
+            const filesToUploadMapped = this.filesToUpload.map(file => {
+                const appFile = new AppFile();
+                appFile.name = file.name;
+                appFile.size = file.size;
+                appFile.lastModified = new Date(file.lastModified);
+                appFile.originalFile = file;
+                appFile.folderId = searchParams.folderId;
+                return appFile;
+            });
+            this.store.dispatch(FilesActions.uploadFiles({ files: filesToUploadMapped }));
         });
-        this.store.dispatch(FilesActions.uploadFiles({ files: filesToUploadMapped }));
     }
 }

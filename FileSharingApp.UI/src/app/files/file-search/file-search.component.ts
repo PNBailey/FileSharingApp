@@ -8,7 +8,7 @@ import { AsyncPipe, NgFor } from '@angular/common';
 import { InputTextModule } from 'primeng/inputtext';
 import { DropdownModule } from 'primeng/dropdown';
 import { FloatLabelModule } from 'primeng/floatlabel';
-import { Observable, combineLatest, debounceTime, distinctUntilChanged, filter, skip, startWith, tap, withLatestFrom } from 'rxjs';
+import { Observable, combineLatest, debounceTime, distinctUntilChanged, filter, skip, startWith, withLatestFrom } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FilesActions } from 'src/app/state/file/file.actions';
 import { getFileSearchParams, getFileTypes } from 'src/app/state/file/file.selector';
@@ -16,7 +16,6 @@ import { FileType } from 'src/app/models/file-type';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { CalendarModule } from 'primeng/calendar';
 import { FileSearch } from 'src/app/models/file-search';
-import { FolderActions } from 'src/app/state/folder/folder.actions';
 import { ActivatedRoute } from '@angular/router';
 
 @Component({

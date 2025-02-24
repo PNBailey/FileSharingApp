@@ -4,7 +4,6 @@ using FileSharingApp.API.ExtensionMethods;
 using FileSharingApp.API.Models;
 using FileSharingApp.API.Models.DTOs;
 using FileSharingApp.API.Models.Files;
-using FileSharingApp.API.Services;
 using FileSharingApp.API.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -14,16 +13,13 @@ namespace FileSharingApp.API.Controllers
     {
         private readonly IFileService fileService;
         private readonly IMapper mapper;
-        private readonly IFolderService folderService;
 
         public FileController(
             IFileService fileService, 
-            IMapper mapper,
-            IFolderService folderService)
+            IMapper mapper)
         {
             this.fileService = fileService;
             this.mapper = mapper;
-            this.folderService = folderService;
         }
 
         [HttpPost("GetFiles")]
@@ -43,31 +39,36 @@ namespace FileSharingApp.API.Controllers
             }
 
             BaseFile appFile = fileService.CreateAppFile(fileUploadDto);
-            appFile.FolderId = folderService.GetTopLevelFolder(User.GetUserId()).Id;
             appFile.DownloadUrl = fileService.AddFileToCloudStorage(fileUploadDto.OriginalFile).MediaLink;
             fileService.SaveFile(appFile, User.GetUserId());
 
             return appFile;
         }
 
-        [HttpDelete("{fileName}")]
-        public void Delete(string fileName)
+        [HttpDelete("{id}")]
+        public void Delete(int id)
         {
-            fileService.DeleteFile(fileName);
+            fileService.DeleteFile(id);
         }
 
         [HttpPut("Update")]
         public IActionResult Update([FromBody]FileDto file)
         {
             var existingFile = fileService.Get(file.Id);
-
             if (existingFile == null)
             {
-                return NotFound();
+                return NotFound("Unable to locate file to update");
             }
-            var fileToUpdate = mapper.Map(file, existingFile);
-            fileService.Update(fileToUpdate);
-
+            if(fileService.FileAlreadyExists(file, User.GetUserId()))
+            {
+                return BadRequest("File already exists in this location");
+            }
+            if(existingFile.Name != file.Name)
+            {
+                fileService.UpdateFileOnCloudStorage(existingFile.Name, file.Name);
+            }
+            var updatedFile = mapper.Map(file, existingFile);
+            fileService.Update(updatedFile);
             return Ok();
         }
 
