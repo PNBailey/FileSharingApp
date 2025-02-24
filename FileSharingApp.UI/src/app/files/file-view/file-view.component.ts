@@ -59,8 +59,8 @@ export class FileViewComponent {
         @Inject(MAT_DIALOG_DATA) public data: { file: AppFile }
     ) {
         this.appFileForm = this.fb.group({
-            "name": [{ value: this.data.file.name, disabled: true }, [Validators.required, Validators.maxLength(1000)]],
-            "description": [{ value: this.data.file.description, disabled: true }, [Validators.maxLength(1000)]],
+            "name": [this.data.file.name, [Validators.required, Validators.maxLength(1000)]],
+            "description": [this.data.file.description, [Validators.maxLength(1000)]],
             "folderId": [this.data.file.folderId]
         });
     }

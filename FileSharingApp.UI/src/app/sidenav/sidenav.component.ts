@@ -16,6 +16,7 @@ import { tokenHasExpired } from '../shared/helpers/jwt-helpers';
 import { FolderNode } from '../models/folder-node';
 import { MenuModule } from 'primeng/menu';
 import { ButtonModule } from 'primeng/button';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 @Component({
     selector: 'app-sidenav',
@@ -31,7 +32,8 @@ import { ButtonModule } from 'primeng/button';
         TreeModule,
         ParentFolderFilterPipe,
         MenuModule,
-        ButtonModule
+        ButtonModule,
+        MatTooltipModule
     ],
     templateUrl: './sidenav.component.html',
     styleUrls: ['./sidenav.component.scss'],

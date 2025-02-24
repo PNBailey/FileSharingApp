@@ -34,7 +34,7 @@ export class FileService {
     }
 
     deleteFile(file: AppFile) {
-        return this.http.delete(`${this.baseUrl}/${file.name}`).pipe(
+        return this.http.delete(`${this.baseUrl}/${file.id}`).pipe(
             map(() => file)
         );
     }

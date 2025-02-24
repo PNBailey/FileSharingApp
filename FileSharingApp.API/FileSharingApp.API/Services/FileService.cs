@@ -5,7 +5,6 @@ using FileSharingApp.API.Models.Files;
 using FileSharingApp.API.Services.Interfaces;
 using Google.Apis.Auth.OAuth2;
 using Google.Cloud.Storage.V1;
-using Microsoft.AspNet.Identity;
 using System.Text.Json;
 
 namespace FileSharingApp.API.Services
@@ -73,10 +72,11 @@ namespace FileSharingApp.API.Services
             return fileRepository.GetFileTypes(userId);
         }
 
-        public void DeleteFile(string fileName)
+        public void DeleteFile(int id)
         {
-            DeleteFileFromCloudStorage(fileName);
-            fileRepository.DeleteFile(fileName);
+            var fileToDelete = Get(id);
+            DeleteFileFromCloudStorage(fileToDelete.Name);
+            fileRepository.DeleteFile(fileToDelete);
         }
 
         public void Update(BaseFile file)
@@ -117,6 +117,16 @@ namespace FileSharingApp.API.Services
             storageClient.DeleteObject(bucketName, fileName);
         }
 
+        public void UpdateFileOnCloudStorage(string existingFileName, string newFileName)
+        {
+            storageClient.CopyObject(
+                bucketName, existingFileName,
+                bucketName, newFileName
+            );
+
+            DeleteFileFromCloudStorage(existingFileName);
+        }
+
         public Google.Apis.Storage.v1.Data.Object DownloadObjectFromCloudStorage(string fileName, MemoryStream memoryStream)
         {
             return storageClient.DownloadObject(bucketName, fileName, memoryStream);
@@ -137,6 +147,11 @@ namespace FileSharingApp.API.Services
                 HttpMethod.Get
             );
             return signedUrl;
+        }
+
+        public bool FileAlreadyExists(FileDto file, int userId)
+        {
+            return fileRepository.FileAlreadyExists(file, userId);
         }
     }
 }

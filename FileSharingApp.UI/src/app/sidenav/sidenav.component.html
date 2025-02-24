@@ -12,7 +12,7 @@
                     <ng-template let-node pTemplate="default">
                         <div class="tree-node">
                             <div class="d-flex align-items-center">
-                                <p class="mb-0">{{ node.label }}</p>
+                                <p class="mb-0" [matTooltip]="node.label">{{ node.label | textLength: 10 }}</p>
                                 <button *ngIf="node.parent" class="info-btn" mat-icon-button aria-label="Delete"
                                     (click)="modifyFolder(node.data, $event)">
                                     <mat-icon color="primary">info</mat-icon>
