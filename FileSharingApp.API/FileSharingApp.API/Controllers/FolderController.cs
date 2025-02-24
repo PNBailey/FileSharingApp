@@ -2,6 +2,7 @@
 using FileSharingApp.API.ExtensionMethods;
 using FileSharingApp.API.Models.DTOs;
 using FileSharingApp.API.Models.Folders;
+using FileSharingApp.API.Services;
 using FileSharingApp.API.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -12,13 +13,16 @@ namespace FileSharingApp.API.Controllers
     {
         private readonly IFolderService folderService;
         private readonly IMapper mapper;
+        private readonly IFileService fileService;
 
         public FolderController(
             IFolderService folderService, 
-            IMapper mapper)
+            IMapper mapper,
+            IFileService fileService)
         {
             this.folderService = folderService;
             this.mapper = mapper;
+            this.fileService = fileService;
         }
 
         [HttpGet]
@@ -64,9 +68,15 @@ namespace FileSharingApp.API.Controllers
         }
 
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public ActionResult Delete(int id)
         {
+            if(id == folderService.GetTopLevelFolder(User.GetUserId()).Id)
+            {
+                return BadRequest("Unable to delete My Drive folder");
+            }
+            fileService.DeleteAllFolderFiles(id);
             folderService.DeleteFolder(id);
+            return Ok();
         }
 
         [AllowAnonymous]

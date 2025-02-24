@@ -23,5 +23,7 @@ namespace FileSharingApp.API.DAL.Interfaces
         bool FileAlreadyExists(BaseFile file, int userId);
 
         bool FileAlreadyExists(FileDto file, int userId);
+
+        IEnumerable<BaseFile> GetFolderFiles(int folderId);
     }
 }

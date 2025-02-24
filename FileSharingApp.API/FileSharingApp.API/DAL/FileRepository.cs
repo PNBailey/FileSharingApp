@@ -133,5 +133,10 @@ namespace FileSharingApp.API.DAL
             return context.Files.FirstOrDefault(f => f.Id == id)
                 ?? throw new Exception($"File not found");
         }
+
+        public IEnumerable<BaseFile> GetFolderFiles(int folderId)
+        {
+            return context.Files.Where(f => f.FolderId == folderId);
+        }
     }
 }

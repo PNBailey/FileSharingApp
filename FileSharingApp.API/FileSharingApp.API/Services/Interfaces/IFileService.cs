@@ -35,5 +35,7 @@ namespace FileSharingApp.API.Services.Interfaces
         string GetSignedUrl(string objectName);
 
         bool FileAlreadyExists(FileDto file, int userId);
+
+        void DeleteAllFolderFiles(int folderId);
     }
 }

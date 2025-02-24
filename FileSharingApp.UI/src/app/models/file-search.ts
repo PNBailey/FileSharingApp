@@ -1,6 +1,3 @@
-import { FileType } from "./file-type";
-import { Folder } from "./folder";
-
 interface FileSearchParams {
     name?: string;
     fileTypeId?: number;

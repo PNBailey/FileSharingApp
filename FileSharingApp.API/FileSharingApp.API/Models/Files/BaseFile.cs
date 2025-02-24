@@ -1,5 +1,6 @@
 ﻿using FileSharingApp.API.Models.Folders;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Diagnostics.CodeAnalysis;
 using System.Text.Json.Serialization;
 
 namespace FileSharingApp.API.Models.Files
@@ -21,10 +22,10 @@ namespace FileSharingApp.API.Models.Files
 
         public int FileTypeId { get; set; }
 
-        public Folder? Folder { get; set; }
+        public Folder Folder { get; set; } = null!;
 
         [JsonPropertyName("folderId")]
-        public int? FolderId { get; set; }
+        public int FolderId { get; set; }
 
         [Column(TypeName = "varchar(1000)")]
         public string? Description { get; set; }

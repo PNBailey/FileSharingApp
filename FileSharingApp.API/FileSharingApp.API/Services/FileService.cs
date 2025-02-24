@@ -153,5 +153,15 @@ namespace FileSharingApp.API.Services
         {
             return fileRepository.FileAlreadyExists(file, userId);
         }
+
+        public void DeleteAllFolderFiles(int folderId)
+        {
+            var files = fileRepository.GetFolderFiles(folderId).ToList();
+
+            foreach (var file in files)
+            {
+                DeleteFile(file.Id);
+            }
+        }
     }
 }
