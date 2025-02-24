@@ -2,12 +2,14 @@ import { Injectable } from "@angular/core";
 import { Actions, createEffect, ofType } from "@ngrx/effects";
 import { FolderActions, FolderApiActions } from "./folder.actions";
 import { FolderService } from "src/app/services/folder.service";
-import { catchError, finalize, map, of, switchMap, tap } from "rxjs";
+import { finalize, map, switchMap, tap, withLatestFrom } from "rxjs";
 import { MessageHandlingService } from "src/app/services/message-handling.service";
 import { Folder } from "src/app/models/folder";
 import { Store } from "@ngrx/store";
 import { LoadingActions } from "../loading/loading.actions";
 import { LoadingBoolName } from "../loading/loading.reducer";
+import { Router } from "@angular/router";
+import { getAllFolders } from "./folder.selector";
 
 @Injectable()
 export class FolderEffects {
@@ -103,10 +105,12 @@ export class FolderEffects {
     deleteFolderSuccessful$ = createEffect(() =>
         this.actions$.pipe(
             ofType(FolderApiActions.deleteFolderSuccessful),
-            tap(() => {
+            withLatestFrom(this.store.select(getAllFolders)),
+            tap(([action, folders]) => {
                 this.messageHandlingService.onDisplayNewMessage({
                     message: "Folder deleted"
                 });
+                this.router.navigateByUrl(`/files/${folders[0].id}`);
             }),
             map(() => FolderActions.getAllFolders())
         )
@@ -116,7 +120,8 @@ export class FolderEffects {
         private actions$: Actions,
         private folderService: FolderService,
         private messageHandlingService: MessageHandlingService,
-        private store: Store
+        private store: Store,
+        private router: Router
     ) { }
 
 }

@@ -4,8 +4,6 @@ using FileSharingApp.API.Models.Folders;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using System.Reflection.Emit;
 
 namespace FileSharingApp.API.Data
 {
@@ -74,6 +72,12 @@ namespace FileSharingApp.API.Data
                     new FileType() { Id = 4, Name = "Image", Icon = "pi-image" },
                     new FileType() { Id = 5, Name = "PowerPoint", Icon = "pi-images" }
                 );
+
+            builder.Entity<BaseFile>()
+                .HasOne(f => f.Folder)
+                .WithMany(pf => pf.Files)
+                .HasForeignKey(f => f.FolderId)
+                .OnDelete(DeleteBehavior.NoAction);
         }
 
     }

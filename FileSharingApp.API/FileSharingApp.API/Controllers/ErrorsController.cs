@@ -25,7 +25,7 @@ namespace FileSharingApp.API.Controllers
         [Route("/error")]
         public IActionResult Error()
         {
-            var handler = this.httpContextAccessor.HttpContext!.Features.Get<IExceptionHandlerFeature>()!;
+            var handler = httpContextAccessor.HttpContext!.Features.Get<IExceptionHandlerFeature>()!;
             var exception = handler.Error;
 
             return Problem(
