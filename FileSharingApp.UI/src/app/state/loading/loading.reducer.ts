@@ -7,6 +7,7 @@ export enum LoadingBoolName {
     UPDATING_PROFILE = 'updatingProfile$',
     CHECKING_FOLDERNAME = 'checkingFolderName$',
     LOADING_FILES = 'loadingFiles$',
+    LOADING_FOLDERS = 'loadingFolders$',
     UPDATING_FILE = 'updatingFile$',
     UPLOADING_FILES = 'uploadingFiles$'
 }
