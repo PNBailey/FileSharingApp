@@ -5,7 +5,7 @@
                 <mat-icon fontIcon="add"></mat-icon>
                 Add New Folder
             </button>
-            <ng-container *ngIf="(nodes$ | async) as nodes">
+            <div class="tree-container" *ngIf="(nodes$ | async) as nodes">
                 <p-tree [value]="nodes | parentFolderFilter" [draggableNodes]="true" [droppableNodes]="true"
                     draggableScope="self" droppableScope="self" (onNodeDrop)="onDrop($event)" selectionMode="single"
                     (onNodeSelect)="folderSelected($event)">
@@ -21,7 +21,10 @@
                         </div>
                     </ng-template>
                 </p-tree>
-            </ng-container>
+                <div class="spinner-overlay" *ngIf="loadingFolders$ | async">
+                    <mat-spinner [diameter]="50"></mat-spinner>
+                </div>
+            </div>
         </div>
     </mat-sidenav>
     <mat-sidenav-content class="p-3">

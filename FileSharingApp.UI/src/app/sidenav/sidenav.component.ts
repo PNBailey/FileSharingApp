@@ -17,6 +17,10 @@ import { FolderNode } from '../models/folder-node';
 import { MenuModule } from 'primeng/menu';
 import { ButtonModule } from 'primeng/button';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { getLoadingBool } from '../state/loading/loading.selector';
+import { LoadingBoolName } from '../state/loading/loading.reducer';
+import { Store } from '@ngrx/store';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @Component({
     selector: 'app-sidenav',
@@ -33,7 +37,8 @@ import { MatTooltipModule } from '@angular/material/tooltip';
         ParentFolderFilterPipe,
         MenuModule,
         ButtonModule,
-        MatTooltipModule
+        MatTooltipModule,
+        MatProgressSpinnerModule
     ],
     templateUrl: './sidenav.component.html',
     styleUrls: ['./sidenav.component.scss'],
@@ -42,12 +47,15 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 
 export class SidenavComponent implements AfterViewInit {
 
+    constructor(private store: Store) { }
+
     @Output() createNewFolderEvent = new EventEmitter();
     @Output() editFolderEvent = new EventEmitter<Folder>();
     @Output() changeFolderParentEvent = new EventEmitter<{ folderId: number, parentFolderId: number }>();
     @Output() folderSelectedEvent = new EventEmitter<Folder>();
     @Input() folders$: Observable<Folder[]>;
     @Input() loggedOnUser$: Observable<User | null>;
+    loadingFolders$ = this.store.select(getLoadingBool(LoadingBoolName.LOADING_FOLDERS));
     hasValidToken$: Observable<boolean>;
     destroyRef = inject(DestroyRef);
     nodes$: Observable<FolderNode[]>;

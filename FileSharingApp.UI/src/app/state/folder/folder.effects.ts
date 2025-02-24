@@ -2,9 +2,12 @@ import { Injectable } from "@angular/core";
 import { Actions, createEffect, ofType } from "@ngrx/effects";
 import { FolderActions, FolderApiActions } from "./folder.actions";
 import { FolderService } from "src/app/services/folder.service";
-import { catchError, map, of, switchMap, tap } from "rxjs";
+import { catchError, finalize, map, of, switchMap, tap } from "rxjs";
 import { MessageHandlingService } from "src/app/services/message-handling.service";
 import { Folder } from "src/app/models/folder";
+import { Store } from "@ngrx/store";
+import { LoadingActions } from "../loading/loading.actions";
+import { LoadingBoolName } from "../loading/loading.reducer";
 
 @Injectable()
 export class FolderEffects {
@@ -12,7 +15,12 @@ export class FolderEffects {
     getAllFolders$ = createEffect(() =>
         this.actions$.pipe(
             ofType(FolderActions.getAllFolders),
-            switchMap(() => this.folderService.getFoldersList()),
+            switchMap(() => {
+                this.store.dispatch(LoadingActions.toggleLoading({ loadingBoolName: LoadingBoolName.LOADING_FOLDERS }))
+                return this.folderService.getFoldersList().pipe(
+                    finalize(() => this.store.dispatch(LoadingActions.toggleLoading({ loadingBoolName: LoadingBoolName.LOADING_FOLDERS })))
+                )
+            }),
             map((folders: Folder[]) => FolderApiActions.getAllFoldersSuccessful({ folders: folders })),
         )
     );
@@ -107,7 +115,8 @@ export class FolderEffects {
     constructor(
         private actions$: Actions,
         private folderService: FolderService,
-        private messageHandlingService: MessageHandlingService
+        private messageHandlingService: MessageHandlingService,
+        private store: Store
     ) { }
 
 }
