@@ -36,13 +36,6 @@ export class AppComponent implements OnInit {
     title = 'FileSharingApp';
     destroyRef = inject(DestroyRef);
     loggedOnUser$: Observable<User | null> = this.store.select(getLoggedOnUser);
-    folders$: Observable<Folder[]> = this.loggedOnUser$.pipe(
-        filter(user => !!user),
-        tap(() => this.getFolders()),
-        switchMap((user) => {
-            return user ? this.store.select(getAllFolders) : of([]);
-        })
-    );
 
     constructor(
         public dialog: MatDialog,
@@ -82,7 +75,6 @@ export class AppComponent implements OnInit {
         const dialogRef = this.dialog.open(FolderDialogComponent, {
             width: '500px',
             data: {
-                folders: this.folders$,
                 folderToUpdate: folderToUpdate
             }
         });

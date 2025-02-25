@@ -15,6 +15,7 @@ import { Store } from '@ngrx/store';
 import { getLoadingBool } from 'src/app/state/loading/loading.selector';
 import { LoadingBoolName } from 'src/app/state/loading/loading.reducer';
 import { FolderActions } from 'src/app/state/folder/folder.actions';
+import { getAllFolders } from 'src/app/state/folder/folder.selector';
 
 @Component({
     selector: 'app-folder-dialog',
@@ -38,13 +39,14 @@ export class FolderDialogComponent {
 
     form: FormGroup;
     checkingFolderName$ = this.store.select(getLoadingBool(LoadingBoolName.CHECKING_FOLDERNAME));
+    folders$: Observable<Folder[]> = this.store.select(getAllFolders);
 
     constructor(
         private fb: FormBuilder,
         private validationService: ValidationService,
         private store: Store,
         public dialogRef: MatDialogRef<FolderDialogComponent>,
-        @Inject(MAT_DIALOG_DATA) public data: { folders: Observable<Folder[]>, folderToUpdate: Folder }
+        @Inject(MAT_DIALOG_DATA) public data: { folderToUpdate: Folder }
     ) {
         this.buildForm();
     }

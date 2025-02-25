@@ -5,12 +5,12 @@ import { RouterOutlet } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
-import { Observable, filter, map } from 'rxjs';
+import { Observable, filter, map, switchMap, tap } from 'rxjs';
 import { Folder } from '../models/folder';
 import { TextLengthPipe } from '../shared/pipes/text-length-pipe';
 import { User } from '../models/user';
 import { TreeModule } from 'primeng/tree';
-import { MenuItem, TreeDragDropService } from 'primeng/api';
+import { TreeDragDropService } from 'primeng/api';
 import { ParentFolderFilterPipe } from '../shared/pipes/parent-folder-filter-pipe';
 import { tokenHasExpired } from '../shared/helpers/jwt-helpers';
 import { FolderNode } from '../models/folder-node';
@@ -21,6 +21,8 @@ import { getLoadingBool } from '../state/loading/loading.selector';
 import { LoadingBoolName } from '../state/loading/loading.reducer';
 import { Store } from '@ngrx/store';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { FolderActions } from '../state/folder/folder.actions';
+import { getAllFolders } from '../state/folder/folder.selector';
 
 @Component({
     selector: 'app-sidenav',
@@ -53,8 +55,9 @@ export class SidenavComponent implements AfterViewInit {
     @Output() editFolderEvent = new EventEmitter<Folder>();
     @Output() changeFolderParentEvent = new EventEmitter<{ folderId: number, parentFolderId: number }>();
     @Output() folderSelectedEvent = new EventEmitter<Folder>();
-    @Input() folders$: Observable<Folder[]>;
+
     @Input() loggedOnUser$: Observable<User | null>;
+
     loadingFolders$ = this.store.select(getLoadingBool(LoadingBoolName.LOADING_FOLDERS));
     hasValidToken$: Observable<boolean>;
     destroyRef = inject(DestroyRef);
@@ -65,8 +68,13 @@ export class SidenavComponent implements AfterViewInit {
             filter(user => !!user),
             map(user => !tokenHasExpired(user.token))
         );
-        this.nodes$ = this.folders$.pipe(
-            map(folders => folders.map((folder: Folder) => new FolderNode(folder)))
+        this.nodes$ = this.loggedOnUser$.pipe(
+            filter(user => !!user),
+            tap(() => this.store.dispatch(FolderActions.getAllFolders())),
+            switchMap(() => this.store.select(getAllFolders)),
+            map(folders => {
+                return folders.map((folder: Folder) => new FolderNode(folder));
+            })
         );
     }
 
