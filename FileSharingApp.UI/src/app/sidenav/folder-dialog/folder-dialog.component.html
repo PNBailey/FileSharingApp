@@ -14,19 +14,19 @@
                 <mat-label>Description</mat-label>
                 <input formControlName="description" matInput placeholder="Enter description...">
             </mat-form-field>
-            <mat-form-field class="col-11 mt-2" *ngIf="(data.folders | async).length > 0">
+            <mat-form-field class="col-11 mt-2" *ngIf="(folders$ | async).length > 0">
                 <mat-label>Parent Folder</mat-label>
                 <mat-select formControlName="parentFolderId" placeholder="Select parent folder...">
-                    <mat-option *ngFor="let folder of data.folders | async"
-                        [value]="folder.id">{{folder.name}}</mat-option>
+                    <mat-option *ngFor="let folder of folders$ | async" [value]="folder.id">{{folder.name}}</mat-option>
                 </mat-select>
             </mat-form-field>
         </form>
     </div>
 </mat-dialog-content>
 <mat-dialog-actions class="mb-2 d-flex justify-content-end gap-1">
-    <button mat-flat-button color="warn" (click)="delete()">Delete</button>
+    <button *ngIf="data.folderToUpdate" mat-flat-button color="warn" (click)="delete()">Delete</button>
     <button mat-flat-button color="accent" (click)="cancel()">Cancel</button>
-    <button mat-flat-button cdkFocusInitial color="primary" class="me-2" (click)="confirm()">Submit
+    <button [disabled]="form.invalid" mat-flat-button cdkFocusInitial color="primary" class="me-2"
+        (click)="confirm()">Submit
     </button>
 </mat-dialog-actions>
