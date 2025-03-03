@@ -8,11 +8,11 @@
                         <mat-label>Username</mat-label>
                         <input matInput type="text" class="username-input" formControlName="username" cdkFocusInitial>
                         <mat-error class="username-custom-validator-username-taken"
-                            *ngIf="form.controls['username'].hasError('usernameUniquenessViolated') && accountAccess.action.type === 'Register'">
+                            *ngIf="form.controls['username'].hasError('usernameExists') && accountAccess.action.type === 'Register'">
                             Username is <strong>taken</strong>
                         </mat-error>
                         <mat-error class="username-custom-validator-no-user-found"
-                            *ngIf="form.controls['username'].hasError('usernameUniquenessViolated') && accountAccess.action.type === 'Login'">
+                            *ngIf="form.controls['username'].hasError('usernameDoesNotExist') && accountAccess.action.type === 'Login'">
                             No user found. Select <strong>register</strong> below
                         </mat-error>
                         <mat-error class="username-required-error"

@@ -71,6 +71,15 @@ export class AccountDialogComponent {
 
     private accountAccessFormSubmitted: Subject<RegisterUser | LoginUser> = new Subject();
     private userIsRegisteringToggle = new Subject<void>();
+    private loginForm = this.fb.group({
+        'username': ['', [Validators.required], [this.validationService.usernameLoginFormValidatorFn()]],
+        'password': ['', [Validators.required]]
+    });
+    private registerForm = this.fb.group({
+        'email': ['', [Validators.required, Validators.email], [this.validationService.uniqueEmailValidatorFn()]],
+        'username': ['', [Validators.required], [this.validationService.usernameRegisterFormValidatorFn()]],
+        'password': ['', [Validators.required]]
+    });
 
     private userIsRegistering$: Observable<boolean> = this.userIsRegisteringToggle.pipe(
         scan(previous => !previous, false),
@@ -85,13 +94,7 @@ export class AccountDialogComponent {
     );
 
     private accountAccessForm$: Observable<UntypedFormGroup> = this.userIsRegistering$.pipe(
-        map((userIsRegistering) => {
-            const form = this.buildLoginForm(userIsRegistering);
-            if (userIsRegistering) {
-                this.createEmailFormControl(form);
-            }
-            return form;
-        })
+        map(userIsRegistering => userIsRegistering ? this.registerForm : this.loginForm)
     );
 
     private accountAction$: Observable<Action> = this.userIsRegistering$.pipe(
@@ -121,26 +124,7 @@ export class AccountDialogComponent {
         this.accountAccessFormSubmitted.next(form.value);
     }
 
-    private createEmailFormControl(form: UntypedFormGroup) {
-        form.addControl(
-            'email',
-            new FormControl(
-                '',
-                [Validators.required, Validators.email],
-                [this.validationService.uniqueEmailValidatorFn()]
-            )
-        );
-    }
-
     toggleUserIsRegistering() {
         this.userIsRegisteringToggle.next();
     }
-
-    private buildLoginForm(userIsRegistering: boolean) {
-        return this.fb.group({
-            'username': ['', [Validators.required], [this.validationService.uniqueUsernameValidatorFn(userIsRegistering)]],
-            'password': ['', [Validators.required]]
-        });
-    }
-
 }

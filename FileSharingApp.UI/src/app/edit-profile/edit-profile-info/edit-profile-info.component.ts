@@ -46,8 +46,8 @@ export class EditProfileInfoComponent implements OnInit {
             map(user => {
                 const form = this.fb.group({
                     'bio': this.fb.control(user?.bio, [Validators.maxLength(256)]),
-                    'username': this.fb.control(user?.username, [Validators.required], [this.validationService.uniqueUsernameValidatorFn(true, user?.username)]),
-                    'email': this.fb.control(user?.email, [Validators.required])
+                    'username': this.fb.control(user?.username, [Validators.required], [this.validationService.usernameRegisterFormValidatorFn()]),
+                    'email': this.fb.control(user?.email, [Validators.required], [this.validationService.uniqueEmailValidatorFn()])
                 })
                 this.reactToFormValueChanges(form);
                 return form;
