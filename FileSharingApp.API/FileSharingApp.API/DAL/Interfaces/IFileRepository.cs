@@ -6,24 +6,24 @@ namespace FileSharingApp.API.DAL.Interfaces
 {
     public interface IFileRepository
     {
-        void SaveFile(BaseFile file, int userId);
+        void SaveFile(AppFile file, int userId);
 
-        PaginatedResponse<BaseFile> GetFiles(FileSearchParams searchParams, int userId);
+        PaginatedResponse<AppFile> GetFiles(FileSearchParams searchParams, int userId);
 
         IEnumerable<FileType> GetFileTypes(int userId);
 
-        void DeleteFile(BaseFile fileToDelete);
+        void DeleteFile(AppFile fileToDelete);
 
-        void Update(BaseFile file);
+        void Update(AppFile file);
 
-        BaseFile Get(int id);
+        AppFile Get(int id);
 
         FileType GetFileType(string fileTypeName);
 
-        bool FileAlreadyExists(BaseFile file, int userId);
+        bool FileAlreadyExists(AppFile file, int userId);
 
         bool FileAlreadyExists(FileDto file, int userId);
 
-        IEnumerable<BaseFile> GetFolderFiles(int folderId);
+        IEnumerable<AppFile> GetFolderFiles(int folderId);
     }
 }

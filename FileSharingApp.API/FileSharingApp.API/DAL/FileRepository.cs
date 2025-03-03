@@ -16,13 +16,13 @@ namespace FileSharingApp.API.DAL
             this.context = context;
         }
 
-        public PaginatedResponse<BaseFile> GetFiles(FileSearchParams searchParams, int userId)
+        public PaginatedResponse<AppFile> GetFiles(FileSearchParams searchParams, int userId)
         {
-            IQueryable<BaseFile> filteredFiles = GetFilteredFiles(searchParams, userId);
+            IQueryable<AppFile> filteredFiles = GetFilteredFiles(searchParams, userId);
 
-            IOrderedEnumerable<BaseFile> sortedFilteredFiles = SortFiles(filteredFiles, searchParams);
+            IOrderedEnumerable<AppFile> sortedFilteredFiles = SortFiles(filteredFiles, searchParams);
 
-            PaginatedResponse<BaseFile> paginatedResponse = new()
+            PaginatedResponse<AppFile> paginatedResponse = new()
             {
                 TotalRecords = sortedFilteredFiles.Count(),
                 Items = sortedFilteredFiles
@@ -34,7 +34,7 @@ namespace FileSharingApp.API.DAL
             return paginatedResponse;
         }
 
-        private IQueryable<BaseFile> GetFilteredFiles(FileSearchParams searchParams, int userId)
+        private IQueryable<AppFile> GetFilteredFiles(FileSearchParams searchParams, int userId)
         {
             return context.Files
                 .Where(f =>
@@ -52,9 +52,9 @@ namespace FileSharingApp.API.DAL
             return date.Date.AddDays(1).AddTicks(-1);
         }
 
-        private static IOrderedEnumerable<BaseFile> SortFiles(IQueryable<BaseFile> filteredFiles, FileSearchParams searchParams)
+        private static IOrderedEnumerable<AppFile> SortFiles(IQueryable<AppFile> filteredFiles, FileSearchParams searchParams)
         {
-            Func<BaseFile, object> keySelector = searchParams.SortField switch
+            Func<AppFile, object> keySelector = searchParams.SortField switch
             {
                 "fileType.name" => file => file.FileType.Name,
                 "name" => file => file.Name,
@@ -82,10 +82,13 @@ namespace FileSharingApp.API.DAL
                 ?? throw new Exception($"FileType not found for FileTypeName: {fileTypeName}");
         }
 
-        public void SaveFile(BaseFile file, int userId)
+        public void SaveFile(AppFile file, int userId)
         {
-            file.FileOwner = context.Users.FirstOrDefault(u => u.Id == userId)
+            file.FileOwner = context.Users.SingleOrDefault(u => u.Id == userId)
                 ?? throw new Exception($"No user found with id: {userId}");
+
+            var existingFile = context.Files.SingleOrDefault(f => f.Id == file.Id) 
+                ?? throw new Exception($"No file found with id: {file.Id}");
 
             if (!FileAlreadyExists(file, userId))
             {
@@ -98,7 +101,7 @@ namespace FileSharingApp.API.DAL
             }
         }
 
-        public bool FileAlreadyExists(BaseFile file, int userId)
+        public bool FileAlreadyExists(AppFile file, int userId)
         {
             return CheckFileExists(file.Name, userId, file.FolderId);
         }
@@ -113,7 +116,7 @@ namespace FileSharingApp.API.DAL
             return context.Files.Any(f => f.Name == name && f.FileOwner.Id == userId && f.FolderId == folderId);
         }
 
-        public void DeleteFile(BaseFile fileToDelete)
+        public void DeleteFile(AppFile fileToDelete)
         {
             if (fileToDelete != null) 
             { 
@@ -122,19 +125,19 @@ namespace FileSharingApp.API.DAL
             context.SaveChanges();
         }
 
-        public void Update(BaseFile file)
+        public void Update(AppFile file)
         {
             context.Files.Update(file);
             context.SaveChanges();
         }
 
-        public BaseFile Get(int id)
+        public AppFile Get(int id)
         {
             return context.Files.FirstOrDefault(f => f.Id == id)
                 ?? throw new Exception($"File not found");
         }
 
-        public IEnumerable<BaseFile> GetFolderFiles(int folderId)
+        public IEnumerable<AppFile> GetFolderFiles(int folderId)
         {
             return context.Files.Where(f => f.FolderId == folderId);
         }

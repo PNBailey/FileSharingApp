@@ -27,7 +27,7 @@ namespace FileSharingApp.API.Services
             bucketName = config["CloudStorageConfig:BucketName"];
         }
 
-        public BaseFile SaveFile(BaseFile appFile, int userId)
+        public AppFile SaveFile(AppFile appFile, int userId)
         {
             fileRepository.SaveFile(appFile, userId);
             return appFile;
@@ -58,7 +58,7 @@ namespace FileSharingApp.API.Services
             }
         }
 
-        public PaginatedResponse<BaseFile> GetFiles(FileSearchParams searchParams, int userId)
+        public PaginatedResponse<AppFile> GetFiles(FileSearchParams searchParams, int userId)
         {
             if(searchParams.FolderId == null)
             {
@@ -79,19 +79,19 @@ namespace FileSharingApp.API.Services
             fileRepository.DeleteFile(fileToDelete);
         }
 
-        public void Update(BaseFile file)
+        public void Update(AppFile file)
         {
             fileRepository.Update(file);
         }
 
-        public BaseFile Get(int id)
+        public AppFile Get(int id)
         {
             return fileRepository.Get(id);
         }
 
-        public BaseFile CreateAppFile(FileUploadDto fileUploadDto)
+        public AppFile CreateAppFile(FileUploadDto fileUploadDto)
         {
-            BaseFile appFile = JsonSerializer.Deserialize<BaseFile>(fileUploadDto.FileData)!;
+            AppFile appFile = JsonSerializer.Deserialize<AppFile>(fileUploadDto.FileData)!;
             appFile.Name = Path.GetFileNameWithoutExtension(appFile.Name);
             appFile.FileType = fileRepository.GetFileType(GetFileTypeName(Path.GetExtension(fileUploadDto.OriginalFile.FileName)));
 
@@ -132,11 +132,6 @@ namespace FileSharingApp.API.Services
             return storageClient.DownloadObject(bucketName, fileName, memoryStream);
         }
 
-        public void MakeFilePublic(Google.Apis.Storage.v1.Data.Object storageObject)
-        {
-            storageClient.UpdateObject(storageObject, new UpdateObjectOptions { PredefinedAcl = PredefinedObjectAcl.PublicRead });
-        }
-
         public string GetSignedUrl(string objectName)
         {
             UrlSigner signer = UrlSigner.FromCredential(GoogleCredential.GetApplicationDefault());
@@ -152,6 +147,11 @@ namespace FileSharingApp.API.Services
         public bool FileAlreadyExists(FileDto file, int userId)
         {
             return fileRepository.FileAlreadyExists(file, userId);
+        }
+
+        public bool HasFileNameOrFolderChanged(AppFile existingFile, FileDto updatedFile)
+        {
+            return existingFile.Name != updatedFile.Name || existingFile.FolderId != updatedFile.FolderId;
         }
 
         public void DeleteAllFolderFiles(int folderId)

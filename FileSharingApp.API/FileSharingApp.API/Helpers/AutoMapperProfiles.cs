@@ -23,11 +23,11 @@ namespace API.Helpers
             CreateMap<AppUser, LoginDto>()
                 .ForMember(dest => dest.Password, opt => opt.Ignore());
 
-            CreateMap<BaseFile, FileDto>()
+            CreateMap<AppFile, FileDto>()
                 .ForMember(dest => dest.LastModified, opt => opt.MapFrom(src => src.LastModified));
 
-            CreateMap<FileDto, BaseFile>()
-                .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
+            CreateMap<FileDto, AppFile>()
+                .ForAllMembers(opts => opts.Condition((FileDto src, AppFile dest, object srcMember) => srcMember != null));
 
             CreateMap<FolderDto, Folder>();
 

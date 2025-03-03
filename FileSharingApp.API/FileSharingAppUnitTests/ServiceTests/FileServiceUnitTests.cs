@@ -28,13 +28,13 @@ namespace FileSharingAppUnitTests.ServiceTests
             var mockCloudinaryConfig = MockCloudinaryConfigGenerator.CreateMockCloudinaryConfig();
             var mockUserService = MockUserServiceGenerator.GenerateMockUserService();
             var mockFileRepository = new Mock<IFileRepository>();
-            var service = new FileServiceTestClass(mockCloudinaryConfig.Object, mockFileRepository.Object, mockUserService.Object); 
+            var service = new FileServiceTestClass(mockCloudinaryConfig.Object, mockFileRepository.Object, mockUserService.Object);
             ImageFile mockfile = new ImageFile();
             var bytes = Encoding.UTF8.GetBytes("This is a dummy file");
             mockfile.FileData = new FormFile(new MemoryStream(bytes), 0, bytes.Length, "", "TestImage");
             var result = service.UploadFile(mockfile, 1234);
 
-            Assert.IsAssignableFrom<BaseFile>(result.Result);
+            Assert.IsAssignableFrom<AppFile>(result.Result);
         }
     }
 }

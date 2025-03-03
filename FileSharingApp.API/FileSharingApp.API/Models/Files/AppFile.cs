@@ -5,7 +5,7 @@ using System.Text.Json.Serialization;
 
 namespace FileSharingApp.API.Models.Files
 {
-    public class BaseFile
+    public class AppFile
     {
         public int Id { get; set; }
 
