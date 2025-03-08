@@ -1,4 +1,5 @@
 ﻿using FileSharingApp.API.Services.Interfaces;
+using Google.Api;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;
@@ -27,12 +28,13 @@ namespace FileSharingApp.API.Controllers
         {
             var handler = httpContextAccessor.HttpContext!.Features.Get<IExceptionHandlerFeature>()!;
             var exception = handler.Error;
+            bool isDevelopment = httpContextAccessor.HttpContext.RequestServices.GetRequiredService<IWebHostEnvironment>().IsDevelopment();
 
             return Problem(
-                detail: exception.StackTrace,
+                detail: isDevelopment ? exception.Message : "An internal error occurred. Please try again later.",
                 statusCode: (int)errorService.GetStatusCode(exception),
                 type: exception.GetType().Name,
-                title: exception.Message);
+                title: "An unexpected error occurred");
         }
 
         [HttpPost("LogError")]
