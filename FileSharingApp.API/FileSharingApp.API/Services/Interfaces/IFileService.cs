@@ -6,21 +6,21 @@ namespace FileSharingApp.API.Services.Interfaces
 {
     public interface IFileService
     {
-        BaseFile SaveFile(BaseFile appFile, int userId);
+        AppFile SaveFile(AppFile appFile, int userId);
 
         string GetFileTypeName(string fileExtension);
 
-        PaginatedResponse<BaseFile> GetFiles(FileSearchParams searchParams, int userId);
+        PaginatedResponse<AppFile> GetFiles(FileSearchParams searchParams, int userId);
 
         IEnumerable<FileType> GetFileTypes(int userId);
 
         void DeleteFile(int id);
 
-        void Update(BaseFile file);
+        void Update(AppFile file);
 
-        BaseFile Get(int id);
+        AppFile Get(int id);
 
-        BaseFile CreateAppFile(FileUploadDto fileUploadDto);
+        AppFile CreateAppFile(FileUploadDto fileUploadDto);
 
         Google.Apis.Storage.v1.Data.Object AddFileToCloudStorage(IFormFile file);
 
@@ -30,11 +30,11 @@ namespace FileSharingApp.API.Services.Interfaces
 
         void DeleteFileFromCloudStorage(string fileName);
 
-        void MakeFilePublic(Google.Apis.Storage.v1.Data.Object storageObject);
-
         string GetSignedUrl(string objectName);
 
         bool FileAlreadyExists(FileDto file, int userId);
+
+        bool HasFileNameOrFolderChanged(AppFile existingFile, FileDto updatedFile);
 
         void DeleteAllFolderFiles(int folderId);
     }

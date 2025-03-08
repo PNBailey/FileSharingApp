@@ -24,6 +24,7 @@ import { HomeComponent } from './app/home/home.component';
 import { FilesComponent } from './app/files/files.component';
 import { loadingReducer } from './app/state/loading/loading.reducer';
 import { EditProfileComponent } from './app/edit-profile/edit-profile.component';
+import { ErrorComponent } from './app/error/error.component';
 
 if (environment.production) {
     enableProdMode();
@@ -32,6 +33,7 @@ if (environment.production) {
 const routes: Routes = [
     { path: '', component: HomeComponent },
     { path: 'home', component: HomeComponent },
+    { path: 'error', component: ErrorComponent },
     { path: 'edit-profile', component: EditProfileComponent },
     { path: 'files', component: FilesComponent },
     { path: 'files/:folderId', component: FilesComponent },

@@ -5,8 +5,6 @@ using Microsoft.AspNetCore.Authorization;
 using FileSharingApp.API.Models.DTOs;
 using FileSharingApp.API.Services.Interfaces;
 using NLog;
-using FileSharingApp.API.CustomExceptions;
-using System.ComponentModel.DataAnnotations;
 using FileSharingApp.API.Models.Folders;
 
 namespace FileSharingApp.API.Controllers
@@ -59,12 +57,12 @@ namespace FileSharingApp.API.Controllers
 
             if (!await userService.CheckUserDoesNotAlreadyExistByName(registerDto.Username))
             {
-                throw new ValidationException("Username already exists");
+                return BadRequest("Username already exists");
             }
             
             if(!await userService.CheckUserDoesNotAlreadyExistByEmail(registerDto.Email))
             {
-                throw new ValidationException("Email already exists");
+                return BadRequest("Email already exists");
             }
 
             _logger.Info($"Register dto model validation complete. Attempting to create user. Username: {registerDto.Username}. Email: {registerDto.Email}");
@@ -104,7 +102,7 @@ namespace FileSharingApp.API.Controllers
             var user = await userService.FindByNameAsync(loginDto.Username);
             if (user == null)
             {
-                throw new UserNotFoundException($"No user found with the username: {loginDto.Username}");
+                return BadRequest($"No user found with the username: {loginDto.Username}");
             }
 
             var signInResult = await userService.SignIn(user, loginDto.Password);
@@ -120,7 +118,7 @@ namespace FileSharingApp.API.Controllers
             } 
             else
             {
-                throw new SignInException("Unable to log in. Please check Username and Password and try again");
+                return BadRequest("Unable to log in. Please check Username and Password and try again");
             }
         }
     }

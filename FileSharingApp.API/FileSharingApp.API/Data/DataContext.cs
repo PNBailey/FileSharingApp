@@ -22,14 +22,12 @@ namespace FileSharingApp.API.Data
         {
         }
 
-        public DbSet<BaseFile> Files { get; set; }
-        public DbSet<FileType> FileTypes { get; set; }
-        public DbSet<Folder> Folders { get; set; }
+        public DbSet<AppFile> Files { get; set; } = null!;
+        public DbSet<FileType> FileTypes { get; set; } = null!;
+        public DbSet<Folder> Folders { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
-            var ukTimeZone = TimeZoneInfo.FindSystemTimeZoneById("GMT Standard Time");
-
             base.OnModelCreating(builder);
 
             builder.Entity<AppUser>()
@@ -73,7 +71,7 @@ namespace FileSharingApp.API.Data
                     new FileType() { Id = 5, Name = "PowerPoint", Icon = "pi-images" }
                 );
 
-            builder.Entity<BaseFile>()
+            builder.Entity<AppFile>()
                 .HasOne(f => f.Folder)
                 .WithMany(pf => pf.Files)
                 .HasForeignKey(f => f.FolderId)

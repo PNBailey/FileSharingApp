@@ -13,13 +13,13 @@ namespace FileSharingApp.API.Models.Folders
 
         public AppUser FolderOwner { get; set; } = null!;
 
-        public ICollection<UserFolder>? Users { get; set; } 
+        public ICollection<UserFolder>? Users { get; set; }
 
-        public IEnumerable<BaseFile>? Files { get; set; }
+        public IEnumerable<AppFile>? Files { get; set; }
 
         public int? ParentFolderId { get; set; }
 
-        public Folder? ParentFolder { get; set; }    
+        public Folder? ParentFolder { get; set; }
 
         public IEnumerable<Folder>? SubFolders { get; set; }
     }

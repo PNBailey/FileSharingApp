@@ -24,7 +24,7 @@ namespace FileSharingAppUnitTests.Helpers
                 cfg.CreateMap<AppUser, LoginDto>()
                     .ForMember(dest => dest.Password, opt => opt.Ignore());
 
-                cfg.CreateMap<BaseFile, FileDto>()
+                cfg.CreateMap<AppFile, FileDto>()
                     .ForMember(dest => dest.FileTypeName, opt => opt.MapFrom(bf => bf.GetType().Name));
             });
 

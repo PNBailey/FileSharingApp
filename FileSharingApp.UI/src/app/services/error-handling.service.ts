@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { ErrorHandler, Injectable, NgZone } from '@angular/core';
 import { SnackbarAction, SnackbarClassType, SnackbarDuration } from '../models/snackbar-item';
 import { MessageHandlingService } from './message-handling.service';
+import { environment } from 'src/environments/environment';
 import { Router } from '@angular/router';
 
 
@@ -37,64 +38,25 @@ export class ErrorHandlingService implements ErrorHandler {
     constructor(
         private messageHandlingService: MessageHandlingService,
         private http: HttpClient,
+        private router: Router
     ) { }
 
     handleError(error: any) {
         this.error = error;
         this.setDefaultErrorMessage();
-        this.setCustomErrorMessage();
-        this.logError();
-        this.displayErrorToUser();
-        console.error("Logged Error:", this.error.message, this.error);
+        if (environment.production === false) {
+            console.error("Error:", this.message, this.error);
+        }
+        if (this.error.status == ErrorCode.BadRequest) {
+            this.displayErrorToUser();
+        } else {
+            this.logError();
+            this.router.navigateByUrl('/error');
+        }
     }
 
     private setDefaultErrorMessage() {
-        this.error.error ?
-            this.message = this.error.error.title :
-            this.message = this.error.message;
-    }
-
-    private setCustomErrorMessage() {
-        switch (this.error.status) {
-            case ErrorCode.Unauthorized:
-                this.handle401Error();
-                break;
-            case ErrorCode.Forbidden:
-                this.handle403Error();
-                break;
-            case ErrorCode.NotFound:
-                this.handle404Error();
-                break;
-            default:
-                this.message = "An unexpected error occured: " + this.message;
-                break;
-        }
-    }
-
-    private handle401Error() {
-        switch (this.error.error?.type) {
-            case Exception.SIGN_IN_EXCEPTION:
-                this.message = ExceptionMessage.SIGN_IN_EXCEPTION_MESSAGE;
-                break;
-        }
-    }
-
-    private handle403Error() {
-        switch (this.error.error?.type) {
-            case Exception.VALIDATION_EXCEPTION:
-                this.message = ExceptionMessage.VALIDATION_EXCEPTION_MESSAGE;
-                break;
-        }
-    }
-
-    private handle404Error() {
-        switch (this.error.error?.type) {
-            case Exception.USER_NOT_FOUND_EXCEPTION:
-                this.message = ExceptionMessage.USER_NOT_FOUND_EXCEPTION_MESSAGE;
-                break;
-            default:
-                this.message = ExceptionMessage.DEFAULT_RESOURCE_NOT_FOUND_MESSAGE;
-        }
+        this.message = this.error.error.detail ?? this.error.error;
     }
 
     private logError() {
@@ -102,9 +64,6 @@ export class ErrorHandlingService implements ErrorHandler {
     }
 
     private displayErrorToUser() {
-        if (this.message != "Session Expired") {
-
-        }
         this.messageHandlingService.onDisplayNewMessage({
             message: this.message,
             action: SnackbarAction.Close,

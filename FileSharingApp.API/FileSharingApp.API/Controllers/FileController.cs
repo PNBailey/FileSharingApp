@@ -25,20 +25,20 @@ namespace FileSharingApp.API.Controllers
         [HttpPost("GetFiles")]
         public PaginatedResponse<FileDto> GetFiles([FromBody]FileSearchParams searchParams)
         {
-            PaginatedResponse<BaseFile> baseFilePaginatedResponse = fileService.GetFiles(searchParams, User.GetUserId());
+            PaginatedResponse<AppFile> baseFilePaginatedResponse = fileService.GetFiles(searchParams, User.GetUserId());
             PaginatedResponse<FileDto> fileDtoPaginatedResponse = mapper.Map<PaginatedResponse<FileDto>>(baseFilePaginatedResponse);
             return fileDtoPaginatedResponse;
         }
 
         [HttpPost]
-        public BaseFile Post([FromForm]FileUploadDto fileUploadDto)
+        public AppFile Post([FromForm]FileUploadDto fileUploadDto)
         {
             if (fileUploadDto.OriginalFile == null || fileUploadDto.OriginalFile.Length == 0)
             {
                 throw new ArgumentNullException("File is missing or empty.");
             }
 
-            BaseFile appFile = fileService.CreateAppFile(fileUploadDto);
+            AppFile appFile = fileService.CreateAppFile(fileUploadDto);
             appFile.DownloadUrl = fileService.AddFileToCloudStorage(fileUploadDto.OriginalFile).MediaLink;
             fileService.SaveFile(appFile, User.GetUserId());
 
@@ -59,7 +59,7 @@ namespace FileSharingApp.API.Controllers
             {
                 return NotFound("Unable to locate file to update");
             }
-            if(fileService.FileAlreadyExists(file, User.GetUserId()))
+            if(fileService.HasFileNameOrFolderChanged(existingFile, file) && fileService.FileAlreadyExists(file, User.GetUserId()))
             {
                 return BadRequest("File already exists in this location");
             }
