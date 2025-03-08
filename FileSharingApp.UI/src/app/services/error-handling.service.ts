@@ -44,7 +44,7 @@ export class ErrorHandlingService implements ErrorHandler {
     handleError(error: any) {
         this.error = error;
         this.setDefaultErrorMessage();
-        if (environment.production === false) {
+        if (!environment.production) {
             console.error("Error:", this.message, this.error);
         }
         if (this.error.status == ErrorCode.BadRequest) {
@@ -56,7 +56,7 @@ export class ErrorHandlingService implements ErrorHandler {
     }
 
     private setDefaultErrorMessage() {
-        this.message = this.error.error.detail ?? this.error.error;
+        this.message = this.error.error?.detail ?? this.error.error;
     }
 
     private logError() {
