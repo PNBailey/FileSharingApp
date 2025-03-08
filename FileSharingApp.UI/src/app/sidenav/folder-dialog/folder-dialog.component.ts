@@ -49,13 +49,22 @@ export class FolderDialogComponent {
         @Inject(MAT_DIALOG_DATA) public data: { folderToUpdate: Folder }
     ) {
         this.buildForm();
+        this.addFolderFormValues();
+    }
+
+    addFolderFormValues() {
+        this.form.setValue({
+            'name': this.data.folderToUpdate?.name,
+            'description': this.data.folderToUpdate?.description,
+            'parentFolderId': this.data.folderToUpdate?.parentFolderId
+        }, { emitEvent: false })
     }
 
     buildForm() {
         this.form = this.fb.group({
-            'name': this.fb.control(this.data.folderToUpdate?.name, Validators.required, this.validationService.uniqueFolderValidatorFn()),
-            'description': this.fb.control(this.data.folderToUpdate?.description),
-            'parentFolderId': this.fb.control(this.data.folderToUpdate?.parentFolderId)
+            'name': ['', [Validators.required], [this.validationService.uniqueFolderValidatorFn()]],
+            'description': [''],
+            'parentFolderId': ['']
         })
     }
 
