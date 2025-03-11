@@ -2,7 +2,6 @@
 using FileSharingApp.API.ExtensionMethods;
 using FileSharingApp.API.Models.DTOs;
 using FileSharingApp.API.Models.Folders;
-using FileSharingApp.API.Services;
 using FileSharingApp.API.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

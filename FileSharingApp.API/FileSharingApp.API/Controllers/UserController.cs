@@ -8,7 +8,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace FileSharingApp.API.Controllers
 {
-    [Authorize]
     public class UserController : BaseController
     {
         private readonly IUserService userService;
