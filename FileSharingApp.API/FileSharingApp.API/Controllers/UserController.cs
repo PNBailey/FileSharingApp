@@ -54,7 +54,7 @@ namespace FileSharingApp.API.Controllers
         [HttpPost("Upload-Profile-Picture")]
         public async Task<IActionResult> UploadProfilePicture([FromForm]IFormFile imageFileData)
         {
-            var storageObject = fileService.AddFileToCloudStorage(imageFileData);
+            var storageObject = fileService.AddFileToCloudStorage(imageFileData, User.GetUserId());
             var signedUrl = fileService.GetSignedUrl(storageObject.Name);
             var user = await userService.FindByIdAsync(User.GetUserId());
             user.ProfilePictureUrl = signedUrl;

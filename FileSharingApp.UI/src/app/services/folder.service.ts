@@ -38,4 +38,8 @@ export class FolderService {
         const url = `${this.baseUrl}/${folderId}`;
         return this.http.delete(url);
     }
+
+    checkFolderNameUnique(folderName: string): Observable<boolean> {
+        return this.http.get<boolean>(`${this.baseUrl}/CheckFolderName?folderName=${folderName}`);
+    }
 }

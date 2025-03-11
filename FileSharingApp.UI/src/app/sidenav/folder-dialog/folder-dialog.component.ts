@@ -38,7 +38,6 @@ import { getAllFolders } from 'src/app/state/folder/folder.selector';
 export class FolderDialogComponent {
 
     form: FormGroup;
-    checkingFolderName$ = this.store.select(getLoadingBool(LoadingBoolName.CHECKING_FOLDERNAME));
     folders$: Observable<Folder[]> = this.store.select(getAllFolders);
 
     constructor(
@@ -49,14 +48,14 @@ export class FolderDialogComponent {
         @Inject(MAT_DIALOG_DATA) public data: { folderToUpdate: Folder }
     ) {
         this.buildForm();
-        this.addFolderFormValues();
+        this.addInitialFormValues();
     }
 
-    addFolderFormValues() {
-        this.form.setValue({
-            'name': this.data.folderToUpdate?.name,
-            'description': this.data.folderToUpdate?.description,
-            'parentFolderId': this.data.folderToUpdate?.parentFolderId
+    addInitialFormValues() {
+        this.form.patchValue({
+            name: this.data.folderToUpdate?.name,
+            description: this.data.folderToUpdate?.description,
+            parentFolderId: this.data.folderToUpdate?.parentFolderId
         }, { emitEvent: false })
     }
 

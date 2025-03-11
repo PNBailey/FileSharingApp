@@ -34,29 +34,29 @@ export class EditProfileInfoComponent implements OnInit {
 
     userInfoForm$: Observable<UntypedFormGroup>;
     updatedUser: User;
-    checkingUsername$ = this.store.select(getLoadingBool(LoadingBoolName.CHECKING_USERNAME));
-    checkingEmail$ = this.store.select(getLoadingBool(LoadingBoolName.CHECKING_EMAIL));
+    form = this.fb.group({
+        'bio': this.fb.control(null, [Validators.maxLength(256)]),
+        'username': this.fb.control(null, [Validators.required], [this.validationService.usernameEditProfileFormValidatorFn()]),
+        'email': this.fb.control(null, [Validators.required], [this.validationService.uniqueEmailEditProfileFormValidatorFn()])
+    });
 
     ngOnInit(): void {
-        this.buildForm();
+        this.reactToLoggedOnUserChanges();
+        this.reactToFormValueChanges()
     }
 
-    private buildForm() {
-        this.userInfoForm$ = this.loggedOnUser$.pipe(
-            map(user => {
-                const form = this.fb.group({
-                    'bio': this.fb.control(user?.bio, [Validators.maxLength(256)]),
-                    'username': this.fb.control(user?.username, [Validators.required], [this.validationService.usernameRegisterFormValidatorFn()]),
-                    'email': this.fb.control(user?.email, [Validators.required], [this.validationService.uniqueEmailValidatorFn()])
-                })
-                this.reactToFormValueChanges(form);
-                return form;
-            })
-        )
+    private reactToLoggedOnUserChanges() {
+        this.loggedOnUser$.subscribe(user => {
+            this.form.patchValue({
+                bio: user?.bio,
+                username: user?.username,
+                email: user?.email
+            }, { emitEvent: false })
+        });
     }
 
-    private reactToFormValueChanges(form: UntypedFormGroup) {
-        form.valueChanges.pipe(
+    private reactToFormValueChanges() {
+        this.form.valueChanges.pipe(
             withLatestFrom(this.loggedOnUser$),
             map(([formValue, originalUser]) => {
                 this.updatedUser = {

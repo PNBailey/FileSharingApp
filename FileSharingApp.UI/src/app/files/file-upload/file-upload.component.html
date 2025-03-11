@@ -40,7 +40,8 @@
     </mat-dialog-content>
     <mat-dialog-actions align="end">
         <button mat-flat-button mat-dialog-close color="warn">Cancel</button>
-        <button mat-flat-button cdkFocusInitial color="primary" class="mx-3" (click)="uploadFiles()">Upload
+        <button mat-flat-button cdkFocusInitial color="primary" class="mx-3" (click)="uploadFiles()"
+            [disabled]="filesToUpload.length <= 0">Upload
         </button>
     </mat-dialog-actions>
 </div>

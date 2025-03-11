@@ -1,36 +1,35 @@
-<div *ngIf="(userInfoForm$ | async) as form">
-    <form [formGroup]="form">
-        <div class="row">
-            <mat-form-field>
-                <mat-label>Username</mat-label>
-                <input matInput type="text" class="username-input" formControlName="username" cdkFocusInitial>
-                <mat-error class="username-error"
-                    *ngIf="form.controls['username'].hasError('usernameUniquenessViolated')">
-                    Username is <strong>taken</strong>
-                </mat-error>
-                <mat-spinner class="me-3" matSuffix [diameter]="18" *ngIf="checkingUsername$ | async"></mat-spinner>
-            </mat-form-field>
-        </div>
-        <div class="row">
-            <mat-form-field>
-                <mat-label>Email</mat-label>
-                <input matInput type="email" class="email-input" formControlName="email" cdkFocusInitial>
-            </mat-form-field>
-        </div>
-        <div class="row">
-            <mat-form-field>
-                <mat-label>Bio</mat-label>
-                <textarea maxlength="256" cdkTextareaAutosize matInput type="text" class="bio-input"
-                    formControlName="bio" placeholder="Write something about yourself..." cdkFocusInitial #bio>
-                </textarea>
-                <mat-hint align="end">{{bio.value.length + '/256'}}</mat-hint>
-            </mat-form-field>
-        </div>
-    </form>
-    <div class="d-flex justify-content-end mt-4">
-        <button class="save-changes-button" (click)="updateInfo()" type="submit" color="primary"
-            [disabled]="form.invalid || !form.dirty" mat-raised-button>
-            Save Changes
-        </button>
+<form [formGroup]="form">
+    <div class="row">
+        <mat-form-field>
+            <mat-label>Username</mat-label>
+            <input matInput type="text" class="username-input" formControlName="username" cdkFocusInitial>
+            <mat-error class="username-error" *ngIf="form.controls['username'].hasError('usernameExists')">
+                Username is <strong>taken</strong>
+            </mat-error>
+        </mat-form-field>
     </div>
+    <div class="row">
+        <mat-form-field>
+            <mat-label>Email</mat-label>
+            <input matInput type="email" class="email-input" formControlName="email" cdkFocusInitial>
+            <mat-error *ngIf="form.controls['email'].hasError('emailUniquenessViolated')">
+                An account with this email already exists.
+            </mat-error>
+        </mat-form-field>
+    </div>
+    <div class="row">
+        <mat-form-field>
+            <mat-label>Bio</mat-label>
+            <textarea maxlength="256" cdkTextareaAutosize matInput type="text" class="bio-input" formControlName="bio"
+                placeholder="Write something about yourself..." cdkFocusInitial #bio>
+                </textarea>
+            <mat-hint align="end">{{bio.value.length + '/256'}}</mat-hint>
+        </mat-form-field>
+    </div>
+</form>
+<div class="d-flex justify-content-end mt-4">
+    <button class="save-changes-button" (click)="updateInfo()" type="submit" color="primary"
+        [disabled]="form.invalid || !form.dirty" mat-raised-button>
+        Save Changes
+    </button>
 </div>

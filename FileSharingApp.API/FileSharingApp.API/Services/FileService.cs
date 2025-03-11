@@ -5,6 +5,7 @@ using FileSharingApp.API.Models.Files;
 using FileSharingApp.API.Services.Interfaces;
 using Google.Apis.Auth.OAuth2;
 using Google.Cloud.Storage.V1;
+using System.Text;
 using System.Text.Json;
 
 namespace FileSharingApp.API.Services
@@ -27,9 +28,9 @@ namespace FileSharingApp.API.Services
             bucketName = config["CloudStorageConfig:BucketName"];
         }
 
-        public AppFile SaveFile(AppFile appFile, int userId)
+        public AppFile AddFile(AppFile appFile, int userId)
         {
-            fileRepository.SaveFile(appFile, userId);
+            fileRepository.AddFile(appFile, userId);
             return appFile;
         }
 
@@ -98,13 +99,13 @@ namespace FileSharingApp.API.Services
             return appFile;
         }
 
-        public Google.Apis.Storage.v1.Data.Object AddFileToCloudStorage(IFormFile file)
+        public Google.Apis.Storage.v1.Data.Object AddFileToCloudStorage(IFormFile file, int userId)
         {
             using (var fileStream = file.OpenReadStream())
             {
                 var storageObject = storageClient.UploadObject(
                     bucket: bucketName,
-                    objectName: Path.GetFileNameWithoutExtension(file.FileName),
+                    objectName: $"{userId}/{Path.GetFileNameWithoutExtension(file.FileName)}",
                     contentType: file.ContentType,
                     source: fileStream
                 );
@@ -145,6 +146,11 @@ namespace FileSharingApp.API.Services
         }
 
         public bool FileAlreadyExists(FileDto file, int userId)
+        {
+            return fileRepository.FileAlreadyExists(file, userId);
+        }
+
+        public bool FileAlreadyExists(AppFile file, int userId)
         {
             return fileRepository.FileAlreadyExists(file, userId);
         }

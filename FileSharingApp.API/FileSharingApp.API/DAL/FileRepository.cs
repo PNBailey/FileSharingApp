@@ -82,13 +82,10 @@ namespace FileSharingApp.API.DAL
                 ?? throw new Exception($"FileType not found for FileTypeName: {fileTypeName}");
         }
 
-        public void SaveFile(AppFile file, int userId)
+        public void AddFile(AppFile file, int userId)
         {
             file.FileOwner = context.Users.SingleOrDefault(u => u.Id == userId)
                 ?? throw new Exception($"No user found with id: {userId}");
-
-            var existingFile = context.Files.SingleOrDefault(f => f.Id == file.Id) 
-                ?? throw new Exception($"No file found with id: {file.Id}");
 
             if (!FileAlreadyExists(file, userId))
             {

@@ -6,7 +6,7 @@ namespace FileSharingApp.API.Services.Interfaces
 {
     public interface IFileService
     {
-        AppFile SaveFile(AppFile appFile, int userId);
+        AppFile AddFile(AppFile appFile, int userId);
 
         string GetFileTypeName(string fileExtension);
 
@@ -22,7 +22,7 @@ namespace FileSharingApp.API.Services.Interfaces
 
         AppFile CreateAppFile(FileUploadDto fileUploadDto);
 
-        Google.Apis.Storage.v1.Data.Object AddFileToCloudStorage(IFormFile file);
+        Google.Apis.Storage.v1.Data.Object AddFileToCloudStorage(IFormFile file, int userId);
 
         void UpdateFileOnCloudStorage(string existingFileName, string newFileName);
 
@@ -33,6 +33,8 @@ namespace FileSharingApp.API.Services.Interfaces
         string GetSignedUrl(string objectName);
 
         bool FileAlreadyExists(FileDto file, int userId);
+
+        bool FileAlreadyExists(AppFile file, int userId);
 
         bool HasFileNameOrFolderChanged(AppFile existingFile, FileDto updatedFile);
 

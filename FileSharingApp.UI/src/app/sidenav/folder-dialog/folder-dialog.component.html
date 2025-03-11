@@ -5,7 +5,6 @@
             <mat-form-field class="col-11">
                 <mat-label>Name</mat-label>
                 <input formControlName="name" matInput placeholder="Enter folder name...">
-                <mat-spinner class="me-3" matSuffix [diameter]="18" *ngIf="checkingFolderName$ | async"></mat-spinner>
                 <mat-error *ngIf="form.controls['name'].hasError('folderUniquenessViolated')">
                     Folder name is <strong>taken</strong>
                 </mat-error>

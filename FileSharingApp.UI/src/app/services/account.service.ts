@@ -4,6 +4,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { LoginUser } from '../models/login-user';
 import { RegisterUser } from '../models/register-user';
 import { User } from '../models/user';
+import { Observable } from 'rxjs';
 
 @Injectable({
     providedIn: 'root'
@@ -20,5 +21,13 @@ export class AccountService {
 
     loginOrRegister(user: RegisterUser | LoginUser, url: string) {
         return this.http.post<User>(`${this.baseUrl}${url}`, user);
+    }
+
+    checkUsernameUnique(username: string): Observable<boolean> {
+        return this.http.get<boolean>(`${this.baseUrl}/CheckUsername?username=${username}`);
+    }
+
+    checkEmailUnique(email: string): Observable<boolean> {
+        return this.http.get<boolean>(`${this.baseUrl}/CheckEmail?email=${email}`);
     }
 }

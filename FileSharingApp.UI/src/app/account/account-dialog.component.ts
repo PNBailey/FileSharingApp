@@ -66,9 +66,6 @@ export class AccountDialogComponent {
         ).subscribe();
     }
 
-    checkingUsername$ = this.store.select(getLoadingBool(LoadingBoolName.CHECKING_USERNAME));
-    checkingEmail$ = this.store.select(getLoadingBool(LoadingBoolName.CHECKING_EMAIL));
-
     private accountAccessFormSubmitted: Subject<RegisterUser | LoginUser> = new Subject();
     private userIsRegisteringToggle = new Subject<void>();
     private loginForm = this.fb.group({
@@ -76,7 +73,7 @@ export class AccountDialogComponent {
         'password': ['', [Validators.required]]
     });
     private registerForm = this.fb.group({
-        'email': ['', [Validators.required, Validators.email], [this.validationService.uniqueEmailValidatorFn()]],
+        'email': ['', [Validators.required, Validators.email], [this.validationService.uniqueEmailRegisterFormValidatorFn()]],
         'username': ['', [Validators.required], [this.validationService.usernameRegisterFormValidatorFn()]],
         'password': ['', [Validators.required]]
     });

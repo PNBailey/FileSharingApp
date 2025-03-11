@@ -19,8 +19,6 @@
                             *ngIf="form.controls['username'].hasError('required')">
                             Username is <strong>required</strong>
                         </mat-error>
-                        <mat-spinner class="me-3" matSuffix [diameter]="18"
-                            *ngIf="checkingUsername$ | async"></mat-spinner>
                     </mat-form-field>
                 </div>
                 <div class="row mb-2">
@@ -49,13 +47,10 @@
                         <mat-error class="email-required-error" *ngIf="form.controls['email'].hasError('required')">
                             Email is <strong>required</strong>
                         </mat-error>
-                        <mat-error class="email-custom-validator-error"
-                            *ngIf="form.controls['email'].hasError('emailUniquenessViolated')">
+                        <mat-error *ngIf="form.controls['email'].hasError('emailUniquenessViolated')">
                             An account with this email address already exists. Select <strong>login</strong> below to
                             login
                         </mat-error>
-                        <mat-spinner class="me-3" matSuffix [diameter]="18"
-                            *ngIf="checkingEmail$ | async"></mat-spinner>
                     </mat-form-field>
                 </div>
             </div>

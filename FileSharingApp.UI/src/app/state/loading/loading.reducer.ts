@@ -2,10 +2,7 @@ import { createReducer, on } from "@ngrx/store";
 import { LoadingActions } from "./loading.actions";
 
 export enum LoadingBoolName {
-    CHECKING_EMAIL = 'checkingEmail$',
-    CHECKING_USERNAME = 'checkingUsername$',
     UPDATING_PROFILE = 'updatingProfile$',
-    CHECKING_FOLDERNAME = 'checkingFolderName$',
     LOADING_FILES = 'loadingFiles$',
     LOADING_FOLDERS = 'loadingFolders$',
     UPDATING_FILE = 'updatingFile$',

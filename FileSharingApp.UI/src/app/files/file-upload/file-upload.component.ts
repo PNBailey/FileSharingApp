@@ -12,11 +12,11 @@ import { FilesActions } from 'src/app/state/file/file.actions';
 import { getFileSearchParams } from 'src/app/state/file/file.selector';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AppFile } from 'src/app/models/app-file';
-import { FileSearch } from 'src/app/models/file-search';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { getLoadingBool } from 'src/app/state/loading/loading.selector';
 import { LoadingBoolName } from 'src/app/state/loading/loading.reducer';
-import { take } from 'rxjs';
+import { take, withLatestFrom } from 'rxjs';
+import { getTopLevelFolder } from 'src/app/state/folder/folder.selector';
 
 @Component({
     selector: 'app-file-upload',
@@ -84,19 +84,22 @@ export class FileUploadComponent {
     }
 
     public uploadFiles() {
-        this.store.select(getFileSearchParams).pipe(
-            take(1)
-        ).subscribe(searchParams => {
-            const filesToUploadMapped = this.filesToUpload.map(file => {
-                const appFile = new AppFile();
-                appFile.name = file.name;
-                appFile.size = file.size;
-                appFile.lastModified = new Date(file.lastModified);
-                appFile.originalFile = file;
-                appFile.folderId = searchParams.folderId;
-                return appFile;
+        if (this.filesToUpload.length > 0) {
+            this.store.select(getFileSearchParams).pipe(
+                take(1),
+                withLatestFrom(this.store.select(getTopLevelFolder))
+            ).subscribe(([searchParams, topLevelFolder]) => {
+                const filesToUploadMapped = this.filesToUpload.map(file => {
+                    const appFile = new AppFile();
+                    appFile.name = file.name;
+                    appFile.size = file.size;
+                    appFile.lastModified = new Date(file.lastModified);
+                    appFile.originalFile = file;
+                    appFile.folderId = searchParams.folderId ?? topLevelFolder.id;
+                    return appFile;
+                });
+                this.store.dispatch(FilesActions.uploadFiles({ files: filesToUploadMapped }));
             });
-            this.store.dispatch(FilesActions.uploadFiles({ files: filesToUploadMapped }));
-        });
+        }
     }
 }

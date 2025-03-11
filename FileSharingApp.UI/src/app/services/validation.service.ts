@@ -1,10 +1,10 @@
-import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { AbstractControl, AsyncValidatorFn, ValidationErrors } from '@angular/forms';
 import { Store } from '@ngrx/store';
-import { debounceTime, distinctUntilChanged, finalize, first, map, Observable, switchMap, tap } from 'rxjs';
-import { LoadingActions } from '../state/loading/loading.actions';
-import { LoadingBoolName } from '../state/loading/loading.reducer';
+import { debounceTime, distinctUntilChanged, filter, first, map, Observable, switchMap, withLatestFrom } from 'rxjs';
+import { getLoggedOnUser } from '../state/account/account.selectors';
+import { AccountService } from './account.service';
+import { FolderService } from './folder.service';
 
 @Injectable({
     providedIn: 'root'
@@ -15,7 +15,8 @@ export class ValidationService {
 
     constructor(
         private store: Store,
-        private http: HttpClient
+        private accountService: AccountService,
+        private folderService: FolderService
     ) { }
 
     usernameLoginFormValidatorFn(): AsyncValidatorFn {
@@ -36,24 +37,46 @@ export class ValidationService {
 
     usernameExistsValidator(controlObs: Observable<string>): Observable<Boolean> {
         return controlObs.pipe(
-            tap(() => this.store.dispatch(LoadingActions.toggleLoading({ loadingBoolName: LoadingBoolName.CHECKING_USERNAME }))),
             debounceTime(400),
             distinctUntilChanged(),
-            switchMap(controlValue => this.checkUsernameUnique(controlValue)),
-            finalize(() => this.store.dispatch(LoadingActions.toggleLoading({ loadingBoolName: LoadingBoolName.CHECKING_USERNAME }))),
+            switchMap(controlValue => this.accountService.checkUsernameUnique(controlValue)),
             first()
         );
     }
 
-    uniqueEmailValidatorFn(): AsyncValidatorFn {
+    usernameEditProfileFormValidatorFn(): AsyncValidatorFn {
         return (control: AbstractControl): Observable<ValidationErrors | { string: boolean } | null> => control.valueChanges
             .pipe(
-                tap(() => this.store.dispatch(LoadingActions.toggleLoading({ loadingBoolName: LoadingBoolName.CHECKING_EMAIL }))),
+                withLatestFrom(this.store.select(getLoggedOnUser)),
+                filter(([newUsername, loggedOnUser]) => loggedOnUser.username != newUsername),
                 debounceTime(400),
                 distinctUntilChanged(),
-                switchMap(value => this.checkEmailUnique(value)),
-                finalize(() => this.store.dispatch(LoadingActions.toggleLoading({ loadingBoolName: LoadingBoolName.CHECKING_EMAIL }))),
-                map((usernameIsUnique: boolean) => (usernameIsUnique ? null : { 'emailUniquenessViolated': true })),
+                switchMap(([controlValue, loggedOnUser]) => this.accountService.checkUsernameUnique(controlValue)),
+                map(usernameExists => usernameExists ? null : { 'usernameExists': true }),
+                first()
+            );
+    }
+
+    uniqueEmailEditProfileFormValidatorFn(): AsyncValidatorFn {
+        return (control: AbstractControl): Observable<ValidationErrors | { string: boolean } | null> => control.valueChanges
+            .pipe(
+                withLatestFrom(this.store.select(getLoggedOnUser)),
+                filter(([newEmail, loggedOnUser]) => loggedOnUser.email != newEmail),
+                debounceTime(400),
+                distinctUntilChanged(),
+                switchMap(([controlValue, loggedOnUser]) => this.accountService.checkEmailUnique(controlValue)),
+                map(usernameIsUnique => usernameIsUnique ? null : { 'emailUniquenessViolated': true }),
+                first()
+            );
+    }
+
+    uniqueEmailRegisterFormValidatorFn(): AsyncValidatorFn {
+        return (control: AbstractControl): Observable<ValidationErrors | { string: boolean } | null> => control.valueChanges
+            .pipe(
+                debounceTime(400),
+                distinctUntilChanged(),
+                switchMap(controlValue => this.accountService.checkEmailUnique(controlValue)),
+                map(usernameIsUnique => usernameIsUnique ? null : { 'emailUniquenessViolated': true }),
                 first()
             );
     }
@@ -61,25 +84,11 @@ export class ValidationService {
     uniqueFolderValidatorFn(): AsyncValidatorFn {
         return (control: AbstractControl): Observable<ValidationErrors | { string: boolean } | null> => control.valueChanges
             .pipe(
-                tap(() => this.store.dispatch(LoadingActions.toggleLoading({ loadingBoolName: LoadingBoolName.CHECKING_FOLDERNAME }))),
                 debounceTime(400),
                 distinctUntilChanged(),
-                switchMap(value => this.checkFolderNameUnique(value)),
-                finalize(() => this.store.dispatch(LoadingActions.toggleLoading({ loadingBoolName: LoadingBoolName.CHECKING_FOLDERNAME }))),
-                map((folderIsNotUnique: boolean) => (folderIsNotUnique ? { 'folderUniquenessViolated': true } : null)),
+                switchMap(value => this.folderService.checkFolderNameUnique(value)),
+                map(folderIsNotUnique => folderIsNotUnique ? { 'folderUniquenessViolated': true } : null),
                 first()
             );
-    }
-
-    checkUsernameUnique(username: string): Observable<boolean> {
-        return this.http.get<boolean>(`${this.baseUrl}/Account/CheckUsername?username=${username}`);
-    }
-
-    checkEmailUnique(email: string): Observable<boolean> {
-        return this.http.get<boolean>(`${this.baseUrl}/Account/CheckEmail?email=${email}`);
-    }
-
-    checkFolderNameUnique(folderName: string): Observable<boolean> {
-        return this.http.get<boolean>(`${this.baseUrl}/Folder/CheckFolderName?folderName=${folderName}`);
     }
 }

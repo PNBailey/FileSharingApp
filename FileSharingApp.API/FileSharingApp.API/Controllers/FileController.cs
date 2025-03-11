@@ -31,7 +31,7 @@ namespace FileSharingApp.API.Controllers
         }
 
         [HttpPost]
-        public AppFile Post([FromForm]FileUploadDto fileUploadDto)
+        public ActionResult<AppFile> Post([FromForm]FileUploadDto fileUploadDto)
         {
             if (fileUploadDto.OriginalFile == null || fileUploadDto.OriginalFile.Length == 0)
             {
@@ -39,8 +39,17 @@ namespace FileSharingApp.API.Controllers
             }
 
             AppFile appFile = fileService.CreateAppFile(fileUploadDto);
-            appFile.DownloadUrl = fileService.AddFileToCloudStorage(fileUploadDto.OriginalFile).MediaLink;
-            fileService.SaveFile(appFile, User.GetUserId());
+
+            if (!fileService.FileAlreadyExists(appFile, User.GetUserId()))
+            {
+                appFile.DownloadUrl = fileService.AddFileToCloudStorage(fileUploadDto.OriginalFile, User.GetUserId()).MediaLink;
+                fileService.AddFile(appFile, User.GetUserId());
+            }
+            else
+            {
+                return BadRequest("File already exists");
+            }
+
 
             return appFile;
         }
