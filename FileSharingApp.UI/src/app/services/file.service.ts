@@ -50,6 +50,8 @@ export class FileService {
     }
 
     downloadFile(fileName: string) {
-        return this.http.get(`${this.baseUrl}/DownloadFile/${fileName}`)
+        return this.http.get(`${this.baseUrl}/DownloadFile/${fileName}`, {
+            responseType: 'blob'
+        })
     }
 }

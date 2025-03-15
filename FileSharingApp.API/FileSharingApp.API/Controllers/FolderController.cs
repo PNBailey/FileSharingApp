@@ -8,6 +8,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace FileSharingApp.API.Controllers
 {
+
+    [Authorize]
     public class FolderController : BaseController
     {
         private readonly IFolderService folderService;

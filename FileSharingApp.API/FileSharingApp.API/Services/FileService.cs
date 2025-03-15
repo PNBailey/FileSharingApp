@@ -73,10 +73,8 @@ namespace FileSharingApp.API.Services
             return fileRepository.GetFileTypes(userId);
         }
 
-        public void DeleteFile(int id)
+        public void DeleteFile(AppFile fileToDelete)
         {
-            var fileToDelete = Get(id);
-            DeleteFileFromCloudStorage(fileToDelete.Name);
             fileRepository.DeleteFile(fileToDelete);
         }
 
@@ -124,13 +122,23 @@ namespace FileSharingApp.API.Services
                 bucketName, existingFileName,
                 bucketName, newFileName
             );
-
-            DeleteFileFromCloudStorage(existingFileName);
         }
 
         public Google.Apis.Storage.v1.Data.Object DownloadObjectFromCloudStorage(string fileName, MemoryStream memoryStream)
         {
             return storageClient.DownloadObject(bucketName, fileName, memoryStream);
+        }
+
+        public (Stream FileStream, string ContentType, string FileName) DownloadObjectFromCloudStorage(string fileName, int userId)
+        {
+            var memoryStream = new MemoryStream();
+            var fullFileName = $"{userId}/{fileName}";
+            var obj = storageClient.GetObject(bucketName, fullFileName);
+            storageClient.DownloadObject(bucketName, fullFileName, memoryStream);
+
+            memoryStream.Position = 0;
+
+            return (memoryStream, obj.ContentType ?? "application/octet-stream", obj.Name);
         }
 
         public string GetSignedUrl(string objectName)
@@ -166,7 +174,7 @@ namespace FileSharingApp.API.Services
 
             foreach (var file in files)
             {
-                DeleteFile(file.Id);
+                DeleteFile(file);
             }
         }
     }

@@ -14,7 +14,7 @@ namespace FileSharingApp.API.Services.Interfaces
 
         IEnumerable<FileType> GetFileTypes(int userId);
 
-        void DeleteFile(int id);
+        void DeleteFile(AppFile fileToDelete);
 
         void Update(AppFile file);
 
@@ -27,6 +27,8 @@ namespace FileSharingApp.API.Services.Interfaces
         void UpdateFileOnCloudStorage(string existingFileName, string newFileName);
 
         Google.Apis.Storage.v1.Data.Object DownloadObjectFromCloudStorage(string fileName, MemoryStream memoryStream);
+
+        (Stream FileStream, string ContentType, string FileName) DownloadObjectFromCloudStorage(string fileName, int userId);
 
         void DeleteFileFromCloudStorage(string fileName);
 

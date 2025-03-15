@@ -1,11 +1,8 @@
 ﻿using FileSharingApp.API.Services.Interfaces;
-using Google.Api;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Diagnostics;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using NLog;
-using System.Net;
 
 namespace FileSharingApp.API.Controllers
 {

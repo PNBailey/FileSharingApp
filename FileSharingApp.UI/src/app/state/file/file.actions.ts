@@ -12,7 +12,8 @@ export const FilesActions = createActionGroup({
         'Search Files': props<{ searchParams: FileSearch }>(),
         'Delete File': props<{ file: AppFile }>(),
         'Update File': props<{ file: AppFile }>(),
-        'Get File Types': emptyProps()
+        'Get File Types': emptyProps(),
+        'Download File': props<{ fileName: string }>()
     }
 });
 
