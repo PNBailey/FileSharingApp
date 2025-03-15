@@ -102,11 +102,7 @@ export class FilesComponent {
     }
 
     downloadFile(file: AppFile) {
-        if (file && file.downloadUrl) {
-            this.store.dispatch(FilesActions.downloadFile({
-                fileName: file.name
-            }));
-        }
+        this.store.dispatch(FilesActions.downloadFile({ file: file }));
     }
 
     paginateOrSort(event: LazyLoadEvent) {

@@ -5,7 +5,6 @@ using FileSharingApp.API.Models.Files;
 using FileSharingApp.API.Services.Interfaces;
 using Google.Apis.Auth.OAuth2;
 using Google.Cloud.Storage.V1;
-using System.Text;
 using System.Text.Json;
 
 namespace FileSharingApp.API.Services
@@ -97,13 +96,14 @@ namespace FileSharingApp.API.Services
             return appFile;
         }
 
-        public Google.Apis.Storage.v1.Data.Object AddFileToCloudStorage(IFormFile file, int userId)
+        public Google.Apis.Storage.v1.Data.Object AddFileToCloudStorage(IFormFile file, int userId, int? folderId = 0)
         {
             using (var fileStream = file.OpenReadStream())
             {
                 var storageObject = storageClient.UploadObject(
                     bucket: bucketName,
-                    objectName: $"{userId}/{Path.GetFileNameWithoutExtension(file.FileName)}",
+                    objectName: folderId > 0 ? $"{userId}/{folderId}/{Path.GetFileNameWithoutExtension(file.FileName)}" :
+                    $"{userId}/ProfilePicture/{Path.GetFileNameWithoutExtension(file.FileName)}",
                     contentType: file.ContentType,
                     source: fileStream
                 );
@@ -122,11 +122,6 @@ namespace FileSharingApp.API.Services
                 bucketName, existingFileName,
                 bucketName, newFileName
             );
-        }
-
-        public Google.Apis.Storage.v1.Data.Object DownloadObjectFromCloudStorage(string fileName, MemoryStream memoryStream)
-        {
-            return storageClient.DownloadObject(bucketName, fileName, memoryStream);
         }
 
         public (Stream FileStream, string ContentType, string FileName) DownloadObjectFromCloudStorage(string fileName, int userId)

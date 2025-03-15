@@ -22,11 +22,9 @@ namespace FileSharingApp.API.Services.Interfaces
 
         AppFile CreateAppFile(FileUploadDto fileUploadDto);
 
-        Google.Apis.Storage.v1.Data.Object AddFileToCloudStorage(IFormFile file, int userId);
+        Google.Apis.Storage.v1.Data.Object AddFileToCloudStorage(IFormFile file, int userId, int? folderId = 0);
 
         void UpdateFileOnCloudStorage(string existingFileName, string newFileName);
-
-        Google.Apis.Storage.v1.Data.Object DownloadObjectFromCloudStorage(string fileName, MemoryStream memoryStream);
 
         (Stream FileStream, string ContentType, string FileName) DownloadObjectFromCloudStorage(string fileName, int userId);
 

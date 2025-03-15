@@ -45,7 +45,7 @@ namespace FileSharingApp.API.Controllers
 
             if (!fileService.FileAlreadyExists(appFile, User.GetUserId()))
             {
-                appFile.DownloadUrl = fileService.AddFileToCloudStorage(fileUploadDto.OriginalFile, User.GetUserId()).MediaLink;
+                appFile.DownloadUrl = fileService.AddFileToCloudStorage(fileUploadDto.OriginalFile, User.GetUserId(), appFile.FolderId).MediaLink;
                 fileService.AddFile(appFile, User.GetUserId());
             }
             else
@@ -61,7 +61,7 @@ namespace FileSharingApp.API.Controllers
         public void Delete(int id)
         {
             var fileToDelete = fileService.Get(id);
-            fileService.DeleteFileFromCloudStorage($"{User.GetUserId()}/{fileToDelete.Name}");
+            fileService.DeleteFileFromCloudStorage($"{User.GetUserId()}/{fileToDelete.FolderId}/{fileToDelete.Name}");
             fileService.DeleteFile(fileToDelete);
         }
 
@@ -79,7 +79,8 @@ namespace FileSharingApp.API.Controllers
             }
             if(existingFile.Name != file.Name)
             {
-                fileService.UpdateFileOnCloudStorage($"{User.GetUserId()}/{existingFile.Name}", $"{User.GetUserId()}/{file.Name}");
+                fileService.UpdateFileOnCloudStorage($"{User.GetUserId()}/{existingFile.FolderId}/{existingFile.Name}", $"{User.GetUserId()}/{file.FolderId}/{file.Name}");
+                fileService.DeleteFileFromCloudStorage($"{User.GetUserId()}/{existingFile.FolderId}/{existingFile.Name}");
             }
             var updatedFile = mapper.Map(file, existingFile);
             fileService.Update(updatedFile);
@@ -92,10 +93,10 @@ namespace FileSharingApp.API.Controllers
             return fileService.GetFileTypes(User.GetUserId());
         }
 
-        [HttpGet("DownloadFile/{fileName}")]
-        public IActionResult DownloadFile(string fileName)
+        [HttpGet("DownloadFile/{folderId}/{fileName}")]
+        public IActionResult DownloadFile(int folderId, string fileName)
         {
-            var (fileStream, contentType, name) = fileService.DownloadObjectFromCloudStorage(fileName, User.GetUserId());
+            var (fileStream, contentType, name) = fileService.DownloadObjectFromCloudStorage($"{folderId}/{fileName}", User.GetUserId());
 
             Response.Headers.Add("Content-Disposition", $"attachment; filename={name}");
 

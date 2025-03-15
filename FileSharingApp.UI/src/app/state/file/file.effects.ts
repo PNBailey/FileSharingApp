@@ -119,12 +119,12 @@ export class FileEffects {
         this.actions$.pipe(
             ofType(FilesActions.downloadFile),
             switchMap((action) =>
-                this.fileService.downloadFile(action.fileName).pipe(
+                this.fileService.downloadFile(action.file).pipe(
                     tap((blob) => {
                         const a = document.createElement('a');
                         const objectUrl = URL.createObjectURL(blob);
                         a.href = objectUrl;
-                        a.download = action.fileName;
+                        a.download = action.file.name;
                         a.style.display = 'none';
                         document.body.appendChild(a);
                         a.click();

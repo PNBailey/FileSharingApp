@@ -13,7 +13,7 @@ export const FilesActions = createActionGroup({
         'Delete File': props<{ file: AppFile }>(),
         'Update File': props<{ file: AppFile }>(),
         'Get File Types': emptyProps(),
-        'Download File': props<{ fileName: string }>()
+        'Download File': props<{ file: AppFile }>()
     }
 });
 
