@@ -54,10 +54,7 @@ export class AppComponent implements OnInit {
     setCurrentUser() {
         const storedUser = localStorage.getItem('user');
         if (storedUser != 'null') {
-            this.router.navigateByUrl('/files')
             this.store.dispatch(AccountActions.setLoggedOnUser({ user: JSON.parse(storedUser) }));
-        } else {
-            this.router.navigateByUrl('/home')
         }
     }
 
