@@ -1,5 +1,4 @@
 import { ErrorHandler, enableProdMode, importProvidersFrom } from '@angular/core';
-
 import { environment } from './environments/environment';
 import { AppComponent } from './app/app.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -25,19 +24,20 @@ import { FilesComponent } from './app/files/files.component';
 import { loadingReducer } from './app/state/loading/loading.reducer';
 import { EditProfileComponent } from './app/edit-profile/edit-profile.component';
 import { ErrorComponent } from './app/error/error.component';
+import { UnAuthGuard } from './app/shared/guards/unauth-guard';
 
 if (environment.production) {
     enableProdMode();
 }
 
 const routes: Routes = [
-    { path: '', component: HomeComponent },
+    { path: '', component: FilesComponent, canActivate: [UnAuthGuard] },
     { path: 'home', component: HomeComponent },
     { path: 'error', component: ErrorComponent },
-    { path: 'edit-profile', component: EditProfileComponent },
-    { path: 'files', component: FilesComponent },
-    { path: 'files/:folderId', component: FilesComponent },
-    { path: '**', component: HomeComponent }
+    { path: 'edit-profile', component: EditProfileComponent, canActivate: [UnAuthGuard] },
+    { path: 'files', component: FilesComponent, canActivate: [UnAuthGuard] },
+    { path: 'files/:folderId', component: FilesComponent, canActivate: [UnAuthGuard] },
+    { path: '**', component: FilesComponent, canActivate: [UnAuthGuard] }
 ];
 
 bootstrapApplication(AppComponent, {
