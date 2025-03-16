@@ -63,7 +63,7 @@
                     <span class="p-column-title">Size</span>
                     {{(file.size / 1000000 | number: '1.1-2') + 'mb'}}
                 </td>
-                <td class="p-0">
+                <td class="p-0 actions">
                     <span class="p-column-title">Actions</span>
                     <div class="d-flex align-items-center">
                         <button mat-icon-button aria-label="Change File Folder" (click)="openFileViewDialog(file)">
