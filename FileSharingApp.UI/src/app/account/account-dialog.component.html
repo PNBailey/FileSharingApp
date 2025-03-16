@@ -25,8 +25,7 @@
                     <mat-form-field class="account-form-control" appearance="fill">
                         <mat-label>Password</mat-label>
                         <input class="password-input" matInput type="password" placeholder="Enter Password.."
-                            formControlName="password"
-                            matTooltip="Password must be a minimum of eight characters and contain at least one uppercase letter, one lowercase letter, one number and one special character"
+                            formControlName="password" [matTooltip]="accountAccess.action.passwordToolTip"
                             matTooltipPosition="before">
                         <mat-error class="password-invalid-error" *ngIf="form.controls['password'].hasError('pattern')">
                             Password is <strong>invalid</strong>
