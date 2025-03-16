@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace FileSharingApp.API.Controllers
 {
+
     [Authorize]
     public class UserController : BaseController
     {
@@ -54,6 +55,11 @@ namespace FileSharingApp.API.Controllers
         [HttpPost("Upload-Profile-Picture")]
         public async Task<IActionResult> UploadProfilePicture([FromForm]IFormFile imageFileData)
         {
+            var currentUser = await userService.FindByIdAsync(User.GetUserId());
+            if (currentUser.ProfilePictureName != null)
+            {
+                fileService.DeleteFileFromCloudStorage(currentUser.ProfilePictureName);
+            }
             var storageObject = fileService.AddFileToCloudStorage(imageFileData, User.GetUserId());
             var signedUrl = fileService.GetSignedUrl(storageObject.Name);
             var user = await userService.FindByIdAsync(User.GetUserId());

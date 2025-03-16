@@ -1,6 +1,4 @@
-﻿using Google.Apis.Auth.OAuth2;
-using Google.Cloud.SecretManager.V1;
-using Microsoft.Identity.Client.Platforms.Features.DesktopOs.Kerberos;
+﻿using Google.Cloud.SecretManager.V1;
 
 namespace FileSharingApp.API.Services
 {

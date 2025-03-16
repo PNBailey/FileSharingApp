@@ -1,4 +1,4 @@
-import { Component, DestroyRef, Renderer2, inject } from '@angular/core';
+import { Component, DestroyRef, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatButtonModule } from '@angular/material/button';
@@ -63,8 +63,7 @@ export class FilesComponent {
 
     constructor(
         private store: Store,
-        public dialog: MatDialog,
-        private renderer: Renderer2
+        public dialog: MatDialog
     ) {
         this.store.select(getFileSearchParams)
             .pipe(takeUntilDestroyed(this.destroyRef))
@@ -103,13 +102,7 @@ export class FilesComponent {
     }
 
     downloadFile(file: AppFile) {
-        if (file && file.downloadUrl) {
-            const link = document.createElement('a');
-            link.href = `${environment.baseUrl}/File/DownloadFile/${file.name}`;
-            this.renderer.appendChild(document.body, link);
-            link.click();
-            this.renderer.removeChild(document.body, link);
-        }
+        this.store.dispatch(FilesActions.downloadFile({ file: file }));
     }
 
     paginateOrSort(event: LazyLoadEvent) {

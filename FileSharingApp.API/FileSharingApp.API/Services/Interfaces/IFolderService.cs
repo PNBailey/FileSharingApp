@@ -19,6 +19,5 @@ namespace FileSharingApp.API.Services.Interfaces
         Folder GetTopLevelFolder(int userId);
 
         void DeleteFolder(int id);
-
     }
 }

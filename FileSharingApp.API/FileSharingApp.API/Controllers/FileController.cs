@@ -5,10 +5,13 @@ using FileSharingApp.API.Models;
 using FileSharingApp.API.Models.DTOs;
 using FileSharingApp.API.Models.Files;
 using FileSharingApp.API.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FileSharingApp.API.Controllers
 {
+
+    [Authorize]
     public class FileController : BaseController
     {
         private readonly IFileService fileService;
@@ -42,7 +45,7 @@ namespace FileSharingApp.API.Controllers
 
             if (!fileService.FileAlreadyExists(appFile, User.GetUserId()))
             {
-                appFile.DownloadUrl = fileService.AddFileToCloudStorage(fileUploadDto.OriginalFile, User.GetUserId()).MediaLink;
+                appFile.DownloadUrl = fileService.AddFileToCloudStorage(fileUploadDto.OriginalFile, User.GetUserId(), appFile.FolderId).MediaLink;
                 fileService.AddFile(appFile, User.GetUserId());
             }
             else
@@ -57,7 +60,9 @@ namespace FileSharingApp.API.Controllers
         [HttpDelete("{id}")]
         public void Delete(int id)
         {
-            fileService.DeleteFile(id);
+            var fileToDelete = fileService.Get(id);
+            fileService.DeleteFileFromCloudStorage($"{User.GetUserId()}/{fileToDelete.FolderId}/{fileToDelete.Name}");
+            fileService.DeleteFile(fileToDelete);
         }
 
         [HttpPut("Update")]
@@ -74,7 +79,8 @@ namespace FileSharingApp.API.Controllers
             }
             if(existingFile.Name != file.Name)
             {
-                fileService.UpdateFileOnCloudStorage(existingFile.Name, file.Name);
+                fileService.UpdateFileOnCloudStorage($"{User.GetUserId()}/{existingFile.FolderId}/{existingFile.Name}", $"{User.GetUserId()}/{file.FolderId}/{file.Name}");
+                fileService.DeleteFileFromCloudStorage($"{User.GetUserId()}/{existingFile.FolderId}/{existingFile.Name}");
             }
             var updatedFile = mapper.Map(file, existingFile);
             fileService.Update(updatedFile);
@@ -87,13 +93,14 @@ namespace FileSharingApp.API.Controllers
             return fileService.GetFileTypes(User.GetUserId());
         }
 
-        [HttpGet("DownloadFile/{fileName}")]
-        public FileStreamResult DownloadFile(string fileName)
+        [HttpGet("DownloadFile/{folderId}/{fileName}")]
+        public IActionResult DownloadFile(int folderId, string fileName)
         {
-            var memoryStream = new MemoryStream();
-            var obj = fileService.DownloadObjectFromCloudStorage(fileName, memoryStream);
-            memoryStream.Seek(0, SeekOrigin.Begin);
-            return File(memoryStream, obj.ContentType);
+            var (fileStream, contentType, name) = fileService.DownloadObjectFromCloudStorage($"{folderId}/{fileName}", User.GetUserId());
+
+            Response.Headers.Add("Content-Disposition", $"attachment; filename={name}");
+
+            return File(fileStream, contentType, name);
         }
     }
 }

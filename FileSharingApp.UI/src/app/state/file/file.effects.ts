@@ -1,7 +1,7 @@
 import { Injectable } from "@angular/core";
 import { Actions, createEffect, ofType } from "@ngrx/effects";
 import { FilesActions, FilesApiActions } from "./file.actions";
-import { filter, finalize, forkJoin, map, mergeMap, switchMap, tap, withLatestFrom } from "rxjs";
+import { finalize, forkJoin, map, mergeMap, switchMap, tap, withLatestFrom } from "rxjs";
 import { FileService } from "src/app/services/file.service";
 import { MessageHandlingService } from "src/app/services/message-handling.service";
 import { AppFile } from "src/app/models/app-file";
@@ -113,6 +113,27 @@ export class FileEffects {
             }),
             map(([action, existingSearchParams]) => FilesActions.searchFiles({ searchParams: existingSearchParams }))
         )
+    );
+
+    downloadFile$ = createEffect(() =>
+        this.actions$.pipe(
+            ofType(FilesActions.downloadFile),
+            switchMap((action) =>
+                this.fileService.downloadFile(action.file).pipe(
+                    tap((blob) => {
+                        const a = document.createElement('a');
+                        const objectUrl = URL.createObjectURL(blob);
+                        a.href = objectUrl;
+                        a.download = action.file.name;
+                        a.style.display = 'none';
+                        document.body.appendChild(a);
+                        a.click();
+                        document.body.removeChild(a);
+                        URL.revokeObjectURL(objectUrl);
+                    })
+                )
+            )
+        ), { dispatch: false }
     );
 
     constructor(
