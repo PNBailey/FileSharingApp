@@ -18,3 +18,11 @@
 .table-container.loading p-table {
     opacity: 0.5;
 }
+
+.p-selectable-row {
+    cursor: default;
+}
+
+.actions {
+    cursor: pointer;
+}
