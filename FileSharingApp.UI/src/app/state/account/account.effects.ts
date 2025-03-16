@@ -22,12 +22,8 @@ export class AccountEffects {
     loginOrRegister$ = createEffect(() =>
         this.actions$.pipe(
             ofType(AccountActions.loginOrRegister),
-            exhaustMap(action => this.accountService.loginOrRegister(action.user, action.url)
-                .pipe(
-                    map((user) => AccountApiActions.loginOrRegisterSuccessful({ user: user })),
-                    catchError(error => of(AccountApiActions.loginOrRegisterError(error)))
-                )
-            )
+            switchMap(action => this.accountService.loginOrRegister(action.user, action.url)),
+            map((user) => AccountApiActions.loginOrRegisterSuccessful({ user: user }))
         )
     );
 

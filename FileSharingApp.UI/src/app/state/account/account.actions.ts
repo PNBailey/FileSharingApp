@@ -18,7 +18,6 @@ export const AccountApiActions = createActionGroup({
     source: 'Account Api',
     events: {
         'Login Or Register Successful': props<{ user: User }>(),
-        'Login Or Register Error': props<{ error: any }>(),
         'Upload Profile Picture Successful': props<{ updatedUser: User }>(),
         'Update User Info Successful': props<{ updatedUser: User }>()
     }
