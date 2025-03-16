@@ -22,7 +22,8 @@ export interface Action {
     type: string,
     linkLabel: string,
     linkText: string,
-    buttonAction: string
+    buttonAction: string,
+    passwordToolTip: string
 }
 
 @Component({
@@ -75,7 +76,8 @@ export class AccountDialogComponent {
     private registerForm = this.fb.group({
         'email': ['', [Validators.required, Validators.email], [this.validationService.uniqueEmailRegisterFormValidatorFn()]],
         'username': ['', [Validators.required], [this.validationService.usernameRegisterFormValidatorFn()]],
-        'password': ['', [Validators.required]]
+        'password': ['', [Validators.required, Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/)
+        ]]
     });
 
     private userIsRegistering$: Observable<boolean> = this.userIsRegisteringToggle.pipe(
@@ -101,6 +103,7 @@ export class AccountDialogComponent {
                 linkLabel: userIsRegistering ? 'Already have an account?' : 'No account?',
                 linkText: userIsRegistering ? 'Login' : 'Register',
                 buttonAction: userIsRegistering ? 'Register' : 'Login',
+                passwordToolTip: userIsRegistering ? 'Password must be a minimum of eight characters and contain at least one uppercase letter, one lowercase letter, one number and one special character' : null
             }
         })
     );
